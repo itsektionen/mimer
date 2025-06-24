@@ -1,0 +1,34 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mimer-app
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@mimer-db:5432/mimer?sslmode=disable
+    ports:
+      - 8080:8080
+    networks:
+      - mimer-network
+    depends_on:
+      - db
+  db:
+    image: postgres:17-alpine
+    container_name: mimer-db
+    environment:
+      POSTGRES_DB: mimer
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - mimer-db-data:/var/lib/postgresql/data
+    networks:
+      - mimer-network
+
+volumes:
+  mimer-db-data:
+
+networks:
+  mimer-network:
+    driver: bridge
