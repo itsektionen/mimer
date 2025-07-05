@@ -25,6 +25,11 @@ func (s *committeeService) GetAllCommittees() ([]model.Committee, error) {
 }
 
 func (s *committeeService) CreateCommittee(committee *model.Committee) (*model.Committee, error) {
+	defaultColor := "#cc99ff"
+	if committee.Color == nil {
+		committee.Color = &defaultColor
+	}
+
 	return s.committeeRepo.CreateCommittee(committee)
 }
 

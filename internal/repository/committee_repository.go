@@ -66,10 +66,6 @@ func (r *committeeRepository) GetCommitteeById(id uuid.UUID) (*model.Committee, 
 }
 
 func (r *committeeRepository) CreateCommittee(committee *model.Committee) (*model.Committee, error) {
-	defaultColor := "#cc99ff"
-	if committee.Color == nil {
-		committee.Color = &defaultColor
-	}
 	query := `
 	INSERT INTO committee (name, description, slug, color)
 	VALUES ($1, $2, $3, $4)
