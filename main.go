@@ -10,6 +10,7 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
+	"github.com/itsektionen/mimer/internal/app/v1/middleware"
 	v1Router "github.com/itsektionen/mimer/internal/app/v1/router"
 	v1Service "github.com/itsektionen/mimer/internal/app/v1/service"
 	"github.com/itsektionen/mimer/internal/pkg/db"
@@ -51,9 +52,10 @@ func main() {
 	committeeService := v1Service.NewCommitteeService(committeeRepo)
 	personRepo := repository.NewPersonRepository(dbConn)
 	personService := v1Service.NewPersonService(personRepo)
+	authRepo := repository.NewApiKeyRepository(dbConn)
 
 	v1APIRouter := v1Router.SetupV1Router(committeeService, personService)
-	rootMux := router.SetupRootRouter(v1APIRouter)
+	rootMux := router.SetupRootRouter(middleware.AuthMiddleware(v1APIRouter, authRepo))
 
 	fmt.Println("Starting server on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", rootMux))
