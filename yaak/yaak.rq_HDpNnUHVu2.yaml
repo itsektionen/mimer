@@ -1,0 +1,27 @@
+type: http_request
+model: http_request
+id: rq_HDpNnUHVu2
+createdAt: 2025-06-24T12:52:02.883047
+updatedAt: 2025-07-07T20:46:37.348600
+workspaceId: wk_Hc6ubbaaZf
+folderId: fl_2W5YWL48Ab
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "firstName": "John",
+      "lastName": "Doe"
+    }
+bodyType: application/json
+description: ''
+headers:
+- enabled: true
+  name: Content-Type
+  value: application/json
+  id: hjnS5dYh8X
+method: POST
+name: create
+sortPriority: 0.0
+url: ${[ BASE_URL ]}/api/v1/people
+urlParameters: []

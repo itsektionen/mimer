@@ -1,0 +1,18 @@
+type: http_request
+model: http_request
+id: rq_5zE64JGpWi
+createdAt: 2025-07-07T20:39:16.763239
+updatedAt: 2025-07-07T20:46:40.326155
+workspaceId: wk_Hc6ubbaaZf
+folderId: fl_PCnmCkzjjd
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: ''
+headers: []
+method: GET
+name: get
+sortPriority: 1000.0
+url: ${[ BASE_URL ]}/api/v1/positions/${[ prompt.text(title='Get position by ID', label='', defaultValue='', placeholder=b64'MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw') ]}
+urlParameters: []

@@ -1,0 +1,18 @@
+type: http_request
+model: http_request
+id: rq_vzQaWiUsym
+createdAt: 2025-05-20T14:47:38.179250
+updatedAt: 2025-07-07T20:46:41.348590
+workspaceId: wk_Hc6ubbaaZf
+folderId: fl_PCnmCkzjjd
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: ''
+headers: []
+method: GET
+name: list
+sortPriority: 500.0
+url: ${[ BASE_URL ]}/api/v1/positions
+urlParameters: []

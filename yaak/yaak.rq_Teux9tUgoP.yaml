@@ -1,0 +1,18 @@
+type: http_request
+model: http_request
+id: rq_Teux9tUgoP
+createdAt: 2025-05-20T15:01:47.243710
+updatedAt: 2025-07-07T20:40:53.429169
+workspaceId: wk_Hc6ubbaaZf
+folderId: fl_i4mCZWcjKm
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: ''
+headers: []
+method: GET
+name: get
+sortPriority: 2000.0
+url: ${[ BASE_URL ]}/api/v1/committees/${[ prompt.text(title='Get committee by ID', placeholder=b64'MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw') ]}
+urlParameters: []

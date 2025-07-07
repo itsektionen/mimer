@@ -1,0 +1,11 @@
+type: workspace
+model: workspace
+id: wk_Hc6ubbaaZf
+createdAt: 2025-05-20T14:46:05.088700
+updatedAt: 2025-05-20T14:46:05.088701
+name: mimer
+description: ''
+encryptionKeyChallenge: null
+settingValidateCertificates: true
+settingFollowRedirects: true
+settingRequestTimeout: 0

@@ -1,0 +1,18 @@
+type: http_request
+model: http_request
+id: rq_5LTYDki5ar
+createdAt: 2025-06-24T12:50:53.327671
+updatedAt: 2025-07-07T20:46:37.351041
+workspaceId: wk_Hc6ubbaaZf
+folderId: fl_2W5YWL48Ab
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: ''
+headers: []
+method: GET
+name: list
+sortPriority: 1000.0
+url: ${[ BASE_URL ]}/api/v1/people
+urlParameters: []

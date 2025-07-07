@@ -1,0 +1,22 @@
+type: http_request
+model: http_request
+id: rq_i7YYgBaCkt
+createdAt: 2025-05-20T14:47:13.465866
+updatedAt: 2025-07-07T20:38:04.837853
+workspaceId: wk_Hc6ubbaaZf
+folderId: fl_i4mCZWcjKm
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: ''
+headers:
+- enabled: true
+  name: ''
+  value: ''
+  id: zzz2RPDhNM
+method: GET
+name: list
+sortPriority: 1000.0
+url: ${[ BASE_URL ]}/api/v1/committees
+urlParameters: []

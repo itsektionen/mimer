@@ -1,0 +1,18 @@
+type: http_request
+model: http_request
+id: rq_ngW2NJBGRS
+createdAt: 2025-07-07T20:46:28.860366
+updatedAt: 2025-07-07T20:47:11.248288
+workspaceId: wk_Hc6ubbaaZf
+folderId: fl_2W5YWL48Ab
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: ''
+headers: []
+method: GET
+name: get
+sortPriority: 2000.0
+url: ${[ BASE_URL ]}/api/v1/people/${[ prompt.text(title='Get person by ID', placeholder=b64'MDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAw') ]}
+urlParameters: []

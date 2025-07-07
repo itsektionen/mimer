@@ -1,0 +1,28 @@
+type: http_request
+model: http_request
+id: rq_JRkcFynPxN
+createdAt: 2025-07-07T20:45:13.368452
+updatedAt: 2025-07-07T20:53:11.538949
+workspaceId: wk_Hc6ubbaaZf
+folderId: fl_PCnmCkzjjd
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "name": "President",
+      "committeeId": "00000000-0000-0000-0000-000000000000",
+      "active": false
+    }
+bodyType: application/json
+description: ''
+headers:
+- enabled: true
+  name: Content-Type
+  value: application/json
+  id: zsRAFznQgn
+method: POST
+name: create
+sortPriority: 0.0
+url: ${[ BASE_URL ]}/api/v1/positions
+urlParameters: []

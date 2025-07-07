@@ -1,0 +1,33 @@
+type: http_request
+model: http_request
+id: rq_4xUCP6EKoT
+createdAt: 2025-06-24T12:09:28.247767
+updatedAt: 2025-07-07T20:46:25.436798
+workspaceId: wk_Hc6ubbaaZf
+folderId: fl_i4mCZWcjKm
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "name": "The Best Committee",
+      "slug": "the-best-committee",
+      "description": "We do the best stuff!",
+      "color": "#c0ff33"
+    }
+bodyType: application/json
+description: ''
+headers:
+- enabled: true
+  name: Content-Type
+  value: application/json
+  id: JbS45Hi9at
+- enabled: true
+  name: ''
+  value: ''
+  id: kyzbzQs9M9
+method: POST
+name: create
+sortPriority: 0.0
+url: ${[ BASE_URL ]}/api/v1/committees
+urlParameters: []
