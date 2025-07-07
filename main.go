@@ -50,11 +50,16 @@ func main() {
 
 	committeeRepo := repository.NewCommitteeRepository(dbConn)
 	committeeService := v1Service.NewCommitteeService(committeeRepo)
+
 	personRepo := repository.NewPersonRepository(dbConn)
 	personService := v1Service.NewPersonService(personRepo)
+
+	positionRepo := repository.NewPositionRepository(dbConn)
+	positionService := v1Service.NewPositionService(positionRepo)
+
 	authRepo := repository.NewApiKeyRepository(dbConn)
 
-	v1APIRouter := v1Router.SetupV1Router(committeeService, personService)
+	v1APIRouter := v1Router.SetupV1Router(committeeService, personService, positionService)
 	rootMux := router.SetupRootRouter(middleware.AuthMiddleware(v1APIRouter, authRepo))
 
 	fmt.Println("Starting server on port 8080")
