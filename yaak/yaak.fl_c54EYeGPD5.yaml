@@ -2,9 +2,14 @@ type: folder
 model: folder
 id: fl_c54EYeGPD5
 createdAt: 2025-05-20T14:47:07.076205
-updatedAt: 2025-05-20T14:47:07.076206
+updatedAt: 2025-08-26T16:30:21.585256
 workspaceId: wk_Hc6ubbaaZf
 folderId: null
-name: v1
+authentication:
+  key: Authorization
+  value: ${[ API_KEY ]}
+authenticationType: apikey
 description: ''
+headers: []
+name: v1
 sortPriority: -1747752500000.0
