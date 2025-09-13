@@ -12,53 +12,57 @@ import (
 )
 
 type ApiKey struct {
-	ID    uuid.UUID
-	Value string
+	ID        uuid.UUID    `json:"id"`
+	Value     string       `json:"value"`
+	Active    bool         `json:"active"`
+	CreatedAt sql.NullTime `json:"created_at"`
+	UpdatedAt sql.NullTime `json:"updated_at"`
+	DeletedAt sql.NullTime `json:"deleted_at"`
 }
 
 type Committee struct {
-	ID          uuid.UUID
-	Name        string
-	Slug        string
-	ShortName   string
-	Description sql.NullString
-	Color       string
-	ImageUrl    sql.NullString
-	WebsiteUrl  sql.NullString
-	Active      sql.NullBool
-	CreatedAt   sql.NullTime
-	UpdatedAt   sql.NullTime
-	DeletedAt   sql.NullTime
+	ID          uuid.UUID      `json:"id"`
+	Name        string         `json:"name"`
+	Slug        string         `json:"slug"`
+	ShortName   string         `json:"short_name"`
+	Description sql.NullString `json:"description"`
+	Color       string         `json:"color"`
+	ImageUrl    sql.NullString `json:"image_url"`
+	WebsiteUrl  sql.NullString `json:"website_url"`
+	Active      bool           `json:"active"`
+	CreatedAt   sql.NullTime   `json:"created_at"`
+	UpdatedAt   sql.NullTime   `json:"updated_at"`
+	DeletedAt   sql.NullTime   `json:"deleted_at"`
 }
 
 type Person struct {
-	ID        uuid.UUID
-	FirstName string
-	LastName  string
-	ImageUrl  sql.NullString
-	CreatedAt sql.NullTime
-	UpdatedAt sql.NullTime
-	DeletedAt sql.NullTime
+	ID        uuid.UUID      `json:"id"`
+	FirstName string         `json:"first_name"`
+	LastName  string         `json:"last_name"`
+	ImageUrl  sql.NullString `json:"image_url"`
+	CreatedAt sql.NullTime   `json:"created_at"`
+	UpdatedAt sql.NullTime   `json:"updated_at"`
+	DeletedAt sql.NullTime   `json:"deleted_at"`
 }
 
 type Position struct {
-	ID          uuid.UUID
-	Name        string
-	Email       string
-	Active      sql.NullBool
-	CommitteeID uuid.UUID
-	CreatedAt   sql.NullTime
-	UpdatedAt   sql.NullTime
-	DeletedAt   sql.NullTime
+	ID          uuid.UUID    `json:"id"`
+	Name        string       `json:"name"`
+	Email       string       `json:"email"`
+	Active      bool         `json:"active"`
+	CommitteeID uuid.UUID    `json:"committee_id"`
+	CreatedAt   sql.NullTime `json:"created_at"`
+	UpdatedAt   sql.NullTime `json:"updated_at"`
+	DeletedAt   sql.NullTime `json:"deleted_at"`
 }
 
 type Trustee struct {
-	ID         uuid.UUID
-	StartDate  time.Time
-	EndDate    time.Time
-	PositionID uuid.UUID
-	PersonID   uuid.UUID
-	CreatedAt  sql.NullTime
-	UpdatedAt  sql.NullTime
-	DeletedAt  sql.NullTime
+	ID         uuid.UUID    `json:"id"`
+	StartDate  time.Time    `json:"start_date"`
+	EndDate    time.Time    `json:"end_date"`
+	PositionID uuid.UUID    `json:"position_id"`
+	PersonID   uuid.UUID    `json:"person_id"`
+	CreatedAt  sql.NullTime `json:"created_at"`
+	UpdatedAt  sql.NullTime `json:"updated_at"`
+	DeletedAt  sql.NullTime `json:"deleted_at"`
 }

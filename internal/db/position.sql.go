@@ -25,9 +25,9 @@ RETURNING id, name, email, active, committee_id, created_at, updated_at, deleted
 `
 
 type CreatePositionParams struct {
-	Name        string
-	Email       string
-	CommitteeID uuid.UUID
+	Name        string    `json:"name"`
+	Email       string    `json:"email"`
+	CommitteeID uuid.UUID `json:"committee_id"`
 }
 
 func (q *Queries) CreatePosition(ctx context.Context, arg CreatePositionParams) (Position, error) {
@@ -114,10 +114,10 @@ RETURNING id, name, email, active, committee_id, created_at, updated_at, deleted
 `
 
 type UpdatePositionParams struct {
-	ID          uuid.UUID
-	Name        string
-	Email       string
-	CommitteeID uuid.UUID
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Email       string    `json:"email"`
+	CommitteeID uuid.UUID `json:"committee_id"`
 }
 
 func (q *Queries) UpdatePosition(ctx context.Context, arg UpdatePositionParams) (Position, error) {

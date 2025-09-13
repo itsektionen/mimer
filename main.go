@@ -17,7 +17,6 @@ import (
 	v1Service "github.com/itsektionen/mimer/internal/app/v1/service"
 	sqlc "github.com/itsektionen/mimer/internal/db"
 	"github.com/itsektionen/mimer/internal/pkg/db"
-	"github.com/itsektionen/mimer/internal/repository"
 	"github.com/itsektionen/mimer/internal/router"
 )
 
@@ -89,17 +88,12 @@ func main() {
 
 	queries := sqlc.New(dbConn)
 
-	committeeRepo := repository.NewCommitteeRepository(dbConn)
-	committeeService := v1Service.NewCommitteeService(committeeRepo)
-
-	personRepo := repository.NewPersonRepository(dbConn)
-	personService := v1Service.NewPersonService(personRepo)
+	committeeService := v1Service.NewCommitteeService(*queries)
+	personService := v1Service.NewPersonService(*queries)
 	positionService := v1Service.NewPositionService(*queries)
 
-	authRepo := repository.NewApiKeyRepository(dbConn)
-
 	v1APIRouter := v1Router.SetupV1Router(committeeService, personService, positionService)
-	rootMux := router.SetupRootRouter(middleware.AuthMiddleware(v1APIRouter, authRepo))
+	rootMux := router.SetupRootRouter(middleware.AuthMiddleware(v1APIRouter, *queries))
 
 	fmt.Println("Starting server on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", rootMux))

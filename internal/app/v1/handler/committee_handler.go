@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/itsektionen/mimer/internal/app/v1/service"
-	"github.com/itsektionen/mimer/internal/model"
+	"github.com/itsektionen/mimer/internal/db"
 	"github.com/itsektionen/mimer/internal/pkg/util"
 )
 
@@ -25,7 +25,8 @@ func (h *CommitteeHandler) HandleCommittees(w http.ResponseWriter, r *http.Reque
 	case http.MethodPost:
 		h.createCommittee(w, r)
 	case http.MethodGet:
-		committees, err := h.committeeService.GetAllCommittees()
+		ctx := r.Context()
+		committees, err := h.committeeService.GetAllCommittees(ctx)
 		if err != nil {
 			log.Printf("%v", err)
 			util.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
@@ -48,9 +49,11 @@ func (h *CommitteeHandler) HandleCommitteeById(w http.ResponseWriter, r *http.Re
 		util.RespondWithError(w, http.StatusBadRequest, "Invalid UUID")
 	}
 
+	ctx := r.Context()
+
 	switch r.Method {
 	case http.MethodGet:
-		committee, err := h.committeeService.GetCommitteeById(id)
+		committee, err := h.committeeService.GetCommitteeById(ctx, id)
 		if err != nil {
 			log.Printf("%v", err)
 			util.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
@@ -60,14 +63,16 @@ func (h *CommitteeHandler) HandleCommitteeById(w http.ResponseWriter, r *http.Re
 }
 
 func (h *CommitteeHandler) createCommittee(w http.ResponseWriter, r *http.Request) {
-	var committee *model.Committee
-	err := json.NewDecoder(r.Body).Decode(&committee)
+	var newCommittee db.CreateCommitteeParams
+	err := json.NewDecoder(r.Body).Decode(&newCommittee)
 	if err != nil {
 		util.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
-	committee, err = h.committeeService.CreateCommittee(committee)
+	ctx := r.Context()
+
+	committee, err := h.committeeService.CreateCommittee(ctx, newCommittee)
 	if err != nil {
 		log.Printf("%v", err)
 		util.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")

@@ -1,6 +1,7 @@
 CREATE TABLE api_key (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     value VARCHAR(32) NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT false,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
