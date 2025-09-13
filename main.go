@@ -15,18 +15,50 @@ import (
 	"github.com/itsektionen/mimer/internal/app/v1/middleware"
 	v1Router "github.com/itsektionen/mimer/internal/app/v1/router"
 	v1Service "github.com/itsektionen/mimer/internal/app/v1/service"
+	sqlc "github.com/itsektionen/mimer/internal/db"
 	"github.com/itsektionen/mimer/internal/pkg/db"
 	"github.com/itsektionen/mimer/internal/repository"
 	"github.com/itsektionen/mimer/internal/router"
 )
 
-//go:embed migrations/*.sql
+//go:embed db/migrations/*.sql
 var migrations embed.FS
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	env := os.Getenv("MIMER_ENV")
+	if env == "" {
+		env = "development"
+	}
+	fmt.Println("env:", env)
+
+	files := []string{
+		".env." + env + ".local",
+	}
+	if env != "test" {
+		files = append(files, ".env.local")
+	}
+	files = append(files, ".env."+env, ".env")
+
+	var loadedFiles []string
+	var failedFiles []string
+
+	for _, file := range files {
+		if err := godotenv.Load(file); err == nil {
+			loadedFiles = append(loadedFiles, file)
+		} else {
+			failedFiles = append(failedFiles, file)
+		}
+	}
+
+	if len(loadedFiles) == 0 {
+		fmt.Fprintln(os.Stderr, "Error: No environment files were loaded.")
+		fmt.Fprintln(os.Stderr, "Attempted files:", files)
+		os.Exit(1)
+	} else {
+		fmt.Println("Successfully loaded env files:")
+		for _, f := range loadedFiles {
+			fmt.Println(" -", f)
+		}
 	}
 
 	connString := os.Getenv("DATABASE_URL")
@@ -41,7 +73,7 @@ func main() {
 		log.Fatalf("Failed to initialize migrations")
 	}
 
-	migrations, err := iofs.New(migrations, "migrations")
+	migrations, err := iofs.New(migrations, "db/migrations")
 	if err != nil {
 		log.Fatalf("Failed to read migrations")
 	}
@@ -55,14 +87,14 @@ func main() {
 		panic(fmt.Errorf("Failed to migrate 4: %v", err))
 	}
 
+	queries := sqlc.New(dbConn)
+
 	committeeRepo := repository.NewCommitteeRepository(dbConn)
 	committeeService := v1Service.NewCommitteeService(committeeRepo)
 
 	personRepo := repository.NewPersonRepository(dbConn)
 	personService := v1Service.NewPersonService(personRepo)
-
-	positionRepo := repository.NewPositionRepository(dbConn)
-	positionService := v1Service.NewPositionService(positionRepo)
+	positionService := v1Service.NewPositionService(*queries)
 
 	authRepo := repository.NewApiKeyRepository(dbConn)
 
