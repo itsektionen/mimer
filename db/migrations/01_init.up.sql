@@ -25,10 +25,10 @@ CREATE TABLE committee (
 
 CREATE TABLE person (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    
+
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
-    image_url TEXT,    
+    image_url TEXT,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

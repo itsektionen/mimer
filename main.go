@@ -10,6 +10,8 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
+	"github.com/joho/godotenv"
+
 	"github.com/itsektionen/mimer/internal/app/v1/middleware"
 	v1Router "github.com/itsektionen/mimer/internal/app/v1/router"
 	v1Service "github.com/itsektionen/mimer/internal/app/v1/service"
@@ -22,6 +24,11 @@ import (
 var migrations embed.FS
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	connString := os.Getenv("DATABASE_URL")
 	dbConn, err := db.SetupPostgresDB(connString)
 	if err != nil {
