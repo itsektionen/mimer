@@ -16,7 +16,7 @@ CREATE TABLE committee (
     color VARCHAR(128) NOT NULL,
     image_url TEXT,
     website_url TEXT,
-    active BOOLEAN DEFAULT false,
+    active BOOLEAN NOT NULL DEFAULT false,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -25,10 +25,10 @@ CREATE TABLE committee (
 
 CREATE TABLE person (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    
+
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
-    image_url TEXT,    
+    image_url TEXT,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -40,7 +40,7 @@ CREATE TABLE position (
 
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
-    active BOOLEAN DEFAULT false,
+    active BOOLEAN NOT NULL DEFAULT false,
 
     committee_id UUID NOT NULL REFERENCES committee(id),
 

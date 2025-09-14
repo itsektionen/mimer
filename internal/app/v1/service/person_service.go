@@ -1,33 +1,34 @@
 package service
 
 import (
+	"context"
+
 	"github.com/google/uuid"
-	"github.com/itsektionen/mimer/internal/model"
-	"github.com/itsektionen/mimer/internal/repository"
+	"github.com/itsektionen/mimer/internal/db"
 )
 
 type PersonService interface {
-	GetAllPeople() ([]model.Person, error)
-	CreatePerson(*model.Person) (*model.Person, error)
-	GetPersonById(id uuid.UUID) (*model.Person, error)
+	GetAllPeople(ctx context.Context) ([]db.Person, error)
+	CreatePerson(ctx context.Context, person db.CreatePersonParams) (db.Person, error)
+	GetPersonById(ctx context.Context, id uuid.UUID) (db.Person, error)
 }
 
 type personService struct {
-	personRepo repository.PersonRepository
+	queries db.Queries
 }
 
-func NewPersonService(personRepo repository.PersonRepository) PersonService {
-	return &personService{personRepo: personRepo}
+func NewPersonService(queries db.Queries) PersonService {
+	return &personService{queries: queries}
 }
 
-func (s *personService) GetAllPeople() ([]model.Person, error) {
-	return s.personRepo.GetAllPeople()
+func (s *personService) GetAllPeople(ctx context.Context) ([]db.Person, error) {
+	return s.queries.ListPeople(ctx)
 }
 
-func (s *personService) CreatePerson(person *model.Person) (*model.Person, error) {
-	return s.personRepo.CreatePerson(person)
+func (s *personService) CreatePerson(ctx context.Context, person db.CreatePersonParams) (db.Person, error) {
+	return s.queries.CreatePerson(ctx, person)
 }
 
-func (s *personService) GetPersonById(id uuid.UUID) (*model.Person, error) {
-	return s.personRepo.GetPersonById(id)
+func (s *personService) GetPersonById(ctx context.Context, id uuid.UUID) (db.Person, error) {
+	return s.queries.GetPerson(ctx, id)
 }

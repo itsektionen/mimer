@@ -1,38 +1,34 @@
 package service
 
 import (
+	"context"
+
 	"github.com/google/uuid"
-	"github.com/itsektionen/mimer/internal/model"
-	"github.com/itsektionen/mimer/internal/repository"
+	"github.com/itsektionen/mimer/internal/db"
 )
 
 type CommitteeService interface {
-	GetAllCommittees() ([]model.Committee, error)
-	CreateCommittee(*model.Committee) (*model.Committee, error)
-	GetCommitteeById(id uuid.UUID) (*model.Committee, error)
+	GetAllCommittees(ctx context.Context) ([]db.Committee, error)
+	CreateCommittee(ctx context.Context, committee db.CreateCommitteeParams) (db.Committee, error)
+	GetCommitteeById(ctx context.Context, id uuid.UUID) (db.Committee, error)
 }
 
 type committeeService struct {
-	committeeRepo repository.CommitteeRepository
+	queries db.Queries
 }
 
-func NewCommitteeService(committeeRepo repository.CommitteeRepository) CommitteeService {
-	return &committeeService{committeeRepo: committeeRepo}
+func NewCommitteeService(queries db.Queries) CommitteeService {
+	return &committeeService{queries: queries}
 }
 
-func (s *committeeService) GetAllCommittees() ([]model.Committee, error) {
-	return s.committeeRepo.GetAllCommittees()
+func (s *committeeService) GetAllCommittees(ctx context.Context) ([]db.Committee, error) {
+	return s.queries.ListCommittees(ctx)
 }
 
-func (s *committeeService) CreateCommittee(committee *model.Committee) (*model.Committee, error) {
-	defaultColor := "#cc99ff"
-	if committee.Color == nil {
-		committee.Color = &defaultColor
-	}
-
-	return s.committeeRepo.CreateCommittee(committee)
+func (s *committeeService) CreateCommittee(ctx context.Context, committee db.CreateCommitteeParams) (db.Committee, error) {
+	return s.queries.CreateCommittee(ctx, committee)
 }
 
-func (s *committeeService) GetCommitteeById(id uuid.UUID) (*model.Committee, error) {
-	return s.committeeRepo.GetCommitteeById(id)
+func (s *committeeService) GetCommitteeById(ctx context.Context, id uuid.UUID) (db.Committee, error) {
+	return s.queries.GetCommittee(ctx, id)
 }

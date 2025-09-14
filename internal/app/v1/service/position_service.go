@@ -1,33 +1,34 @@
 package service
 
 import (
+	"context"
+
 	"github.com/google/uuid"
-	"github.com/itsektionen/mimer/internal/model"
-	"github.com/itsektionen/mimer/internal/repository"
+	"github.com/itsektionen/mimer/internal/db"
 )
 
 type PositionService interface {
-	GetAllPositions() ([]model.Position, error)
-	CreatePosition(*model.Position) (*model.Position, error)
-	GetPositionById(id uuid.UUID) (*model.Position, error)
+	GetAllPositions(ctx context.Context) ([]db.Position, error)
+	CreatePosition(ctx context.Context, position db.CreatePositionParams) (db.Position, error)
+	GetPositionById(ctx context.Context, id uuid.UUID) (db.Position, error)
 }
 
-func NewPositionService(positionRepo repository.PositionRepository) PositionService {
-	return &positionService{positionRepo: positionRepo}
+func NewPositionService(queries db.Queries) PositionService {
+	return &positionService{queries: queries}
 }
 
 type positionService struct {
-	positionRepo repository.PositionRepository
+	queries db.Queries
 }
 
-func (s *positionService) GetAllPositions() ([]model.Position, error) {
-	return s.positionRepo.GetAllPositions()
+func (s *positionService) GetAllPositions(ctx context.Context) ([]db.Position, error) {
+	return s.queries.ListPositions(ctx)
 }
 
-func (s *positionService) CreatePosition(position *model.Position) (*model.Position, error) {
-	return s.positionRepo.CreatePosition(position)
+func (s *positionService) CreatePosition(ctx context.Context, position db.CreatePositionParams) (db.Position, error) {
+	return s.queries.CreatePosition(ctx, position)
 }
 
-func (s *positionService) GetPositionById(id uuid.UUID) (*model.Position, error) {
-	return s.positionRepo.GetPositionById(id)
+func (s *positionService) GetPositionById(ctx context.Context, id uuid.UUID) (db.Position, error) {
+	return s.queries.GetPosition(ctx, id)
 }
