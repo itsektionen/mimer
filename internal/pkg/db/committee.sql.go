@@ -7,7 +7,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/google/uuid"
 )
@@ -34,17 +33,17 @@ RETURNING id, name, slug, short_name, description, color, image_url, website_url
 `
 
 type CreateCommitteeParams struct {
-	Name        string         `json:"name"`
-	Slug        string         `json:"slug"`
-	ShortName   string         `json:"short_name"`
-	Description sql.NullString `json:"description"`
-	Color       string         `json:"color"`
-	ImageUrl    sql.NullString `json:"image_url"`
-	WebsiteUrl  sql.NullString `json:"website_url"`
+	Name        string  `json:"name"`
+	Slug        string  `json:"slug"`
+	ShortName   string  `json:"short_name"`
+	Description *string `json:"description"`
+	Color       string  `json:"color"`
+	ImageUrl    *string `json:"image_url"`
+	WebsiteUrl  *string `json:"website_url"`
 }
 
 func (q *Queries) CreateCommittee(ctx context.Context, arg CreateCommitteeParams) (Committee, error) {
-	row := q.db.QueryRowContext(ctx, createCommittee,
+	row := q.db.QueryRow(ctx, createCommittee,
 		arg.Name,
 		arg.Slug,
 		arg.ShortName,
@@ -71,13 +70,40 @@ func (q *Queries) CreateCommittee(ctx context.Context, arg CreateCommitteeParams
 	return i, err
 }
 
+const deleteCommittee = `-- name: DeleteCommittee :one
+UPDATE committee
+    SET deleted_at = NOW()
+WHERE ID = $1 AND deleted_at IS NULL
+RETURNING id, name, slug, short_name, description, color, image_url, website_url, active, created_at, updated_at, deleted_at
+`
+
+func (q *Queries) DeleteCommittee(ctx context.Context, id uuid.UUID) (Committee, error) {
+	row := q.db.QueryRow(ctx, deleteCommittee, id)
+	var i Committee
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Slug,
+		&i.ShortName,
+		&i.Description,
+		&i.Color,
+		&i.ImageUrl,
+		&i.WebsiteUrl,
+		&i.Active,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
 const getCommittee = `-- name: GetCommittee :one
 SELECT id, name, slug, short_name, description, color, image_url, website_url, active, created_at, updated_at, deleted_at FROM committee
-WHERE ID = $1 LIMIT 1
+WHERE ID = $1 AND deleted_at IS NULL AND active = TRUE LIMIT 1
 `
 
 func (q *Queries) GetCommittee(ctx context.Context, id uuid.UUID) (Committee, error) {
-	row := q.db.QueryRowContext(ctx, getCommittee, id)
+	row := q.db.QueryRow(ctx, getCommittee, id)
 	var i Committee
 	err := row.Scan(
 		&i.ID,
@@ -98,11 +124,12 @@ func (q *Queries) GetCommittee(ctx context.Context, id uuid.UUID) (Committee, er
 
 const listCommittees = `-- name: ListCommittees :many
 SELECT id, name, slug, short_name, description, color, image_url, website_url, active, created_at, updated_at, deleted_at FROM committee
+WHERE deleted_at IS NULL AND active = TRUE
 ORDER BY name
 `
 
 func (q *Queries) ListCommittees(ctx context.Context) ([]Committee, error) {
-	rows, err := q.db.QueryContext(ctx, listCommittees)
+	rows, err := q.db.Query(ctx, listCommittees)
 	if err != nil {
 		return nil, err
 	}
@@ -128,9 +155,6 @@ func (q *Queries) ListCommittees(ctx context.Context) ([]Committee, error) {
 		}
 		items = append(items, i)
 	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
@@ -146,23 +170,23 @@ UPDATE committee
     color = $6,
     image_url = $7,
     website_url = $8
-WHERE ID = $1
+WHERE ID = $1 AND deleted_at IS NULL
 RETURNING id, name, slug, short_name, description, color, image_url, website_url, active, created_at, updated_at, deleted_at
 `
 
 type UpdateCommitteeParams struct {
-	ID          uuid.UUID      `json:"id"`
-	Name        string         `json:"name"`
-	Slug        string         `json:"slug"`
-	ShortName   string         `json:"short_name"`
-	Description sql.NullString `json:"description"`
-	Color       string         `json:"color"`
-	ImageUrl    sql.NullString `json:"image_url"`
-	WebsiteUrl  sql.NullString `json:"website_url"`
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Slug        string    `json:"slug"`
+	ShortName   string    `json:"short_name"`
+	Description *string   `json:"description"`
+	Color       string    `json:"color"`
+	ImageUrl    *string   `json:"image_url"`
+	WebsiteUrl  *string   `json:"website_url"`
 }
 
 func (q *Queries) UpdateCommittee(ctx context.Context, arg UpdateCommitteeParams) (Committee, error) {
-	row := q.db.QueryRowContext(ctx, updateCommittee,
+	row := q.db.QueryRow(ctx, updateCommittee,
 		arg.ID,
 		arg.Name,
 		arg.Slug,

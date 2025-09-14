@@ -7,7 +7,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/google/uuid"
 )
@@ -29,7 +28,29 @@ type CreatePersonParams struct {
 }
 
 func (q *Queries) CreatePerson(ctx context.Context, arg CreatePersonParams) (Person, error) {
-	row := q.db.QueryRowContext(ctx, createPerson, arg.FirstName, arg.LastName)
+	row := q.db.QueryRow(ctx, createPerson, arg.FirstName, arg.LastName)
+	var i Person
+	err := row.Scan(
+		&i.ID,
+		&i.FirstName,
+		&i.LastName,
+		&i.ImageUrl,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
+const deletePerson = `-- name: DeletePerson :one
+UPDATE person
+    SET deleted_at = NOW()
+WHERE id = $1 AND deleted_at IS NULL
+RETURNING id, first_name, last_name, image_url, created_at, updated_at, deleted_at
+`
+
+func (q *Queries) DeletePerson(ctx context.Context, id uuid.UUID) (Person, error) {
+	row := q.db.QueryRow(ctx, deletePerson, id)
 	var i Person
 	err := row.Scan(
 		&i.ID,
@@ -49,7 +70,7 @@ WHERE ID = $1 LIMIT 1
 `
 
 func (q *Queries) GetPerson(ctx context.Context, id uuid.UUID) (Person, error) {
-	row := q.db.QueryRowContext(ctx, getPerson, id)
+	row := q.db.QueryRow(ctx, getPerson, id)
 	var i Person
 	err := row.Scan(
 		&i.ID,
@@ -69,7 +90,7 @@ ORDER BY last_name
 `
 
 func (q *Queries) ListPeople(ctx context.Context) ([]Person, error) {
-	rows, err := q.db.QueryContext(ctx, listPeople)
+	rows, err := q.db.Query(ctx, listPeople)
 	if err != nil {
 		return nil, err
 	}
@@ -90,9 +111,6 @@ func (q *Queries) ListPeople(ctx context.Context) ([]Person, error) {
 		}
 		items = append(items, i)
 	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
@@ -109,14 +127,14 @@ RETURNING id, first_name, last_name, image_url, created_at, updated_at, deleted_
 `
 
 type UpdatePersonParams struct {
-	ID        uuid.UUID      `json:"id"`
-	FirstName string         `json:"first_name"`
-	LastName  string         `json:"last_name"`
-	ImageUrl  sql.NullString `json:"image_url"`
+	ID        uuid.UUID `json:"id"`
+	FirstName string    `json:"first_name"`
+	LastName  string    `json:"last_name"`
+	ImageUrl  *string   `json:"image_url"`
 }
 
 func (q *Queries) UpdatePerson(ctx context.Context, arg UpdatePersonParams) (Person, error) {
-	row := q.db.QueryRowContext(ctx, updatePerson,
+	row := q.db.QueryRow(ctx, updatePerson,
 		arg.ID,
 		arg.FirstName,
 		arg.LastName,

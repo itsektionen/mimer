@@ -1,9 +1,10 @@
 -- name: GetCommittee :one
 SELECT * FROM committee
-WHERE ID = $1 LIMIT 1;
+WHERE ID = $1 AND deleted_at IS NULL AND active = TRUE LIMIT 1;
 
 -- name: ListCommittees :many
 SELECT * FROM committee
+WHERE deleted_at IS NULL AND active = TRUE
 ORDER BY name;
 
 -- name: CreateCommittee :one
@@ -35,5 +36,11 @@ UPDATE committee
     color = $6,
     image_url = $7,
     website_url = $8
-WHERE ID = $1
+WHERE ID = $1 AND deleted_at IS NULL
+RETURNING *;
+
+-- name: DeleteCommittee :one
+UPDATE committee
+    SET deleted_at = NOW()
+WHERE ID = $1 AND deleted_at IS NULL
 RETURNING *;

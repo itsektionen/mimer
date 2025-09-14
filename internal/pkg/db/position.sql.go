@@ -31,7 +31,30 @@ type CreatePositionParams struct {
 }
 
 func (q *Queries) CreatePosition(ctx context.Context, arg CreatePositionParams) (Position, error) {
-	row := q.db.QueryRowContext(ctx, createPosition, arg.Name, arg.Email, arg.CommitteeID)
+	row := q.db.QueryRow(ctx, createPosition, arg.Name, arg.Email, arg.CommitteeID)
+	var i Position
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Email,
+		&i.Active,
+		&i.CommitteeID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
+const deletePosition = `-- name: DeletePosition :one
+UPDATE position
+    SET deleted_at = NOW()
+WHERE ID = $1 AND deleted_at IS NULL
+RETURNING id, name, email, active, committee_id, created_at, updated_at, deleted_at
+`
+
+func (q *Queries) DeletePosition(ctx context.Context, id uuid.UUID) (Position, error) {
+	row := q.db.QueryRow(ctx, deletePosition, id)
 	var i Position
 	err := row.Scan(
 		&i.ID,
@@ -48,11 +71,11 @@ func (q *Queries) CreatePosition(ctx context.Context, arg CreatePositionParams) 
 
 const getPosition = `-- name: GetPosition :one
 SELECT id, name, email, active, committee_id, created_at, updated_at, deleted_at FROM position
-WHERE ID = $1 LIMIT 1
+WHERE ID = $1 AND deleted_at IS NULL AND active = TRUE LIMIT 1
 `
 
 func (q *Queries) GetPosition(ctx context.Context, id uuid.UUID) (Position, error) {
-	row := q.db.QueryRowContext(ctx, getPosition, id)
+	row := q.db.QueryRow(ctx, getPosition, id)
 	var i Position
 	err := row.Scan(
 		&i.ID,
@@ -69,11 +92,12 @@ func (q *Queries) GetPosition(ctx context.Context, id uuid.UUID) (Position, erro
 
 const listPositions = `-- name: ListPositions :many
 SELECT id, name, email, active, committee_id, created_at, updated_at, deleted_at FROM position
+WHERE deleted_at IS NULL AND active = TRUE
 ORDER BY name
 `
 
 func (q *Queries) ListPositions(ctx context.Context) ([]Position, error) {
-	rows, err := q.db.QueryContext(ctx, listPositions)
+	rows, err := q.db.Query(ctx, listPositions)
 	if err != nil {
 		return nil, err
 	}
@@ -95,9 +119,6 @@ func (q *Queries) ListPositions(ctx context.Context) ([]Position, error) {
 		}
 		items = append(items, i)
 	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
@@ -109,7 +130,7 @@ UPDATE position
     SET name = $2,
     email = $3,
     committee_id = $4
-WHERE ID = $1
+WHERE ID = $1 AND deleted_at IS NULL
 RETURNING id, name, email, active, committee_id, created_at, updated_at, deleted_at
 `
 
@@ -121,7 +142,7 @@ type UpdatePositionParams struct {
 }
 
 func (q *Queries) UpdatePosition(ctx context.Context, arg UpdatePositionParams) (Position, error) {
-	row := q.db.QueryRowContext(ctx, updatePosition,
+	row := q.db.QueryRow(ctx, updatePosition,
 		arg.ID,
 		arg.Name,
 		arg.Email,

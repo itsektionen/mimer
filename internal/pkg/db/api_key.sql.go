@@ -21,7 +21,28 @@ RETURNING id, value, active, created_at, updated_at, deleted_at
 `
 
 func (q *Queries) CreateApiKey(ctx context.Context, value string) (ApiKey, error) {
-	row := q.db.QueryRowContext(ctx, createApiKey, value)
+	row := q.db.QueryRow(ctx, createApiKey, value)
+	var i ApiKey
+	err := row.Scan(
+		&i.ID,
+		&i.Value,
+		&i.Active,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
+const deleteApiKey = `-- name: DeleteApiKey :one
+UPDATE api_key
+    SET deleted_at = NOW()
+WHERE id = $1 AND deleted_at IS NULL
+RETURNING id, value, active, created_at, updated_at, deleted_at
+`
+
+func (q *Queries) DeleteApiKey(ctx context.Context, id uuid.UUID) (ApiKey, error) {
+	row := q.db.QueryRow(ctx, deleteApiKey, id)
 	var i ApiKey
 	err := row.Scan(
 		&i.ID,
@@ -37,32 +58,32 @@ func (q *Queries) CreateApiKey(ctx context.Context, value string) (ApiKey, error
 const disableApiKey = `-- name: DisableApiKey :exec
 UPDATE api_key
     SET active = false
-WHERE id = $1
+WHERE id = $1 AND deleted_at IS NULL
 `
 
 func (q *Queries) DisableApiKey(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.ExecContext(ctx, disableApiKey, id)
+	_, err := q.db.Exec(ctx, disableApiKey, id)
 	return err
 }
 
 const enableApiKey = `-- name: EnableApiKey :exec
 UPDATE api_key
     SET active = false
-WHERE id = $1
+WHERE id = $1 AND deleted_at IS NULL
 `
 
 func (q *Queries) EnableApiKey(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.ExecContext(ctx, enableApiKey, id)
+	_, err := q.db.Exec(ctx, enableApiKey, id)
 	return err
 }
 
 const getApiKey = `-- name: GetApiKey :one
 SELECT id, value, active, created_at, updated_at, deleted_at FROM api_key
-WHERE ID = $1
+WHERE ID = $1 AND deleted_at IS NULL
 `
 
 func (q *Queries) GetApiKey(ctx context.Context, id uuid.UUID) (ApiKey, error) {
-	row := q.db.QueryRowContext(ctx, getApiKey, id)
+	row := q.db.QueryRow(ctx, getApiKey, id)
 	var i ApiKey
 	err := row.Scan(
 		&i.ID,
@@ -77,11 +98,11 @@ func (q *Queries) GetApiKey(ctx context.Context, id uuid.UUID) (ApiKey, error) {
 
 const getApiKeyByValue = `-- name: GetApiKeyByValue :one
 SELECT id, value, active, created_at, updated_at, deleted_at FROM api_key
-WHERE value = $1
+WHERE value = $1 AND deleted_at IS NULL
 `
 
 func (q *Queries) GetApiKeyByValue(ctx context.Context, value string) (ApiKey, error) {
-	row := q.db.QueryRowContext(ctx, getApiKeyByValue, value)
+	row := q.db.QueryRow(ctx, getApiKeyByValue, value)
 	var i ApiKey
 	err := row.Scan(
 		&i.ID,
@@ -96,11 +117,11 @@ func (q *Queries) GetApiKeyByValue(ctx context.Context, value string) (ApiKey, e
 
 const listApiKeys = `-- name: ListApiKeys :many
 SELECT id, value, active, created_at, updated_at, deleted_at FROM api_key
-ORDER BY created_at
+ORDER BY created_at AND deleted_at IS NULL
 `
 
 func (q *Queries) ListApiKeys(ctx context.Context) ([]ApiKey, error) {
-	rows, err := q.db.QueryContext(ctx, listApiKeys)
+	rows, err := q.db.Query(ctx, listApiKeys)
 	if err != nil {
 		return nil, err
 	}
@@ -119,9 +140,6 @@ func (q *Queries) ListApiKeys(ctx context.Context) ([]ApiKey, error) {
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
