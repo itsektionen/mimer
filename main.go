@@ -11,7 +11,7 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	pgxMigrate "github.com/golang-migrate/migrate/v4/database/pgx/v5"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/joho/godotenv"
 
 	"github.com/itsektionen/mimer/internal/app/v1/middleware"
@@ -72,13 +72,19 @@ func main() {
 	}
 
 	connString := os.Getenv("DATABASE_URL")
-	dbConn, err := db.SetupPostgresDB(connString)
+	ctx := context.Background()
+
+	conn, err := db.SetupPostgresDB(ctx, connString)
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
-	defer dbConn.Close()
+	defer conn.Close(ctx)
 
-	driver, err := pgxMigrate.WithInstance(dbConn, &pgxMigrate.Config{})
+	// Create *sql.DB from pgx connection for migrations
+	sqlDB := stdlib.OpenDB(*conn.Config())
+	defer sqlDB.Close()
+
+	driver, err := pgxMigrate.WithInstance(sqlDB, &pgxMigrate.Config{})
 	if err != nil {
 		log.Fatalf("Failed to initialize migrations")
 	}
@@ -96,14 +102,6 @@ func main() {
 	if err := migrator.Up(); err != migrate.ErrNoChange && err != nil {
 		panic(fmt.Errorf("Failed to migrate 4: %v", err))
 	}
-
-	ctx := context.Background()
-
-	conn, err := pgx.Connect(ctx, connString)
-	if err != nil {
-		panic("FUCK!")
-	}
-	defer conn.Close(ctx)
 
 	queries := sqlc.New(conn)
 
