@@ -42,6 +42,28 @@ func (q *Queries) CreatePerson(ctx context.Context, arg CreatePersonParams) (Per
 	return i, err
 }
 
+const deletePerson = `-- name: DeletePerson :one
+UPDATE person
+    SET deleted_at = NOW()
+WHERE id = $1 AND deleted_at IS NULL
+RETURNING id, first_name, last_name, image_url, created_at, updated_at, deleted_at
+`
+
+func (q *Queries) DeletePerson(ctx context.Context, id uuid.UUID) (Person, error) {
+	row := q.db.QueryRow(ctx, deletePerson, id)
+	var i Person
+	err := row.Scan(
+		&i.ID,
+		&i.FirstName,
+		&i.LastName,
+		&i.ImageUrl,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
 const getPerson = `-- name: GetPerson :one
 SELECT id, first_name, last_name, image_url, created_at, updated_at, deleted_at FROM person
 WHERE ID = $1 LIMIT 1

@@ -42,7 +42,7 @@ CREATE TABLE position (
     email VARCHAR(255) NOT NULL,
     active BOOLEAN NOT NULL DEFAULT false,
 
-    committee_id UUID NOT NULL REFERENCES committee(id),
+    committee_id UUID NOT NULL REFERENCES committee(id) ON DELETE CASCADE,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -55,8 +55,8 @@ CREATE TABLE trustee (
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
 
-    position_id UUID NOT NULL REFERENCES position(id),
-    person_id UUID NOT NULL REFERENCES person(id),
+    position_id UUID NOT NULL REFERENCES position(id) ON DELETE CASCADE,
+    person_id UUID NOT NULL REFERENCES person(id) ON DELETE CASCADE,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

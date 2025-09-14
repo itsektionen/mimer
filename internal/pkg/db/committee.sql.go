@@ -70,9 +70,36 @@ func (q *Queries) CreateCommittee(ctx context.Context, arg CreateCommitteeParams
 	return i, err
 }
 
+const deleteCommittee = `-- name: DeleteCommittee :one
+UPDATE committee
+    SET deleted_at = NOW()
+WHERE ID = $1 AND deleted_at IS NULL
+RETURNING id, name, slug, short_name, description, color, image_url, website_url, active, created_at, updated_at, deleted_at
+`
+
+func (q *Queries) DeleteCommittee(ctx context.Context, id uuid.UUID) (Committee, error) {
+	row := q.db.QueryRow(ctx, deleteCommittee, id)
+	var i Committee
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Slug,
+		&i.ShortName,
+		&i.Description,
+		&i.Color,
+		&i.ImageUrl,
+		&i.WebsiteUrl,
+		&i.Active,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
 const getCommittee = `-- name: GetCommittee :one
 SELECT id, name, slug, short_name, description, color, image_url, website_url, active, created_at, updated_at, deleted_at FROM committee
-WHERE ID = $1 LIMIT 1
+WHERE ID = $1 AND deleted_at IS NULL AND active = TRUE LIMIT 1
 `
 
 func (q *Queries) GetCommittee(ctx context.Context, id uuid.UUID) (Committee, error) {
@@ -97,6 +124,7 @@ func (q *Queries) GetCommittee(ctx context.Context, id uuid.UUID) (Committee, er
 
 const listCommittees = `-- name: ListCommittees :many
 SELECT id, name, slug, short_name, description, color, image_url, website_url, active, created_at, updated_at, deleted_at FROM committee
+WHERE deleted_at IS NULL AND active = TRUE
 ORDER BY name
 `
 
@@ -142,7 +170,7 @@ UPDATE committee
     color = $6,
     image_url = $7,
     website_url = $8
-WHERE ID = $1
+WHERE ID = $1 AND deleted_at IS NULL
 RETURNING id, name, slug, short_name, description, color, image_url, website_url, active, created_at, updated_at, deleted_at
 `
 

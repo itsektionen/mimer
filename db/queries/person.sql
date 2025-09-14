@@ -23,3 +23,9 @@ UPDATE person
     image_url = $4
 WHERE id = $1
 RETURNING *;
+
+-- name: DeletePerson :one
+UPDATE person
+    SET deleted_at = NOW()
+WHERE id = $1 AND deleted_at IS NULL
+RETURNING *;
