@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"embed"
 	"fmt"
 	"log"
@@ -8,8 +9,9 @@ import (
 	"os"
 
 	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/postgres"
+	pgxMigrate "github.com/golang-migrate/migrate/v4/database/pgx/v5"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
+	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
 
 	"github.com/itsektionen/mimer/internal/app/v1/middleware"
@@ -76,7 +78,7 @@ func main() {
 	}
 	defer dbConn.Close()
 
-	driver, err := postgres.WithInstance(dbConn, &postgres.Config{})
+	driver, err := pgxMigrate.WithInstance(dbConn, &pgxMigrate.Config{})
 	if err != nil {
 		log.Fatalf("Failed to initialize migrations")
 	}
@@ -95,7 +97,15 @@ func main() {
 		panic(fmt.Errorf("Failed to migrate 4: %v", err))
 	}
 
-	queries := sqlc.New(dbConn)
+	ctx := context.Background()
+
+	conn, err := pgx.Connect(ctx, connString)
+	if err != nil {
+		panic("FUCK!")
+	}
+	defer conn.Close(ctx)
+
+	queries := sqlc.New(conn)
 
 	committeeService := v1Service.NewCommitteeService(*queries)
 	personService := v1Service.NewPersonService(*queries)

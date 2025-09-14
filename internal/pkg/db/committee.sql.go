@@ -7,7 +7,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/google/uuid"
 )
@@ -34,17 +33,17 @@ RETURNING id, name, slug, short_name, description, color, image_url, website_url
 `
 
 type CreateCommitteeParams struct {
-	Name        string         `json:"name"`
-	Slug        string         `json:"slug"`
-	ShortName   string         `json:"short_name"`
-	Description sql.NullString `json:"description"`
-	Color       string         `json:"color"`
-	ImageUrl    sql.NullString `json:"image_url"`
-	WebsiteUrl  sql.NullString `json:"website_url"`
+	Name        string  `json:"name"`
+	Slug        string  `json:"slug"`
+	ShortName   string  `json:"short_name"`
+	Description *string `json:"description"`
+	Color       string  `json:"color"`
+	ImageUrl    *string `json:"image_url"`
+	WebsiteUrl  *string `json:"website_url"`
 }
 
 func (q *Queries) CreateCommittee(ctx context.Context, arg CreateCommitteeParams) (Committee, error) {
-	row := q.db.QueryRowContext(ctx, createCommittee,
+	row := q.db.QueryRow(ctx, createCommittee,
 		arg.Name,
 		arg.Slug,
 		arg.ShortName,
@@ -77,7 +76,7 @@ WHERE ID = $1 LIMIT 1
 `
 
 func (q *Queries) GetCommittee(ctx context.Context, id uuid.UUID) (Committee, error) {
-	row := q.db.QueryRowContext(ctx, getCommittee, id)
+	row := q.db.QueryRow(ctx, getCommittee, id)
 	var i Committee
 	err := row.Scan(
 		&i.ID,
@@ -102,7 +101,7 @@ ORDER BY name
 `
 
 func (q *Queries) ListCommittees(ctx context.Context) ([]Committee, error) {
-	rows, err := q.db.QueryContext(ctx, listCommittees)
+	rows, err := q.db.Query(ctx, listCommittees)
 	if err != nil {
 		return nil, err
 	}
@@ -128,9 +127,6 @@ func (q *Queries) ListCommittees(ctx context.Context) ([]Committee, error) {
 		}
 		items = append(items, i)
 	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
@@ -151,18 +147,18 @@ RETURNING id, name, slug, short_name, description, color, image_url, website_url
 `
 
 type UpdateCommitteeParams struct {
-	ID          uuid.UUID      `json:"id"`
-	Name        string         `json:"name"`
-	Slug        string         `json:"slug"`
-	ShortName   string         `json:"short_name"`
-	Description sql.NullString `json:"description"`
-	Color       string         `json:"color"`
-	ImageUrl    sql.NullString `json:"image_url"`
-	WebsiteUrl  sql.NullString `json:"website_url"`
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Slug        string    `json:"slug"`
+	ShortName   string    `json:"short_name"`
+	Description *string   `json:"description"`
+	Color       string    `json:"color"`
+	ImageUrl    *string   `json:"image_url"`
+	WebsiteUrl  *string   `json:"website_url"`
 }
 
 func (q *Queries) UpdateCommittee(ctx context.Context, arg UpdateCommitteeParams) (Committee, error) {
-	row := q.db.QueryRowContext(ctx, updateCommittee,
+	row := q.db.QueryRow(ctx, updateCommittee,
 		arg.ID,
 		arg.Name,
 		arg.Slug,

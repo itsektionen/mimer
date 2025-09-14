@@ -5,64 +5,62 @@
 package db
 
 import (
-	"database/sql"
-	"time"
-
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type ApiKey struct {
-	ID        uuid.UUID    `json:"id"`
-	Value     string       `json:"value"`
-	Active    bool         `json:"active"`
-	CreatedAt sql.NullTime `json:"created_at"`
-	UpdatedAt sql.NullTime `json:"updated_at"`
-	DeletedAt sql.NullTime `json:"deleted_at"`
+	ID        uuid.UUID        `json:"id"`
+	Value     string           `json:"value"`
+	Active    bool             `json:"active"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+	UpdatedAt pgtype.Timestamp `json:"updated_at"`
+	DeletedAt pgtype.Timestamp `json:"deleted_at"`
 }
 
 type Committee struct {
-	ID          uuid.UUID      `json:"id"`
-	Name        string         `json:"name"`
-	Slug        string         `json:"slug"`
-	ShortName   string         `json:"short_name"`
-	Description sql.NullString `json:"description"`
-	Color       string         `json:"color"`
-	ImageUrl    sql.NullString `json:"image_url"`
-	WebsiteUrl  sql.NullString `json:"website_url"`
-	Active      bool           `json:"active"`
-	CreatedAt   sql.NullTime   `json:"created_at"`
-	UpdatedAt   sql.NullTime   `json:"updated_at"`
-	DeletedAt   sql.NullTime   `json:"deleted_at"`
+	ID          uuid.UUID        `json:"id"`
+	Name        string           `json:"name"`
+	Slug        string           `json:"slug"`
+	ShortName   string           `json:"short_name"`
+	Description *string          `json:"description"`
+	Color       string           `json:"color"`
+	ImageUrl    *string          `json:"image_url"`
+	WebsiteUrl  *string          `json:"website_url"`
+	Active      bool             `json:"active"`
+	CreatedAt   pgtype.Timestamp `json:"created_at"`
+	UpdatedAt   pgtype.Timestamp `json:"updated_at"`
+	DeletedAt   pgtype.Timestamp `json:"deleted_at"`
 }
 
 type Person struct {
-	ID        uuid.UUID      `json:"id"`
-	FirstName string         `json:"first_name"`
-	LastName  string         `json:"last_name"`
-	ImageUrl  sql.NullString `json:"image_url"`
-	CreatedAt sql.NullTime   `json:"created_at"`
-	UpdatedAt sql.NullTime   `json:"updated_at"`
-	DeletedAt sql.NullTime   `json:"deleted_at"`
+	ID        uuid.UUID        `json:"id"`
+	FirstName string           `json:"first_name"`
+	LastName  string           `json:"last_name"`
+	ImageUrl  *string          `json:"image_url"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+	UpdatedAt pgtype.Timestamp `json:"updated_at"`
+	DeletedAt pgtype.Timestamp `json:"deleted_at"`
 }
 
 type Position struct {
-	ID          uuid.UUID    `json:"id"`
-	Name        string       `json:"name"`
-	Email       string       `json:"email"`
-	Active      bool         `json:"active"`
-	CommitteeID uuid.UUID    `json:"committee_id"`
-	CreatedAt   sql.NullTime `json:"created_at"`
-	UpdatedAt   sql.NullTime `json:"updated_at"`
-	DeletedAt   sql.NullTime `json:"deleted_at"`
+	ID          uuid.UUID        `json:"id"`
+	Name        string           `json:"name"`
+	Email       string           `json:"email"`
+	Active      bool             `json:"active"`
+	CommitteeID uuid.UUID        `json:"committee_id"`
+	CreatedAt   pgtype.Timestamp `json:"created_at"`
+	UpdatedAt   pgtype.Timestamp `json:"updated_at"`
+	DeletedAt   pgtype.Timestamp `json:"deleted_at"`
 }
 
 type Trustee struct {
-	ID         uuid.UUID    `json:"id"`
-	StartDate  time.Time    `json:"start_date"`
-	EndDate    time.Time    `json:"end_date"`
-	PositionID uuid.UUID    `json:"position_id"`
-	PersonID   uuid.UUID    `json:"person_id"`
-	CreatedAt  sql.NullTime `json:"created_at"`
-	UpdatedAt  sql.NullTime `json:"updated_at"`
-	DeletedAt  sql.NullTime `json:"deleted_at"`
+	ID         uuid.UUID        `json:"id"`
+	StartDate  pgtype.Date      `json:"start_date"`
+	EndDate    pgtype.Date      `json:"end_date"`
+	PositionID uuid.UUID        `json:"position_id"`
+	PersonID   uuid.UUID        `json:"person_id"`
+	CreatedAt  pgtype.Timestamp `json:"created_at"`
+	UpdatedAt  pgtype.Timestamp `json:"updated_at"`
+	DeletedAt  pgtype.Timestamp `json:"deleted_at"`
 }

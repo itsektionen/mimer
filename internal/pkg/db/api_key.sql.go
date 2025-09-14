@@ -21,7 +21,7 @@ RETURNING id, value, active, created_at, updated_at, deleted_at
 `
 
 func (q *Queries) CreateApiKey(ctx context.Context, value string) (ApiKey, error) {
-	row := q.db.QueryRowContext(ctx, createApiKey, value)
+	row := q.db.QueryRow(ctx, createApiKey, value)
 	var i ApiKey
 	err := row.Scan(
 		&i.ID,
@@ -41,7 +41,7 @@ WHERE id = $1
 `
 
 func (q *Queries) DisableApiKey(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.ExecContext(ctx, disableApiKey, id)
+	_, err := q.db.Exec(ctx, disableApiKey, id)
 	return err
 }
 
@@ -52,7 +52,7 @@ WHERE id = $1
 `
 
 func (q *Queries) EnableApiKey(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.ExecContext(ctx, enableApiKey, id)
+	_, err := q.db.Exec(ctx, enableApiKey, id)
 	return err
 }
 
@@ -62,7 +62,7 @@ WHERE ID = $1
 `
 
 func (q *Queries) GetApiKey(ctx context.Context, id uuid.UUID) (ApiKey, error) {
-	row := q.db.QueryRowContext(ctx, getApiKey, id)
+	row := q.db.QueryRow(ctx, getApiKey, id)
 	var i ApiKey
 	err := row.Scan(
 		&i.ID,
@@ -81,7 +81,7 @@ WHERE value = $1
 `
 
 func (q *Queries) GetApiKeyByValue(ctx context.Context, value string) (ApiKey, error) {
-	row := q.db.QueryRowContext(ctx, getApiKeyByValue, value)
+	row := q.db.QueryRow(ctx, getApiKeyByValue, value)
 	var i ApiKey
 	err := row.Scan(
 		&i.ID,
@@ -100,7 +100,7 @@ ORDER BY created_at
 `
 
 func (q *Queries) ListApiKeys(ctx context.Context) ([]ApiKey, error) {
-	rows, err := q.db.QueryContext(ctx, listApiKeys)
+	rows, err := q.db.Query(ctx, listApiKeys)
 	if err != nil {
 		return nil, err
 	}
@@ -119,9 +119,6 @@ func (q *Queries) ListApiKeys(ctx context.Context) ([]ApiKey, error) {
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err

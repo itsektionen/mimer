@@ -31,7 +31,7 @@ type CreatePositionParams struct {
 }
 
 func (q *Queries) CreatePosition(ctx context.Context, arg CreatePositionParams) (Position, error) {
-	row := q.db.QueryRowContext(ctx, createPosition, arg.Name, arg.Email, arg.CommitteeID)
+	row := q.db.QueryRow(ctx, createPosition, arg.Name, arg.Email, arg.CommitteeID)
 	var i Position
 	err := row.Scan(
 		&i.ID,
@@ -52,7 +52,7 @@ WHERE ID = $1 LIMIT 1
 `
 
 func (q *Queries) GetPosition(ctx context.Context, id uuid.UUID) (Position, error) {
-	row := q.db.QueryRowContext(ctx, getPosition, id)
+	row := q.db.QueryRow(ctx, getPosition, id)
 	var i Position
 	err := row.Scan(
 		&i.ID,
@@ -73,7 +73,7 @@ ORDER BY name
 `
 
 func (q *Queries) ListPositions(ctx context.Context) ([]Position, error) {
-	rows, err := q.db.QueryContext(ctx, listPositions)
+	rows, err := q.db.Query(ctx, listPositions)
 	if err != nil {
 		return nil, err
 	}
@@ -94,9 +94,6 @@ func (q *Queries) ListPositions(ctx context.Context) ([]Position, error) {
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
@@ -121,7 +118,7 @@ type UpdatePositionParams struct {
 }
 
 func (q *Queries) UpdatePosition(ctx context.Context, arg UpdatePositionParams) (Position, error) {
-	row := q.db.QueryRowContext(ctx, updatePosition,
+	row := q.db.QueryRow(ctx, updatePosition,
 		arg.ID,
 		arg.Name,
 		arg.Email,
