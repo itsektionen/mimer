@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/itsektionen/mimer/internal/db"
+	"github.com/itsektionen/mimer/internal/pkg/db"
 	"github.com/itsektionen/mimer/internal/pkg/util"
 )
 

@@ -15,21 +15,15 @@ import (
 	"github.com/itsektionen/mimer/internal/app/v1/middleware"
 	v1Router "github.com/itsektionen/mimer/internal/app/v1/router"
 	v1Service "github.com/itsektionen/mimer/internal/app/v1/service"
-	sqlc "github.com/itsektionen/mimer/internal/db"
 	"github.com/itsektionen/mimer/internal/pkg/db"
+	sqlc "github.com/itsektionen/mimer/internal/pkg/db"
 	"github.com/itsektionen/mimer/internal/router"
 )
 
 //go:embed db/migrations/*.sql
 var migrations embed.FS
 
-func main() {
-	env := os.Getenv("MIMER_ENV")
-	if env == "" {
-		env = "development"
-	}
-	fmt.Println("env:", env)
-
+func loadEnv(env string) ([]string, error) {
 	files := []string{
 		".env." + env + ".local",
 	}
@@ -50,8 +44,23 @@ func main() {
 	}
 
 	if len(loadedFiles) == 0 {
-		fmt.Fprintln(os.Stderr, "Error: No environment files were loaded.")
-		fmt.Fprintln(os.Stderr, "Attempted files:", files)
+		return nil, fmt.Errorf("No environment variables found")
+	}
+
+	return loadedFiles, nil
+}
+
+func main() {
+	env := os.Getenv("MIMER_ENV")
+	if env == "" {
+		env = "development"
+	}
+	fmt.Println("env:", env)
+
+	loadedFiles, err := loadEnv(env)
+
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Error: ", err)
 		os.Exit(1)
 	} else {
 		fmt.Println("Successfully loaded env files:")

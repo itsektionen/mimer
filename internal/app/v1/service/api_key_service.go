@@ -5,7 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 
-	"github.com/itsektionen/mimer/internal/db"
+	"github.com/itsektionen/mimer/internal/pkg/db"
 )
 
 type ApiKeyService interface {

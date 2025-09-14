@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/itsektionen/mimer/internal/db"
+	"github.com/itsektionen/mimer/internal/pkg/db"
 )
 
 type PositionService interface {
