@@ -20,49 +20,7 @@ func NewCommitteeHandler(s service.CommitteeService) *CommitteeHandler {
 	return &CommitteeHandler{committeeService: s}
 }
 
-func (h *CommitteeHandler) HandleCommittees(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodPost:
-		h.createCommittee(w, r)
-	case http.MethodGet:
-		ctx := r.Context()
-		committees, err := h.committeeService.GetAllCommittees(ctx)
-		if err != nil {
-			log.Printf("%v", err)
-			util.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
-			return
-		}
-		util.RespondWithJSON(w, http.StatusOK, committees)
-	}
-
-}
-
-func (h *CommitteeHandler) HandleCommitteeById(w http.ResponseWriter, r *http.Request) {
-	pathSegments := strings.Split(r.URL.Path, "/")
-	if len(pathSegments) < 2 {
-		util.RespondWithError(w, http.StatusBadRequest, "Invalid URL path")
-		return
-	}
-	idStr := pathSegments[len(pathSegments)-1]
-	id, err := uuid.Parse(idStr)
-	if err != nil {
-		util.RespondWithError(w, http.StatusBadRequest, "Invalid UUID")
-	}
-
-	ctx := r.Context()
-
-	switch r.Method {
-	case http.MethodGet:
-		committee, err := h.committeeService.GetCommitteeById(ctx, id)
-		if err != nil {
-			log.Printf("%v", err)
-			util.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
-		}
-		util.RespondWithJSON(w, http.StatusOK, committee)
-	}
-}
-
-func (h *CommitteeHandler) createCommittee(w http.ResponseWriter, r *http.Request) {
+func (h *CommitteeHandler) HandleCreateCommittee(w http.ResponseWriter, r *http.Request) {
 	var newCommittee db.CreateCommitteeParams
 	err := json.NewDecoder(r.Body).Decode(&newCommittee)
 	if err != nil {
@@ -80,4 +38,38 @@ func (h *CommitteeHandler) createCommittee(w http.ResponseWriter, r *http.Reques
 	}
 
 	util.RespondWithJSON(w, http.StatusCreated, committee)
+}
+
+func (h *CommitteeHandler) HandleGetAllCommittees(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	committees, err := h.committeeService.GetAllCommittees(ctx)
+	if err != nil {
+		log.Printf("%v", err)
+		util.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
+		return
+	}
+	util.RespondWithJSON(w, http.StatusOK, committees)
+}
+
+func (h *CommitteeHandler) HandleGetCommitteeById(w http.ResponseWriter, r *http.Request) {
+	pathSegments := strings.Split(r.URL.Path, "/")
+	if len(pathSegments) < 2 {
+		util.RespondWithError(w, http.StatusBadRequest, "Invalid URL path")
+		return
+	}
+	idStr := pathSegments[len(pathSegments)-1]
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		util.RespondWithError(w, http.StatusBadRequest, "Invalid UUID")
+	}
+
+	ctx := r.Context()
+
+	committee, err := h.committeeService.GetCommitteeById(ctx, id)
+	if err != nil {
+		log.Printf("%v", err)
+		util.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
+	}
+	util.RespondWithJSON(w, http.StatusOK, committee)
+
 }
