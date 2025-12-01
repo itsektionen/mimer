@@ -18,17 +18,20 @@ func SetupV1Router(
 	personHandler := handler.NewPersonHandler(personService)
 	positionHandler := handler.NewPositionHandler(positionService)
 
-	mux.HandleFunc("/people", personHandler.HandlePeople)
-	mux.HandleFunc("/people/", personHandler.HandlePersonById)
+	mux.HandleFunc("GET /people", personHandler.HandleGetAllPeople)
+	mux.HandleFunc("POST /people", personHandler.HandleCreatePerson)
+	mux.HandleFunc("GET /people/", personHandler.HandleGetPersonById)
 
-	mux.HandleFunc("/positions", positionHandler.HandlePositions)
-	mux.HandleFunc("/positions/", positionHandler.HandlePositionById)
+	mux.HandleFunc("GET /positions", positionHandler.HandleGetAllPositions)
+	mux.HandleFunc("POST /positions", positionHandler.HandleCreatePosition)
+	mux.HandleFunc("GET /positions/", positionHandler.HandleGetPositionById)
 
-	mux.HandleFunc("/committees", committeeHandler.HandleCommittees)
-	mux.HandleFunc("/committees/", committeeHandler.HandleCommitteeById)
+	mux.HandleFunc("GET /committees", committeeHandler.HandleGetAllCommittees)
+	mux.HandleFunc("POST /committees", committeeHandler.HandleCreateCommittee)
+	mux.HandleFunc("GET /committees/", committeeHandler.HandleGetCommitteeById)
 
 	mux.HandleFunc("GET /health", handler.GetHealth)
-	mux.HandleFunc("/", handler.GetIndex)
+	mux.HandleFunc("GET /", handler.GetIndex)
 
 	return mux
 }

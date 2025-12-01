@@ -20,49 +20,7 @@ func NewPersonHandler(s service.PersonService) *PersonHandler {
 	return &PersonHandler{personService: s}
 }
 
-func (h *PersonHandler) HandlePeople(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodPost:
-		h.createPerson(w, r)
-	case http.MethodGet:
-		ctx := r.Context()
-		people, err := h.personService.GetAllPeople(ctx)
-		if err != nil {
-			log.Printf("%v", err)
-			util.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
-			return
-		}
-		util.RespondWithJSON(w, http.StatusOK, people)
-	}
-
-}
-
-func (h *PersonHandler) HandlePersonById(w http.ResponseWriter, r *http.Request) {
-	pathSegments := strings.Split(r.URL.Path, "/")
-	if len(pathSegments) < 2 {
-		util.RespondWithError(w, http.StatusBadRequest, "Invalid URL path")
-		return
-	}
-	idStr := pathSegments[len(pathSegments)-1]
-	id, err := uuid.Parse(idStr)
-	if err != nil {
-		util.RespondWithError(w, http.StatusBadRequest, "Invalid UUID")
-	}
-
-	ctx := r.Context()
-
-	switch r.Method {
-	case http.MethodGet:
-		person, err := h.personService.GetPersonById(ctx, id)
-		if err != nil {
-			log.Printf("%v", err)
-			util.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
-		}
-		util.RespondWithJSON(w, http.StatusOK, person)
-	}
-}
-
-func (h *PersonHandler) createPerson(w http.ResponseWriter, r *http.Request) {
+func (h *PersonHandler) HandleCreatePerson(w http.ResponseWriter, r *http.Request) {
 	var newPerson db.CreatePersonParams
 	err := json.NewDecoder(r.Body).Decode(&newPerson)
 	if err != nil {
@@ -80,4 +38,38 @@ func (h *PersonHandler) createPerson(w http.ResponseWriter, r *http.Request) {
 	}
 
 	util.RespondWithJSON(w, http.StatusCreated, person)
+}
+
+func (h *PersonHandler) HandleGetAllPeople(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	people, err := h.personService.GetAllPeople(ctx)
+	if err != nil {
+		log.Printf("%v", err)
+		util.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
+		return
+	}
+	util.RespondWithJSON(w, http.StatusOK, people)
+}
+
+func (h *PersonHandler) HandleGetPersonById(w http.ResponseWriter, r *http.Request) {
+	pathSegments := strings.Split(r.URL.Path, "/")
+	if len(pathSegments) < 2 {
+		util.RespondWithError(w, http.StatusBadRequest, "Invalid URL path")
+		return
+	}
+	idStr := pathSegments[len(pathSegments)-1]
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		util.RespondWithError(w, http.StatusBadRequest, "Invalid UUID")
+	}
+
+	ctx := r.Context()
+
+	person, err := h.personService.GetPersonById(ctx, id)
+	if err != nil {
+		log.Printf("%v", err)
+		util.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
+	}
+	util.RespondWithJSON(w, http.StatusOK, person)
+
 }
