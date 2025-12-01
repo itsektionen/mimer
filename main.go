@@ -17,7 +17,7 @@ import (
 	"github.com/itsektionen/mimer/internal/app/v1/middleware"
 	v1Router "github.com/itsektionen/mimer/internal/app/v1/router"
 	v1Service "github.com/itsektionen/mimer/internal/app/v1/service"
-	"github.com/itsektionen/mimer/internal/pkg/db"
+	"github.com/itsektionen/mimer/internal/db"
 
 	"github.com/itsektionen/mimer/internal/router"
 )
