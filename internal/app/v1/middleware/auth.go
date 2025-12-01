@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/itsektionen/mimer/internal/db"
-	"github.com/itsektionen/mimer/internal/pkg/util"
+	"github.com/itsektionen/mimer/internal/response"
 )
 
 func AuthMiddleware(next http.Handler, queries db.Queries) http.Handler {
@@ -19,12 +19,12 @@ func AuthMiddleware(next http.Handler, queries db.Queries) http.Handler {
 
 		valid, err := queries.GetApiKeyByValue(r.Context(), authHeader)
 		if err != nil {
-			util.RespondWithJSON(w, http.StatusForbidden, "Not allowed")
+			response.RespondWithJSON(w, http.StatusForbidden, "Not allowed")
 			return
 		}
 
 		if valid.Active == false {
-			util.RespondWithJSON(w, http.StatusForbidden, "Not allowed")
+			response.RespondWithJSON(w, http.StatusForbidden, "Not allowed")
 			return
 		}
 

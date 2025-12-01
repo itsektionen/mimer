@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/itsektionen/mimer/internal/app/v1/service"
 	"github.com/itsektionen/mimer/internal/db"
-	"github.com/itsektionen/mimer/internal/pkg/util"
+	"github.com/itsektionen/mimer/internal/response"
 )
 
 type PositionHandler struct {
@@ -24,7 +24,7 @@ func (h *PositionHandler) HandleCreatePosition(w http.ResponseWriter, r *http.Re
 	var newPosition db.CreatePositionParams
 	err := json.NewDecoder(r.Body).Decode(&newPosition)
 	if err != nil {
-		util.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		response.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
@@ -33,11 +33,11 @@ func (h *PositionHandler) HandleCreatePosition(w http.ResponseWriter, r *http.Re
 	position, err := h.positionService.CreatePosition(ctx, newPosition)
 	if err != nil {
 		log.Printf("%v", err)
-		util.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
+		response.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
 		return
 	}
 
-	util.RespondWithJSON(w, http.StatusCreated, position)
+	response.RespondWithJSON(w, http.StatusCreated, position)
 }
 
 func (h *PositionHandler) HandleGetAllPositions(w http.ResponseWriter, r *http.Request) {
@@ -46,23 +46,23 @@ func (h *PositionHandler) HandleGetAllPositions(w http.ResponseWriter, r *http.R
 	positions, err := h.positionService.GetAllPositions(ctx)
 	if err != nil {
 		log.Printf("%v", err)
-		util.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
+		response.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
 		return
 	}
-	util.RespondWithJSON(w, http.StatusOK, positions)
+	response.RespondWithJSON(w, http.StatusOK, positions)
 
 }
 
 func (h *PositionHandler) HandleGetPositionById(w http.ResponseWriter, r *http.Request) {
 	pathSegments := strings.Split(r.URL.Path, "/")
 	if len(pathSegments) < 2 {
-		util.RespondWithError(w, http.StatusBadRequest, "Invalid URL path")
+		response.RespondWithError(w, http.StatusBadRequest, "Invalid URL path")
 		return
 	}
 	idStr := pathSegments[len(pathSegments)-1]
 	id, err := uuid.Parse(idStr)
 	if err != nil {
-		util.RespondWithError(w, http.StatusBadRequest, "Invalid UUID")
+		response.RespondWithError(w, http.StatusBadRequest, "Invalid UUID")
 	}
 
 	ctx := r.Context()
@@ -70,8 +70,8 @@ func (h *PositionHandler) HandleGetPositionById(w http.ResponseWriter, r *http.R
 	position, err := h.positionService.GetPositionById(ctx, id)
 	if err != nil {
 		log.Printf("%v", err)
-		util.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
+		response.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
 	}
-	util.RespondWithJSON(w, http.StatusOK, position)
+	response.RespondWithJSON(w, http.StatusOK, position)
 
 }

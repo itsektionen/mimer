@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/itsektionen/mimer/internal/app/v1/service"
 	"github.com/itsektionen/mimer/internal/db"
-	"github.com/itsektionen/mimer/internal/pkg/util"
+	"github.com/itsektionen/mimer/internal/response"
 )
 
 type PersonHandler struct {
@@ -24,7 +24,7 @@ func (h *PersonHandler) HandleCreatePerson(w http.ResponseWriter, r *http.Reques
 	var newPerson db.CreatePersonParams
 	err := json.NewDecoder(r.Body).Decode(&newPerson)
 	if err != nil {
-		util.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		response.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
@@ -33,11 +33,11 @@ func (h *PersonHandler) HandleCreatePerson(w http.ResponseWriter, r *http.Reques
 	person, err := h.personService.CreatePerson(ctx, newPerson)
 	if err != nil {
 		log.Printf("%v", err)
-		util.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
+		response.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
 		return
 	}
 
-	util.RespondWithJSON(w, http.StatusCreated, person)
+	response.RespondWithJSON(w, http.StatusCreated, person)
 }
 
 func (h *PersonHandler) HandleGetAllPeople(w http.ResponseWriter, r *http.Request) {
@@ -45,22 +45,22 @@ func (h *PersonHandler) HandleGetAllPeople(w http.ResponseWriter, r *http.Reques
 	people, err := h.personService.GetAllPeople(ctx)
 	if err != nil {
 		log.Printf("%v", err)
-		util.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
+		response.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
 		return
 	}
-	util.RespondWithJSON(w, http.StatusOK, people)
+	response.RespondWithJSON(w, http.StatusOK, people)
 }
 
 func (h *PersonHandler) HandleGetPersonById(w http.ResponseWriter, r *http.Request) {
 	pathSegments := strings.Split(r.URL.Path, "/")
 	if len(pathSegments) < 2 {
-		util.RespondWithError(w, http.StatusBadRequest, "Invalid URL path")
+		response.RespondWithError(w, http.StatusBadRequest, "Invalid URL path")
 		return
 	}
 	idStr := pathSegments[len(pathSegments)-1]
 	id, err := uuid.Parse(idStr)
 	if err != nil {
-		util.RespondWithError(w, http.StatusBadRequest, "Invalid UUID")
+		response.RespondWithError(w, http.StatusBadRequest, "Invalid UUID")
 	}
 
 	ctx := r.Context()
@@ -68,8 +68,8 @@ func (h *PersonHandler) HandleGetPersonById(w http.ResponseWriter, r *http.Reque
 	person, err := h.personService.GetPersonById(ctx, id)
 	if err != nil {
 		log.Printf("%v", err)
-		util.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
+		response.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
 	}
-	util.RespondWithJSON(w, http.StatusOK, person)
+	response.RespondWithJSON(w, http.StatusOK, person)
 
 }

@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/itsektionen/mimer/internal/pkg/util"
+	"github.com/itsektionen/mimer/internal/response"
 )
 
 var startTime time.Time
@@ -14,13 +14,13 @@ func init() {
 }
 
 func GetHealth(w http.ResponseWriter, r *http.Request) {
-	var response struct {
+	var health_response struct {
 		Uptime time.Duration `json:"uptime"`
 		Status string        `json:"status"`
 	}
 
-	response.Uptime = time.Duration(time.Since(startTime).Seconds())
-	response.Status = "UP"
+	health_response.Uptime = time.Duration(time.Since(startTime).Seconds())
+	health_response.Status = "UP"
 
-	util.RespondWithJSON(w, http.StatusOK, response)
+	response.RespondWithJSON(w, http.StatusOK, health_response)
 }
