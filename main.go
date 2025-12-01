@@ -18,7 +18,7 @@ import (
 	v1Router "github.com/itsektionen/mimer/internal/app/v1/router"
 	v1Service "github.com/itsektionen/mimer/internal/app/v1/service"
 	"github.com/itsektionen/mimer/internal/pkg/db"
-	sqlc "github.com/itsektionen/mimer/internal/pkg/db"
+
 	"github.com/itsektionen/mimer/internal/router"
 )
 
@@ -103,7 +103,7 @@ func main() {
 		panic(fmt.Errorf("Failed to migrate 4: %v", err))
 	}
 
-	queries := sqlc.New(conn)
+	queries := db.New(conn)
 
 	committeeService := v1Service.NewCommitteeService(*queries)
 	personService := v1Service.NewPersonService(*queries)
