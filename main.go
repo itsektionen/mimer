@@ -15,10 +15,8 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/itsektionen/mimer/internal/api"
-	"github.com/itsektionen/mimer/internal/api/v1/middleware"
 	"github.com/itsektionen/mimer/internal/db"
 	"github.com/itsektionen/mimer/internal/repository"
-	"github.com/itsektionen/mimer/internal/router"
 	"github.com/itsektionen/mimer/internal/service"
 )
 
@@ -105,20 +103,18 @@ func main() {
 
 	queries := db.New(conn)
 
-	// Create repositories
 	committeeRepo := repository.NewCommitteeRepository(queries)
 	personRepo := repository.NewPersonRepository(queries)
 	positionRepo := repository.NewPositionRepository(queries)
 	apiKeyRepo := repository.NewApiKeyRepository(queries)
 
-	// Create services
 	committeeService := service.NewCommitteeService(committeeRepo)
 	personService := service.NewPersonService(personRepo)
 	positionService := service.NewPositionService(positionRepo)
+	apiKeyService := service.NewApiKeyService(apiKeyRepo)
 
-	v1APIRouter := api.SetupRouter(committeeService, personService, positionService)
-	rootMux := router.SetupRootRouter(middleware.AuthMiddleware(v1APIRouter, apiKeyRepo))
+	router := api.SetupRouter(committeeService, personService, positionService, apiKeyService)
 
 	fmt.Println("Starting server on port 8080")
-	log.Fatal(http.ListenAndServe(":8080", rootMux))
+	log.Fatal(http.ListenAndServe(":8080", router))
 }

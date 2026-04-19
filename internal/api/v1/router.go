@@ -6,8 +6,8 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humachi"
 	"github.com/go-chi/chi/v5"
+	"github.com/itsektionen/mimer/internal/api/middleware"
 	"github.com/itsektionen/mimer/internal/api/v1/handler"
-	"github.com/itsektionen/mimer/internal/api/v1/middleware"
 	"github.com/itsektionen/mimer/internal/service"
 )
 
@@ -15,6 +15,7 @@ func SetupV1Router(
 	committeeService service.CommitteeService,
 	personService service.PersonService,
 	positionService service.PositionService,
+	apiKeyService service.ApiKeyService,
 ) http.Handler {
 	router := chi.NewRouter()
 	humaCfg := huma.DefaultConfig("Mimer", "0.0.0")
@@ -24,7 +25,9 @@ func SetupV1Router(
 	}
 
 	api := humachi.New(router, humaCfg)
+	authMiddleware := middleware.NewAuthMiddleware(api, apiKeyService)
 	api.UseMiddleware(middleware.LoggingMiddleware)
+	api.UseMiddleware(authMiddleware.Handle)
 
 	committeeHandler := handler.NewCommitteeHandler(committeeService)
 	personHandler := handler.NewPersonHandler(personService)
