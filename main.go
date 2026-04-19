@@ -14,12 +14,12 @@ import (
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/joho/godotenv"
 
-	"github.com/itsektionen/mimer/internal/app/v1/middleware"
-	v1Router "github.com/itsektionen/mimer/internal/app/v1/router"
+	"github.com/itsektionen/mimer/internal/api"
+	"github.com/itsektionen/mimer/internal/api/v1/middleware"
 	"github.com/itsektionen/mimer/internal/db"
 	"github.com/itsektionen/mimer/internal/repository"
 	"github.com/itsektionen/mimer/internal/router"
-	v1Service "github.com/itsektionen/mimer/internal/service"
+	"github.com/itsektionen/mimer/internal/service"
 )
 
 //go:embed db/migrations/*.sql
@@ -112,11 +112,11 @@ func main() {
 	apiKeyRepo := repository.NewApiKeyRepository(queries)
 
 	// Create services
-	committeeService := v1Service.NewCommitteeService(committeeRepo)
-	personService := v1Service.NewPersonService(personRepo)
-	positionService := v1Service.NewPositionService(positionRepo)
+	committeeService := service.NewCommitteeService(committeeRepo)
+	personService := service.NewPersonService(personRepo)
+	positionService := service.NewPositionService(positionRepo)
 
-	v1APIRouter := v1Router.SetupV1Router(committeeService, personService, positionService)
+	v1APIRouter := api.SetupRouter(committeeService, personService, positionService)
 	rootMux := router.SetupRootRouter(middleware.AuthMiddleware(v1APIRouter, apiKeyRepo))
 
 	fmt.Println("Starting server on port 8080")

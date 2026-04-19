@@ -1,4 +1,4 @@
-package router
+package v1
 
 import (
 	"net/http"
@@ -6,7 +6,8 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humachi"
 	"github.com/go-chi/chi/v5"
-	"github.com/itsektionen/mimer/internal/app/v1/handler"
+	"github.com/itsektionen/mimer/internal/api/v1/handler"
+	"github.com/itsektionen/mimer/internal/api/v1/middleware"
 	"github.com/itsektionen/mimer/internal/service"
 )
 
@@ -18,26 +19,30 @@ func SetupV1Router(
 	router := chi.NewRouter()
 	humaCfg := huma.DefaultConfig("Mimer", "0.0.0")
 	humaCfg.DocsRenderer = huma.DocsRendererScalar
+	humaCfg.Servers = []*huma.Server{
+		{URL: "/api/v1"},
+	}
 
 	api := humachi.New(router, humaCfg)
+	api.UseMiddleware(middleware.LoggingMiddleware)
 
 	committeeHandler := handler.NewCommitteeHandler(committeeService)
 	personHandler := handler.NewPersonHandler(personService)
 	positionHandler := handler.NewPositionHandler(positionService)
 
-	router.HandleFunc("GET /people", personHandler.HandleGetAllPeople)
-	router.HandleFunc("POST /people", personHandler.HandleCreatePerson)
-	router.HandleFunc("GET /people/", personHandler.HandleGetPersonById)
+	huma.Get(api, "/people", personHandler.HandleListPeople)
+	huma.Post(api, "/people", personHandler.HandleCreatePerson)
+	huma.Get(api, "/people/{id}", personHandler.HandleGetPersonById)
 
-	router.HandleFunc("GET /positions", positionHandler.HandleGetAllPositions)
-	router.HandleFunc("POST /positions", positionHandler.HandleCreatePosition)
-	router.HandleFunc("GET /positions/", positionHandler.HandleGetPositionById)
+	huma.Get(api, "/positions", positionHandler.HandleListPositions)
+	huma.Post(api, "/positions", positionHandler.HandleCreatePosition)
+	huma.Get(api, "/positions/{id}", positionHandler.HandleGetPositionById)
 
 	huma.Get(api, "/committees", committeeHandler.HandleListCommittees)
 	huma.Post(api, "/committees", committeeHandler.HandleCreateCommittee)
 	huma.Get(api, "/committees/{id}", committeeHandler.HandleGetCommitteeById)
 
-	router.HandleFunc("GET /health", handler.GetHealth)
+	huma.Get(api, "/health", handler.GetHealth)
 	router.HandleFunc("GET /", handler.GetIndex)
 
 	return router
