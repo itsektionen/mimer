@@ -58,13 +58,17 @@ func (h *CommitteeHandler) HandleCreateCommittee(
 	return resp, nil
 }
 
+type ListCommiteesRequest struct {
+	Inactive bool `query:"inactive" doc:"Include inactive committees"`
+}
+
 type ListCommitteesResponse struct {
 	Body []model.Committee `json:"body"`
 }
 
-func (h *CommitteeHandler) HandleListCommittees(ctx context.Context, input *struct{}) (*ListCommitteesResponse, error) {
+func (h *CommitteeHandler) HandleListCommittees(ctx context.Context, input *ListCommiteesRequest) (*ListCommitteesResponse, error) {
 	resp := &ListCommitteesResponse{}
-	committees, err := h.committeeService.GetAllCommittees(ctx)
+	committees, err := h.committeeService.GetAllCommittees(ctx, input.Inactive)
 	if err != nil {
 		log.Printf("%v", err)
 		return nil, err
@@ -93,20 +97,20 @@ func (h *CommitteeHandler) HandleGetCommitteeById(ctx context.Context, input *Ge
 
 type GetCommitteeTrusteesRequest struct {
 	CommitteeID uuid.UUID `path:"id"`
-	CurrentOnly bool      `query:"current" doc:"Filter to only currently elected trustees"`
+	Inactive    bool      `query:"inactive" doc:"Include inactive trustees"`
 }
 
 type GetCommitteeTrusteesResponse struct {
 	Body []model.Trustee `json:"body"`
 }
 
-func (h *CommitteeHandler) HandleGetCommitteeTrustees(
+func (h *CommitteeHandler) HandleListCommitteeTrustees(
 	ctx context.Context,
 	input *GetCommitteeTrusteesRequest,
 ) (*GetCommitteeTrusteesResponse, error) {
 	resp := &GetCommitteeTrusteesResponse{}
 
-	trustees, err := h.committeeService.GetCommitteeTrustees(ctx, input.CommitteeID, input.CurrentOnly)
+	trustees, err := h.committeeService.GetCommitteeTrustees(ctx, input.CommitteeID, input.Inactive)
 	if err != nil {
 		return nil, err
 	}

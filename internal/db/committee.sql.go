@@ -124,7 +124,7 @@ func (q *Queries) GetCommittee(ctx context.Context, id uuid.UUID) (Committee, er
 
 const listCommittees = `-- name: ListCommittees :many
 SELECT id, name, slug, short_name, description, color, image_url, website_url, active, created_at, updated_at, deleted_at FROM committee
-WHERE deleted_at IS NULL AND active = TRUE
+WHERE deleted_at IS NULL
 ORDER BY name
 `
 

@@ -4,7 +4,7 @@ WHERE ID = $1 AND deleted_at IS NULL AND active = TRUE LIMIT 1;
 
 -- name: ListCommittees :many
 SELECT * FROM committee
-WHERE deleted_at IS NULL AND active = TRUE
+WHERE deleted_at IS NULL
 ORDER BY name;
 
 -- name: CreateCommittee :one

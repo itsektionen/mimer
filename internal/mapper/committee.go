@@ -6,7 +6,6 @@ import (
 )
 
 func CommitteeFromDB(c db.Committee) model.Committee {
-
 	return model.Committee{
 		ID:          c.ID.String(),
 		Slug:        c.Slug,
@@ -16,6 +15,7 @@ func CommitteeFromDB(c db.Committee) model.Committee {
 		ImageUrl:    c.ImageUrl,
 		WebsiteUrl:  c.WebsiteUrl,
 		Color:       c.Color,
+		Active:      c.Active,
 	}
 }
 

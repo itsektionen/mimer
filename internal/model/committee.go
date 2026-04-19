@@ -9,4 +9,5 @@ type Committee struct {
 	Color       string  `json:"color,omitempty"`
 	ImageUrl    *string `json:"imageUrl,omitempty"`
 	WebsiteUrl  *string `json:"websiteUrl,omitempty"`
+	Active      bool    `json:"active"`
 }
