@@ -25,24 +25,28 @@ func SetupV1Router(
 	}
 
 	api := humachi.New(router, humaCfg)
-	authMiddleware := middleware.NewAuthMiddleware(api, apiKeyService)
 	api.UseMiddleware(middleware.LoggingMiddleware)
-	api.UseMiddleware(authMiddleware.Handle)
+
+	protected := huma.NewGroup(api)
+
+	// NOTE: I do not know if passing the group instead of the root api is the idiomatic way to go about this, but it felt right
+	authMiddleware := middleware.NewAuthMiddleware(protected, apiKeyService)
+	protected.UseMiddleware(authMiddleware.Handle)
 
 	committeeHandler := handler.NewCommitteeHandler(committeeService)
 	personHandler := handler.NewPersonHandler(personService)
 	positionHandler := handler.NewPositionHandler(positionService)
 
 	huma.Get(api, "/people", personHandler.HandleListPeople)
-	huma.Post(api, "/people", personHandler.HandleCreatePerson)
+	huma.Post(protected, "/people", personHandler.HandleCreatePerson)
 	huma.Get(api, "/people/{id}", personHandler.HandleGetPersonById)
 
 	huma.Get(api, "/positions", positionHandler.HandleListPositions)
-	huma.Post(api, "/positions", positionHandler.HandleCreatePosition)
+	huma.Post(protected, "/positions", positionHandler.HandleCreatePosition)
 	huma.Get(api, "/positions/{id}", positionHandler.HandleGetPositionById)
 
 	huma.Get(api, "/committees", committeeHandler.HandleListCommittees)
-	huma.Post(api, "/committees", committeeHandler.HandleCreateCommittee)
+	huma.Post(protected, "/committees", committeeHandler.HandleCreateCommittee)
 	huma.Get(api, "/committees/{id}", committeeHandler.HandleGetCommitteeById)
 	huma.Get(api, "/committees/{id}/trustees", committeeHandler.HandleGetCommitteeTrustees)
 

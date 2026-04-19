@@ -17,22 +17,16 @@ func NewAuthMiddleware(api huma.API, apiKeyService service.ApiKeyService) *AuthM
 }
 
 func (m *AuthMiddleware) Handle(ctx huma.Context, next func(ctx huma.Context)) {
-
 	authHeader := ctx.Header("Authorization")
-
-	if ctx.Method() == http.MethodGet {
-		next(ctx)
-		return
-	}
 
 	apiKey, err := m.apiKeyService.GetByValue(ctx.Context(), authHeader)
 	if err != nil {
-		huma.WriteErr(m.api, ctx, http.StatusForbidden, "forbidden")
+		_ = huma.WriteErr(m.api, ctx, http.StatusForbidden, "forbidden")
 		return
 	}
 
 	if !apiKey.Active {
-		huma.WriteErr(m.api, ctx, http.StatusForbidden, "forbidden")
+		_ = huma.WriteErr(m.api, ctx, http.StatusForbidden, "forbidden")
 		return
 	}
 
