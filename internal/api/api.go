@@ -6,9 +6,11 @@ import (
 	"github.com/go-chi/chi/v5"
 	v1 "github.com/itsektionen/mimer/internal/api/v1"
 	"github.com/itsektionen/mimer/internal/service"
+	"go.uber.org/zap"
 )
 
 func SetupRouter(
+	logger *zap.Logger,
 	committeeService service.CommitteeService,
 	personService service.PersonService,
 	positionService service.PositionService,
@@ -17,6 +19,7 @@ func SetupRouter(
 	router := chi.NewRouter()
 
 	apiV1Router := v1.SetupV1Router(
+		logger,
 		committeeService,
 		personService,
 		positionService,

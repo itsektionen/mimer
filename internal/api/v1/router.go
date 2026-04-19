@@ -9,9 +9,11 @@ import (
 	"github.com/itsektionen/mimer/internal/api/middleware"
 	"github.com/itsektionen/mimer/internal/api/v1/handler"
 	"github.com/itsektionen/mimer/internal/service"
+	"go.uber.org/zap"
 )
 
 func SetupV1Router(
+	logger *zap.Logger,
 	committeeService service.CommitteeService,
 	personService service.PersonService,
 	positionService service.PositionService,
@@ -25,13 +27,14 @@ func SetupV1Router(
 	}
 
 	api := humachi.New(router, humaCfg)
-	api.UseMiddleware(middleware.LoggingMiddleware)
+	loggingMiddleware := middleware.LoggingMiddleware(logger)
+	api.UseMiddleware(loggingMiddleware)
 
 	protected := huma.NewGroup(api)
 
 	// NOTE: I do not know if passing the group instead of the root api is the idiomatic way to go about this, but it felt right
-	authMiddleware := middleware.NewAuthMiddleware(protected, apiKeyService)
-	protected.UseMiddleware(authMiddleware.Handle)
+	authMiddleware := middleware.AuthMiddleware(protected, apiKeyService)
+	protected.UseMiddleware(authMiddleware)
 
 	committeeHandler := handler.NewCommitteeHandler(committeeService)
 	personHandler := handler.NewPersonHandler(personService)

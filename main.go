@@ -13,6 +13,7 @@ import (
 	"github.com/golang-migrate/migrate/v4/source/iofs"
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/joho/godotenv"
+	"go.uber.org/zap"
 
 	"github.com/itsektionen/mimer/internal/api"
 	"github.com/itsektionen/mimer/internal/db"
@@ -72,6 +73,9 @@ func main() {
 	connString := os.Getenv("DATABASE_URL")
 	ctx := context.Background()
 
+	logger, _ := zap.NewProduction()
+	defer logger.Sync()
+
 	conn, err := db.SetupPostgresDB(ctx, connString)
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
@@ -84,21 +88,21 @@ func main() {
 
 	driver, err := pgxMigrate.WithInstance(sqlDB, &pgxMigrate.Config{})
 	if err != nil {
-		log.Fatalf("Failed to initialize migrations")
+		log.Fatalf("failed to initialize migrations")
 	}
 
 	migrations, err := iofs.New(migrations, "db/migrations")
 	if err != nil {
-		log.Fatalf("Failed to read migrations")
+		log.Fatalf("failed to read migrations")
 	}
 
 	migrator, err := migrate.NewWithInstance("iofs", migrations, "mimer", driver)
 	if err != nil {
-		panic(fmt.Errorf("Failed to migrate 3: %v", err))
+		panic(fmt.Errorf("failed to migrate 3: %v", err))
 	}
 
 	if err := migrator.Up(); err != migrate.ErrNoChange && err != nil {
-		panic(fmt.Errorf("Failed to migrate 4: %v", err))
+		panic(fmt.Errorf("failed to migrate 4: %v", err))
 	}
 
 	queries := db.New(conn)
@@ -114,7 +118,13 @@ func main() {
 	positionService := service.NewPositionService(positionRepo)
 	apiKeyService := service.NewApiKeyService(apiKeyRepo)
 
-	router := api.SetupRouter(committeeService, personService, positionService, apiKeyService)
+	router := api.SetupRouter(
+		logger,
+		committeeService,
+		personService,
+		positionService,
+		apiKeyService,
+	)
 
 	fmt.Println("Starting server on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", router))

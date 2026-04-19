@@ -7,28 +7,21 @@ import (
 	"github.com/itsektionen/mimer/internal/service"
 )
 
-type AuthMiddleware struct {
-	api           huma.API
-	apiKeyService service.ApiKeyService
-}
+func AuthMiddleware(api huma.API, apiKeyService service.ApiKeyService) func(huma.Context, func(huma.Context)) {
+	return func(ctx huma.Context, next func(ctx huma.Context)) {
+		authHeader := ctx.Header("Authorization")
 
-func NewAuthMiddleware(api huma.API, apiKeyService service.ApiKeyService) *AuthMiddleware {
-	return &AuthMiddleware{api: api, apiKeyService: apiKeyService}
-}
+		apiKey, err := apiKeyService.GetByValue(ctx.Context(), authHeader)
+		if err != nil {
+			_ = huma.WriteErr(api, ctx, http.StatusForbidden, "forbidden")
+			return
+		}
 
-func (m *AuthMiddleware) Handle(ctx huma.Context, next func(ctx huma.Context)) {
-	authHeader := ctx.Header("Authorization")
+		if !apiKey.Active {
+			_ = huma.WriteErr(api, ctx, http.StatusForbidden, "forbidden")
+			return
+		}
 
-	apiKey, err := m.apiKeyService.GetByValue(ctx.Context(), authHeader)
-	if err != nil {
-		_ = huma.WriteErr(m.api, ctx, http.StatusForbidden, "forbidden")
-		return
+		next(ctx)
 	}
-
-	if !apiKey.Active {
-		_ = huma.WriteErr(m.api, ctx, http.StatusForbidden, "forbidden")
-		return
-	}
-
-	next(ctx)
 }
