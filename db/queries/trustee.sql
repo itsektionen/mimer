@@ -22,3 +22,16 @@ WHERE pos.committee_id = $1
     AND p.deleted_at IS NULL
     AND pos.deleted_at IS NULL
 ORDER BY t.start_date DESC, pos.name ASC;
+
+-- name: CreateTrustee :one
+INSERT INTO trustee (
+  person_id,
+  position_id,
+  start_date,
+  end_date
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4
+) RETURNING *;

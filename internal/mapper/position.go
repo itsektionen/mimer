@@ -11,6 +11,7 @@ func PositionFromDB(p db.Position) model.Position {
 		Name:        p.Name,
 		Active:      p.Active,
 		CommitteeID: p.CommitteeID.String(),
+		Email:       p.Email,
 	}
 }
 

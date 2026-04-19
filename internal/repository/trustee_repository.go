@@ -2,15 +2,18 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/itsektionen/mimer/internal/db"
 	"github.com/itsektionen/mimer/internal/mapper"
 	"github.com/itsektionen/mimer/internal/model"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type TrusteeRepository interface {
 	ListCommitteeTrustees(ctx context.Context, committeeID uuid.UUID) ([]model.Trustee, error)
+	CreateTrustee(ctx context.Context, positionID uuid.UUID, personID uuid.UUID, startDate time.Time, endDate time.Time) (*model.Trustee, error)
 }
 
 type trusteeRepository struct {
@@ -27,4 +30,36 @@ func (r *trusteeRepository) ListCommitteeTrustees(ctx context.Context, committee
 		return nil, err
 	}
 	return mapper.TrusteesFromDBRows(trustees), nil
+}
+
+func (r *trusteeRepository) CreateTrustee(ctx context.Context, positionID uuid.UUID, personID uuid.UUID, startDate time.Time, endDate time.Time) (*model.Trustee, error) {
+	trustee, err := r.q.CreateTrustee(ctx, db.CreateTrusteeParams{
+		PositionID: positionID,
+		PersonID:   personID,
+		StartDate: pgtype.Date{
+			Time:  startDate,
+			Valid: true,
+		},
+		EndDate: pgtype.Date{
+			Time:  endDate,
+			Valid: true,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	person, err := r.q.GetPerson(ctx, trustee.PersonID)
+	if err != nil {
+		return nil, err
+	}
+
+	position, err := r.q.GetPosition(ctx, trustee.PositionID)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := mapper.TrusteeFromDB(trustee, person, position)
+
+	return &resp, nil
 }

@@ -15,6 +15,7 @@ type Querier interface {
 	CreateCommittee(ctx context.Context, arg CreateCommitteeParams) (Committee, error)
 	CreatePerson(ctx context.Context, arg CreatePersonParams) (Person, error)
 	CreatePosition(ctx context.Context, arg CreatePositionParams) (Position, error)
+	CreateTrustee(ctx context.Context, arg CreateTrusteeParams) (Trustee, error)
 	DeleteApiKey(ctx context.Context, id uuid.UUID) (ApiKey, error)
 	DeleteCommittee(ctx context.Context, id uuid.UUID) (Committee, error)
 	DeletePerson(ctx context.Context, id uuid.UUID) (Person, error)

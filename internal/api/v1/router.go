@@ -103,6 +103,16 @@ func SetupV1Router(
 		},
 		positionHandler.HandleGetPositionById,
 	)
+	huma.Register(
+		protected,
+		huma.Operation{
+			Path:    "/positions/{id}/assign",
+			Summary: "Assign position",
+			Method:  http.MethodPost,
+			Tags:    []string{"Positions", "People"},
+		},
+		positionHandler.HandleAssignPosition,
+	)
 
 	huma.Register(
 		api,

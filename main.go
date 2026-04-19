@@ -115,7 +115,7 @@ func main() {
 
 	committeeService := service.NewCommitteeService(committeeRepo, trusteeRepo)
 	personService := service.NewPersonService(personRepo)
-	positionService := service.NewPositionService(positionRepo)
+	positionService := service.NewPositionService(positionRepo, trusteeRepo)
 	apiKeyService := service.NewApiKeyService(apiKeyRepo)
 
 	router := api.SetupRouter(
