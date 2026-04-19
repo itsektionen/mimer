@@ -1,15 +1,13 @@
 package handler
 
 import (
-	"encoding/json"
+	"context"
 	"log"
-	"net/http"
-	"strings"
 
 	"github.com/google/uuid"
-	"github.com/itsektionen/mimer/internal/app/v1/service"
 	"github.com/itsektionen/mimer/internal/db"
-	"github.com/itsektionen/mimer/internal/response"
+	"github.com/itsektionen/mimer/internal/model"
+	"github.com/itsektionen/mimer/internal/service"
 )
 
 type CommitteeHandler struct {
@@ -20,56 +18,75 @@ func NewCommitteeHandler(s service.CommitteeService) *CommitteeHandler {
 	return &CommitteeHandler{committeeService: s}
 }
 
-func (h *CommitteeHandler) HandleCreateCommittee(w http.ResponseWriter, r *http.Request) {
-	var newCommittee db.CreateCommitteeParams
-	err := json.NewDecoder(r.Body).Decode(&newCommittee)
-	if err != nil {
-		response.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
+type CreateCommitteeRequest struct {
+	Body struct {
+		Name        string  `json:"name"`
+		Slug        string  `json:"slug"`
+		ShortName   string  `json:"shortName"`
+		Description *string `json:"description,omitempty"`
+		Color       string  `json:"color"`
+		ImageUrl    *string `json:"imageUrl,omitempty"`
+		WebsiteUrl  *string `json:"websiteUrl,omitempty"`
 	}
+}
 
-	ctx := r.Context()
+type CreateCommitteeResponse struct {
+	Body model.Committee
+}
+
+func (h *CommitteeHandler) HandleCreateCommittee(
+	ctx context.Context,
+	input *CreateCommitteeRequest,
+) (*CreateCommitteeResponse, error) {
+	resp := &CreateCommitteeResponse{}
+	newCommittee := db.CreateCommitteeParams{
+		Name:        input.Body.Name,
+		Slug:        input.Body.Slug,
+		ShortName:   input.Body.ShortName,
+		Description: input.Body.Description,
+		Color:       input.Body.Color,
+		ImageUrl:    input.Body.ImageUrl,
+		WebsiteUrl:  input.Body.WebsiteUrl,
+	}
 
 	committee, err := h.committeeService.CreateCommittee(ctx, newCommittee)
 	if err != nil {
-		log.Printf("%v", err)
-		response.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
-		return
+		return nil, err
 	}
 
-	response.RespondWithJSON(w, http.StatusCreated, committee)
+	resp.Body = committee
+	return resp, nil
 }
 
-func (h *CommitteeHandler) HandleGetAllCommittees(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
+type ListCommitteesResponse struct {
+	Body []model.Committee `json:"body"`
+}
+
+func (h *CommitteeHandler) HandleListCommittees(ctx context.Context, input *struct{}) (*ListCommitteesResponse, error) {
+	resp := &ListCommitteesResponse{}
 	committees, err := h.committeeService.GetAllCommittees(ctx)
 	if err != nil {
 		log.Printf("%v", err)
-		response.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
-		return
+		return nil, err
 	}
-	response.RespondWithJSON(w, http.StatusOK, committees)
+	resp.Body = committees
+	return resp, nil
 }
 
-func (h *CommitteeHandler) HandleGetCommitteeById(w http.ResponseWriter, r *http.Request) {
-	pathSegments := strings.Split(r.URL.Path, "/")
-	if len(pathSegments) < 2 {
-		response.RespondWithError(w, http.StatusBadRequest, "Invalid URL path")
-		return
-	}
-	idStr := pathSegments[len(pathSegments)-1]
-	id, err := uuid.Parse(idStr)
+type GetCommitteeByIdRequest struct {
+	ID uuid.UUID `path:"id"`
+}
+
+type GetCommitteeByIdResponse struct {
+	Body model.Committee `json:"body"`
+}
+
+func (h *CommitteeHandler) HandleGetCommitteeById(ctx context.Context, input *GetCommitteeByIdRequest) (*GetCommitteeByIdResponse, error) {
+	resp := &GetCommitteeByIdResponse{}
+	committee, err := h.committeeService.GetCommitteeById(ctx, input.ID)
 	if err != nil {
-		response.RespondWithError(w, http.StatusBadRequest, "Invalid UUID")
+		return nil, err
 	}
-
-	ctx := r.Context()
-
-	committee, err := h.committeeService.GetCommitteeById(ctx, id)
-	if err != nil {
-		log.Printf("%v", err)
-		response.RespondWithError(w, http.StatusInternalServerError, "Internal Server Error")
-	}
-	response.RespondWithJSON(w, http.StatusOK, committee)
-
+	resp.Body = committee
+	return resp, nil
 }

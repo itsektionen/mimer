@@ -10,57 +10,57 @@ import (
 )
 
 type ApiKey struct {
-	ID        uuid.UUID        `json:"id"`
-	Value     string           `json:"value"`
-	Active    bool             `json:"active"`
-	CreatedAt pgtype.Timestamp `json:"created_at"`
-	UpdatedAt pgtype.Timestamp `json:"updated_at"`
-	DeletedAt pgtype.Timestamp `json:"deleted_at"`
+	ID        uuid.UUID
+	Value     string
+	Active    bool
+	CreatedAt pgtype.Timestamp
+	UpdatedAt pgtype.Timestamp
+	DeletedAt pgtype.Timestamp
 }
 
 type Committee struct {
-	ID          uuid.UUID        `json:"id"`
-	Name        string           `json:"name"`
-	Slug        string           `json:"slug"`
-	ShortName   string           `json:"short_name"`
-	Description *string          `json:"description"`
-	Color       string           `json:"color"`
-	ImageUrl    *string          `json:"image_url"`
-	WebsiteUrl  *string          `json:"website_url"`
-	Active      bool             `json:"active"`
-	CreatedAt   pgtype.Timestamp `json:"created_at"`
-	UpdatedAt   pgtype.Timestamp `json:"updated_at"`
-	DeletedAt   pgtype.Timestamp `json:"deleted_at"`
+	ID          uuid.UUID
+	Name        string
+	Slug        string
+	ShortName   string
+	Description *string
+	Color       string
+	ImageUrl    *string
+	WebsiteUrl  *string
+	Active      bool
+	CreatedAt   pgtype.Timestamp
+	UpdatedAt   pgtype.Timestamp
+	DeletedAt   pgtype.Timestamp
 }
 
 type Person struct {
-	ID        uuid.UUID        `json:"id"`
-	FirstName string           `json:"first_name"`
-	LastName  string           `json:"last_name"`
-	ImageUrl  *string          `json:"image_url"`
-	CreatedAt pgtype.Timestamp `json:"created_at"`
-	UpdatedAt pgtype.Timestamp `json:"updated_at"`
-	DeletedAt pgtype.Timestamp `json:"deleted_at"`
+	ID        uuid.UUID
+	FirstName string
+	LastName  string
+	ImageUrl  *string
+	CreatedAt pgtype.Timestamp
+	UpdatedAt pgtype.Timestamp
+	DeletedAt pgtype.Timestamp
 }
 
 type Position struct {
-	ID          uuid.UUID        `json:"id"`
-	Name        string           `json:"name"`
-	Email       string           `json:"email"`
-	Active      bool             `json:"active"`
-	CommitteeID uuid.UUID        `json:"committee_id"`
-	CreatedAt   pgtype.Timestamp `json:"created_at"`
-	UpdatedAt   pgtype.Timestamp `json:"updated_at"`
-	DeletedAt   pgtype.Timestamp `json:"deleted_at"`
+	ID          uuid.UUID
+	Name        string
+	Email       string
+	Active      bool
+	CommitteeID uuid.UUID
+	CreatedAt   pgtype.Timestamp
+	UpdatedAt   pgtype.Timestamp
+	DeletedAt   pgtype.Timestamp
 }
 
 type Trustee struct {
-	ID         uuid.UUID        `json:"id"`
-	StartDate  pgtype.Date      `json:"start_date"`
-	EndDate    pgtype.Date      `json:"end_date"`
-	PositionID uuid.UUID        `json:"position_id"`
-	PersonID   uuid.UUID        `json:"person_id"`
-	CreatedAt  pgtype.Timestamp `json:"created_at"`
-	UpdatedAt  pgtype.Timestamp `json:"updated_at"`
-	DeletedAt  pgtype.Timestamp `json:"deleted_at"`
+	ID         uuid.UUID
+	StartDate  pgtype.Date
+	EndDate    pgtype.Date
+	PositionID uuid.UUID
+	PersonID   uuid.UUID
+	CreatedAt  pgtype.Timestamp
+	UpdatedAt  pgtype.Timestamp
+	DeletedAt  pgtype.Timestamp
 }

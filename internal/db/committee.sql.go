@@ -33,13 +33,13 @@ RETURNING id, name, slug, short_name, description, color, image_url, website_url
 `
 
 type CreateCommitteeParams struct {
-	Name        string  `json:"name"`
-	Slug        string  `json:"slug"`
-	ShortName   string  `json:"short_name"`
-	Description *string `json:"description"`
-	Color       string  `json:"color"`
-	ImageUrl    *string `json:"image_url"`
-	WebsiteUrl  *string `json:"website_url"`
+	Name        string
+	Slug        string
+	ShortName   string
+	Description *string
+	Color       string
+	ImageUrl    *string
+	WebsiteUrl  *string
 }
 
 func (q *Queries) CreateCommittee(ctx context.Context, arg CreateCommitteeParams) (Committee, error) {
@@ -175,14 +175,14 @@ RETURNING id, name, slug, short_name, description, color, image_url, website_url
 `
 
 type UpdateCommitteeParams struct {
-	ID          uuid.UUID `json:"id"`
-	Name        string    `json:"name"`
-	Slug        string    `json:"slug"`
-	ShortName   string    `json:"short_name"`
-	Description *string   `json:"description"`
-	Color       string    `json:"color"`
-	ImageUrl    *string   `json:"image_url"`
-	WebsiteUrl  *string   `json:"website_url"`
+	ID          uuid.UUID
+	Name        string
+	Slug        string
+	ShortName   string
+	Description *string
+	Color       string
+	ImageUrl    *string
+	WebsiteUrl  *string
 }
 
 func (q *Queries) UpdateCommittee(ctx context.Context, arg UpdateCommitteeParams) (Committee, error) {

@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/itsektionen/mimer/internal/app/v1/service"
 	"github.com/itsektionen/mimer/internal/db"
 	"github.com/itsektionen/mimer/internal/response"
+	"github.com/itsektionen/mimer/internal/service"
 )
 
 type PositionHandler struct {

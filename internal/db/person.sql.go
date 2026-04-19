@@ -23,8 +23,8 @@ RETURNING id, first_name, last_name, image_url, created_at, updated_at, deleted_
 `
 
 type CreatePersonParams struct {
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
+	FirstName string
+	LastName  string
 }
 
 func (q *Queries) CreatePerson(ctx context.Context, arg CreatePersonParams) (Person, error) {
@@ -127,10 +127,10 @@ RETURNING id, first_name, last_name, image_url, created_at, updated_at, deleted_
 `
 
 type UpdatePersonParams struct {
-	ID        uuid.UUID `json:"id"`
-	FirstName string    `json:"first_name"`
-	LastName  string    `json:"last_name"`
-	ImageUrl  *string   `json:"image_url"`
+	ID        uuid.UUID
+	FirstName string
+	LastName  string
+	ImageUrl  *string
 }
 
 func (q *Queries) UpdatePerson(ctx context.Context, arg UpdatePersonParams) (Person, error) {

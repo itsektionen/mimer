@@ -3,11 +3,11 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/itsektionen/mimer/internal/db"
+	"github.com/itsektionen/mimer/internal/repository"
 	"github.com/itsektionen/mimer/internal/response"
 )
 
-func AuthMiddleware(next http.Handler, queries db.Queries) http.Handler {
+func AuthMiddleware(next http.Handler, apiKeyRepo repository.ApiKeyRepository) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		headers := r.Header
 		authHeader := headers.Get("Authorization")
@@ -17,13 +17,13 @@ func AuthMiddleware(next http.Handler, queries db.Queries) http.Handler {
 			return
 		}
 
-		valid, err := queries.GetApiKeyByValue(r.Context(), authHeader)
+		apiKey, err := apiKeyRepo.GetByValue(r.Context(), authHeader)
 		if err != nil {
 			response.RespondWithJSON(w, http.StatusForbidden, "Not allowed")
 			return
 		}
 
-		if valid.Active == false {
+		if !apiKey.Active {
 			response.RespondWithJSON(w, http.StatusForbidden, "Not allowed")
 			return
 		}

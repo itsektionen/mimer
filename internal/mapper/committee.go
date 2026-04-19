@@ -1,0 +1,28 @@
+package mapper
+
+import (
+	"github.com/itsektionen/mimer/internal/db"
+	"github.com/itsektionen/mimer/internal/model"
+)
+
+func CommitteeFromDB(c db.Committee) model.Committee {
+
+	return model.Committee{
+		ID:          c.ID.String(),
+		Slug:        c.Slug,
+		Name:        c.Name,
+		ShortName:   c.ShortName,
+		Description: c.Description,
+		ImageUrl:    c.ImageUrl,
+		WebsiteUrl:  c.WebsiteUrl,
+		Color:       c.Color,
+	}
+}
+
+func CommitteesFromDB(committees []db.Committee) []model.Committee {
+	result := make([]model.Committee, len(committees))
+	for i, c := range committees {
+		result[i] = CommitteeFromDB(c)
+	}
+	return result
+}
