@@ -14,12 +14,10 @@ import (
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/joho/godotenv"
 
-	"github.com/itsektionen/mimer/internal/app/v1/middleware"
-	v1Router "github.com/itsektionen/mimer/internal/app/v1/router"
-	v1Service "github.com/itsektionen/mimer/internal/app/v1/service"
-	"github.com/itsektionen/mimer/internal/pkg/db"
-	sqlc "github.com/itsektionen/mimer/internal/pkg/db"
-	"github.com/itsektionen/mimer/internal/router"
+	"github.com/itsektionen/mimer/internal/api"
+	"github.com/itsektionen/mimer/internal/db"
+	"github.com/itsektionen/mimer/internal/repository"
+	"github.com/itsektionen/mimer/internal/service"
 )
 
 //go:embed db/migrations/*.sql
@@ -103,15 +101,21 @@ func main() {
 		panic(fmt.Errorf("Failed to migrate 4: %v", err))
 	}
 
-	queries := sqlc.New(conn)
+	queries := db.New(conn)
 
-	committeeService := v1Service.NewCommitteeService(*queries)
-	personService := v1Service.NewPersonService(*queries)
-	positionService := v1Service.NewPositionService(*queries)
+	committeeRepo := repository.NewCommitteeRepository(queries)
+	personRepo := repository.NewPersonRepository(queries)
+	positionRepo := repository.NewPositionRepository(queries)
+	apiKeyRepo := repository.NewApiKeyRepository(queries)
+	trusteeRepo := repository.NewTrusteeRepository(queries)
 
-	v1APIRouter := v1Router.SetupV1Router(committeeService, personService, positionService)
-	rootMux := router.SetupRootRouter(middleware.AuthMiddleware(v1APIRouter, *queries))
+	committeeService := service.NewCommitteeService(committeeRepo, trusteeRepo)
+	personService := service.NewPersonService(personRepo)
+	positionService := service.NewPositionService(positionRepo)
+	apiKeyService := service.NewApiKeyService(apiKeyRepo)
+
+	router := api.SetupRouter(committeeService, personService, positionService, apiKeyService)
 
 	fmt.Println("Starting server on port 8080")
-	log.Fatal(http.ListenAndServe(":8080", rootMux))
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
