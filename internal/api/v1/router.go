@@ -44,6 +44,7 @@ func SetupV1Router(
 	huma.Get(api, "/committees", committeeHandler.HandleListCommittees)
 	huma.Post(api, "/committees", committeeHandler.HandleCreateCommittee)
 	huma.Get(api, "/committees/{id}", committeeHandler.HandleGetCommitteeById)
+	huma.Get(api, "/committees/{id}/trustees", committeeHandler.HandleGetCommitteeTrustees)
 
 	huma.Get(api, "/health", handler.GetHealth)
 	router.HandleFunc("GET /", handler.GetIndex)

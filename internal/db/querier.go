@@ -27,6 +27,7 @@ type Querier interface {
 	GetPerson(ctx context.Context, id uuid.UUID) (Person, error)
 	GetPosition(ctx context.Context, id uuid.UUID) (Position, error)
 	ListApiKeys(ctx context.Context) ([]ApiKey, error)
+	ListCommitteeTrustees(ctx context.Context, committeeID uuid.UUID) ([]ListCommitteeTrusteesRow, error)
 	ListCommittees(ctx context.Context) ([]Committee, error)
 	ListPeople(ctx context.Context) ([]Person, error)
 	ListPositions(ctx context.Context) ([]Position, error)

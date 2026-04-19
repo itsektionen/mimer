@@ -107,8 +107,9 @@ func main() {
 	personRepo := repository.NewPersonRepository(queries)
 	positionRepo := repository.NewPositionRepository(queries)
 	apiKeyRepo := repository.NewApiKeyRepository(queries)
+	trusteeRepo := repository.NewTrusteeRepository(queries)
 
-	committeeService := service.NewCommitteeService(committeeRepo)
+	committeeService := service.NewCommitteeService(committeeRepo, trusteeRepo)
 	personService := service.NewPersonService(personRepo)
 	positionService := service.NewPositionService(positionRepo)
 	apiKeyService := service.NewApiKeyService(apiKeyRepo)

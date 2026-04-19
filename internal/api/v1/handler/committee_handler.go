@@ -90,3 +90,26 @@ func (h *CommitteeHandler) HandleGetCommitteeById(ctx context.Context, input *Ge
 	resp.Body = committee
 	return resp, nil
 }
+
+type GetCommitteeTrusteesRequest struct {
+	CommitteeID uuid.UUID `path:"id"`
+	CurrentOnly bool      `query:"current" doc:"Filter to only currently elected trustees"`
+}
+
+type GetCommitteeTrusteesResponse struct {
+	Body []model.Trustee `json:"body"`
+}
+
+func (h *CommitteeHandler) HandleGetCommitteeTrustees(
+	ctx context.Context,
+	input *GetCommitteeTrusteesRequest,
+) (*GetCommitteeTrusteesResponse, error) {
+	resp := &GetCommitteeTrusteesResponse{}
+
+	trustees, err := h.committeeService.GetCommitteeTrustees(ctx, input.CommitteeID, input.CurrentOnly)
+	if err != nil {
+		return nil, err
+	}
+	resp.Body = trustees
+	return resp, nil
+}
