@@ -166,7 +166,6 @@ func SetupV1Router(
 		},
 		handler.GetHealth,
 	)
-	router.HandleFunc("GET /", handler.GetIndex)
 
 	return router
 }

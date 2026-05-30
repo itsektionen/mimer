@@ -15,6 +15,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/itsektionen/mimer/api"
+	"github.com/itsektionen/mimer/app"
 	"github.com/itsektionen/mimer/cfg"
 	"github.com/itsektionen/mimer/db"
 	"github.com/itsektionen/mimer/repository"
@@ -101,13 +102,21 @@ func main() {
 	positionService := service.NewPositionService(positionRepo, trusteeRepo)
 	apiKeyService := service.NewApiKeyService(apiKeyRepo)
 
-	router := api.SetupRouter(
+	router := app.SetupAppRouter(
+		committeeService,
+		personService,
+		positionService,
+		apiKeyService,
+	)
+	apiRouter := api.SetupAPIRouter(
 		logger,
 		committeeService,
 		personService,
 		positionService,
 		apiKeyService,
 	)
+
+	router.Mount("/api", apiRouter)
 
 	fmt.Printf("Starting server on port %d\n", cfg.Server.Port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", cfg.Server.Port), router))
