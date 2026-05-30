@@ -71,7 +71,7 @@ func (s *committeeService) GetCommitteeTrustees(ctx context.Context, committeeID
 	now := time.Now()
 	var current []model.Trustee
 	for _, trustee := range trustees {
-		if !trustee.StartDate.After(now) && !trustee.EndDate.Before(now) {
+		if trustee.StartDate.After(now) && !trustee.EndDate.Before(now) {
 			current = append(current, trustee)
 		}
 	}

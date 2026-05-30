@@ -13,8 +13,8 @@ func init() {
 
 type GetHealthResponse struct {
 	Body struct {
-		Uptime time.Duration `json:"uptime"`
-		Status string        `json:"status"`
+		Uptime time.Duration `json:"uptime" example:"1776637039"`
+		Status string        `json:"status" example:"UP"`
 	}
 }
 

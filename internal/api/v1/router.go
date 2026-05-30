@@ -40,20 +40,132 @@ func SetupV1Router(
 	personHandler := handler.NewPersonHandler(personService)
 	positionHandler := handler.NewPositionHandler(positionService)
 
-	huma.Get(api, "/people", personHandler.HandleListPeople)
-	huma.Post(protected, "/people", personHandler.HandleCreatePerson)
-	huma.Get(api, "/people/{id}", personHandler.HandleGetPersonById)
+	huma.Register(
+		api,
+		huma.Operation{
+			Path:    "/people",
+			Summary: "List all people",
+			Method:  http.MethodGet,
+			Tags:    []string{"People"},
+		},
+		personHandler.HandleListPeople,
+	)
+	huma.Register(
+		protected,
+		huma.Operation{
+			Path:          "/people",
+			Summary:       "Create person",
+			Method:        http.MethodPost,
+			Tags:          []string{"People"},
+			DefaultStatus: http.StatusCreated,
+		},
+		personHandler.HandleCreatePerson,
+	)
+	huma.Register(
+		api,
+		huma.Operation{
+			Path:    "/people/{id}",
+			Summary: "Get person",
+			Method:  http.MethodGet,
+			Tags:    []string{"People"},
+		},
+		personHandler.HandleGetPersonById,
+	)
 
-	huma.Get(api, "/positions", positionHandler.HandleListPositions)
-	huma.Post(protected, "/positions", positionHandler.HandleCreatePosition)
-	huma.Get(api, "/positions/{id}", positionHandler.HandleGetPositionById)
+	huma.Register(
+		api,
+		huma.Operation{
+			Path:    "/positions",
+			Summary: "List all positions",
+			Method:  http.MethodGet,
+			Tags:    []string{"Positions"},
+		},
+		positionHandler.HandleListPositions,
+	)
+	huma.Register(
+		api,
+		huma.Operation{
+			Path:          "/positions",
+			Summary:       "Create position",
+			Method:        http.MethodPost,
+			Tags:          []string{"Positions"},
+			DefaultStatus: http.StatusCreated,
+		},
+		positionHandler.HandleCreatePosition,
+	)
+	huma.Register(
+		api,
+		huma.Operation{
+			Path:    "/positions/{id}",
+			Summary: "Get position",
+			Method:  http.MethodGet,
+			Tags:    []string{"Positions"},
+		},
+		positionHandler.HandleGetPositionById,
+	)
+	huma.Register(
+		protected,
+		huma.Operation{
+			Path:    "/positions/{id}/assign",
+			Summary: "Assign position",
+			Method:  http.MethodPost,
+			Tags:    []string{"Positions", "People"},
+		},
+		positionHandler.HandleAssignPosition,
+	)
 
-	huma.Get(api, "/committees", committeeHandler.HandleListCommittees)
-	huma.Post(protected, "/committees", committeeHandler.HandleCreateCommittee)
-	huma.Get(api, "/committees/{id}", committeeHandler.HandleGetCommitteeById)
-	huma.Get(api, "/committees/{id}/trustees", committeeHandler.HandleListCommitteeTrustees)
+	huma.Register(
+		api,
+		huma.Operation{
+			Path:    "/committees",
+			Summary: "List all committees",
+			Method:  http.MethodGet,
+			Tags:    []string{"Committees"},
+		},
+		committeeHandler.HandleListCommittees,
+	)
+	huma.Register(
+		api,
+		huma.Operation{
+			Path:          "/committees",
+			Summary:       "Create new committee",
+			Method:        http.MethodPost,
+			Tags:          []string{"Committees"},
+			DefaultStatus: http.StatusCreated,
+		},
+		committeeHandler.HandleCreateCommittee,
+	)
 
-	huma.Get(api, "/health", handler.GetHealth)
+	huma.Register(
+		api,
+		huma.Operation{
+			Path:    "/committees/{id}",
+			Summary: "Get committee",
+			Method:  http.MethodGet,
+			Tags:    []string{"Committees"},
+		},
+		committeeHandler.HandleGetCommitteeById,
+	)
+	huma.Register(
+		api,
+		huma.Operation{
+			Path:    "/committees/{id}/trustees",
+			Summary: "List committee trustees",
+			Method:  http.MethodGet,
+			Tags:    []string{"Committees"},
+		},
+		committeeHandler.HandleListCommitteeTrustees,
+	)
+
+	huma.Register(
+		api,
+		huma.Operation{
+			Path:    "/health",
+			Summary: "Health Check",
+			Method:  http.MethodGet,
+		},
+		handler.GetHealth,
+	)
 	router.HandleFunc("GET /", handler.GetIndex)
 
 	return router

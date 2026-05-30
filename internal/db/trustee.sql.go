@@ -12,6 +12,48 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const createTrustee = `-- name: CreateTrustee :one
+INSERT INTO trustee (
+  person_id,
+  position_id,
+  start_date,
+  end_date
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4
+) RETURNING id, start_date, end_date, position_id, person_id, created_at, updated_at, deleted_at
+`
+
+type CreateTrusteeParams struct {
+	PersonID   uuid.UUID
+	PositionID uuid.UUID
+	StartDate  pgtype.Date
+	EndDate    pgtype.Date
+}
+
+func (q *Queries) CreateTrustee(ctx context.Context, arg CreateTrusteeParams) (Trustee, error) {
+	row := q.db.QueryRow(ctx, createTrustee,
+		arg.PersonID,
+		arg.PositionID,
+		arg.StartDate,
+		arg.EndDate,
+	)
+	var i Trustee
+	err := row.Scan(
+		&i.ID,
+		&i.StartDate,
+		&i.EndDate,
+		&i.PositionID,
+		&i.PersonID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
 const listCommitteeTrustees = `-- name: ListCommitteeTrustees :many
 SELECT
     t.id as trustee_id,

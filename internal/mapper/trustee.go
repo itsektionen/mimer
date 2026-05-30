@@ -21,6 +21,7 @@ func TrusteeFromDBRow(row db.ListCommitteeTrusteesRow) model.Trustee {
 			Name:        row.PositionName,
 			Active:      row.PositionActive,
 			CommitteeID: row.CommitteeID.String(),
+			Email:       row.PositionEmail,
 		},
 	}
 }
@@ -31,4 +32,14 @@ func TrusteesFromDBRows(rows []db.ListCommitteeTrusteesRow) []model.Trustee {
 		result[i] = TrusteeFromDBRow(row)
 	}
 	return result
+}
+
+func TrusteeFromDB(t db.Trustee, p db.Person, pos db.Position) model.Trustee {
+	return model.Trustee{
+		ID:        t.ID.String(),
+		StartDate: t.StartDate.Time,
+		EndDate:   t.EndDate.Time,
+		Person:    PersonFromDB(p),
+		Position:  PositionFromDB(pos),
+	}
 }

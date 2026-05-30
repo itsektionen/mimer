@@ -1,13 +1,13 @@
 package model
 
 type Committee struct {
-	ID          string  `json:"id"`
-	Slug        string  `json:"slug"`
-	Name        string  `json:"name"`
-	ShortName   string  `json:"shortName,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Color       string  `json:"color,omitempty"`
+	ID          string  `json:"id" example:"00000000-0000-0000-0000-000000000000"`
+	Slug        string  `json:"slug" example:"init"`
+	Name        string  `json:"name" example:"init"`
+	ShortName   string  `json:"shortName,omitempty" example:"init"`
+	Description *string `json:"description,omitempty" example:"init is always spelled in lowercase, regardless of context."`
+	Color       string  `json:"color,omitempty" example:"#000000"`
 	ImageUrl    *string `json:"imageUrl,omitempty"`
-	WebsiteUrl  *string `json:"websiteUrl,omitempty"`
-	Active      bool    `json:"active"`
+	WebsiteUrl  *string `json:"websiteUrl,omitempty" example:"https://init.kth.it"`
+	Active      bool    `json:"active" example:"true"`
 }
