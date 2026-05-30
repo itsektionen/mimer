@@ -7,7 +7,7 @@ import (
 
 func CommitteeFromDB(c db.Committee) model.Committee {
 	return model.Committee{
-		ID:          c.ID.String(),
+		ID:          c.ID,
 		Slug:        c.Slug,
 		Name:        c.Name,
 		ShortName:   c.ShortName,

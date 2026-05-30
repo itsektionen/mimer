@@ -7,7 +7,7 @@ import (
 
 func PersonFromDB(p db.Person) model.Person {
 	return model.Person{
-		ID:        p.ID.String(),
+		ID:        p.ID,
 		FirstName: p.FirstName,
 		LastName:  p.LastName,
 		ImageURL:  p.ImageUrl,

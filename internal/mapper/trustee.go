@@ -7,20 +7,20 @@ import (
 
 func TrusteeFromDBRow(row db.ListCommitteeTrusteesRow) model.Trustee {
 	return model.Trustee{
-		ID:        row.TrusteeID.String(),
+		ID:        row.TrusteeID,
 		StartDate: row.StartDate.Time,
 		EndDate:   row.EndDate.Time,
 		Person: model.Person{
-			ID:        row.PersonID.String(),
+			ID:        row.PersonID,
 			FirstName: row.FirstName,
 			LastName:  row.LastName,
 			ImageURL:  row.PersonImageUrl,
 		},
 		Position: model.Position{
-			ID:          row.PositionID.String(),
+			ID:          row.PositionID,
 			Name:        row.PositionName,
 			Active:      row.PositionActive,
-			CommitteeID: row.CommitteeID.String(),
+			CommitteeID: row.CommitteeID,
 			Email:       row.PositionEmail,
 		},
 	}
@@ -36,7 +36,7 @@ func TrusteesFromDBRows(rows []db.ListCommitteeTrusteesRow) []model.Trustee {
 
 func TrusteeFromDB(t db.Trustee, p db.Person, pos db.Position) model.Trustee {
 	return model.Trustee{
-		ID:        t.ID.String(),
+		ID:        t.ID,
 		StartDate: t.StartDate.Time,
 		EndDate:   t.EndDate.Time,
 		Person:    PersonFromDB(p),

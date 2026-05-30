@@ -1,9 +1,13 @@
 package model
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type Trustee struct {
-	ID        string    `json:"id"`
+	ID        uuid.UUID `json:"id"`
 	StartDate time.Time `json:"startDate"`
 	EndDate   time.Time `json:"endDate"`
 	Person    Person    `json:"person"`
