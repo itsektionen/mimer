@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+@theme inline {
+    --color-primary: #cc99ff;
+    --color-border: var(--color-zinc-300);
+}
+
+* {
+    @apply border-border;
+}

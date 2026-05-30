@@ -7,9 +7,13 @@ templ Layout() {
 			<title>Mimer</title>
 			<meta name="viewport" content="width=device-width, initial-scale=1"/>
 			<meta charset="utf-8"/>
+			<link rel="stylesheet" href="/static/index.css"/>
 		</head>
 		<body>
-			{ children... }
+			@Navbar()
+			<main class="max-w-5xl mx-auto p-4">
+				{ children... }
+			</main>
 		</body>
 	</html>
 }

@@ -10,7 +10,7 @@ templ Index(positions []model.Position) {
 
 templ indexView(positions []model.Position) {
 	<div>
-		<h1>Mimer</h1>
+		<h2 class="text-2xl font-bold mb-4">Positions</h2>
 		<ul>
 			for _, position := range positions {
 				<li>{position.Name}</li>
