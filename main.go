@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/golang-migrate/migrate/v4"
 	pgxMigrate "github.com/golang-migrate/migrate/v4/database/pgx/v5"
@@ -15,6 +14,7 @@ import (
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 
+	"github.com/itsektionen/mimer/cfg"
 	"github.com/itsektionen/mimer/internal/api"
 	"github.com/itsektionen/mimer/internal/db"
 	"github.com/itsektionen/mimer/internal/repository"
@@ -52,25 +52,8 @@ func loadEnv(env string) ([]string, error) {
 }
 
 func main() {
-	env := os.Getenv("MIMER_ENV")
-	if env == "" {
-		env = "development"
-	}
-	fmt.Println("env:", env)
-
-	loadedFiles, err := loadEnv(env)
-
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error: ", err)
-		os.Exit(1)
-	} else {
-		fmt.Println("Successfully loaded env files:")
-		for _, f := range loadedFiles {
-			fmt.Println(" -", f)
-		}
-	}
-
-	connString := os.Getenv("DATABASE_URL")
+	cfg := cfg.Load()
+	connString := cfg.Database.URL
 	ctx := context.Background()
 
 	logger, _ := zap.NewProduction()
@@ -126,6 +109,6 @@ func main() {
 		apiKeyService,
 	)
 
-	fmt.Println("Starting server on port 8080")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	fmt.Printf("Starting server on port %d\n", cfg.Server.Port)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", cfg.Server.Port), router))
 }
