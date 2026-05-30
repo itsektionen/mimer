@@ -1,0 +1,20 @@
+package templates
+
+import "github.com/itsektionen/mimer/model"
+
+templ Index(positions []model.Position) {
+	@Layout() {
+		@indexView(positions)
+	}
+}
+
+templ indexView(positions []model.Position) {
+	<div>
+		<h1>Mimer</h1>
+		<ul>
+			for _, position := range positions {
+				<li>{position.Name}</li>
+			}
+		</ul>
+	</div>
+}
