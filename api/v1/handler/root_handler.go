@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/itsektionen/mimer/internal/response"
+	"github.com/itsektionen/mimer/response"
 )
 
 func GetIndex(w http.ResponseWriter, r *http.Request) {

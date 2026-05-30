@@ -6,9 +6,9 @@ import (
 	"log"
 
 	"github.com/google/uuid"
-	"github.com/itsektionen/mimer/internal/db"
-	"github.com/itsektionen/mimer/internal/model"
-	"github.com/itsektionen/mimer/internal/service"
+	"github.com/itsektionen/mimer/db"
+	"github.com/itsektionen/mimer/model"
+	"github.com/itsektionen/mimer/service"
 )
 
 type CommitteeHandler struct {

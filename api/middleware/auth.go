@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/danielgtaylor/huma/v2"
-	"github.com/itsektionen/mimer/internal/service"
+	"github.com/itsektionen/mimer/service"
 )
 
 func AuthMiddleware(api huma.API, apiKeyService service.ApiKeyService) func(huma.Context, func(huma.Context)) {

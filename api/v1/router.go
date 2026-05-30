@@ -6,9 +6,9 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humachi"
 	"github.com/go-chi/chi/v5"
-	"github.com/itsektionen/mimer/internal/api/middleware"
-	"github.com/itsektionen/mimer/internal/api/v1/handler"
-	"github.com/itsektionen/mimer/internal/service"
+	"github.com/itsektionen/mimer/api/middleware"
+	"github.com/itsektionen/mimer/api/v1/handler"
+	"github.com/itsektionen/mimer/service"
 	"go.uber.org/zap"
 )
 

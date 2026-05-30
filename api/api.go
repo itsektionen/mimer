@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	v1 "github.com/itsektionen/mimer/internal/api/v1"
-	"github.com/itsektionen/mimer/internal/service"
+	v1 "github.com/itsektionen/mimer/api/v1"
+	"github.com/itsektionen/mimer/service"
 	"go.uber.org/zap"
 )
 

@@ -7,10 +7,10 @@ import (
 	"os"
 
 	"github.com/itsektionen/mimer/cfg"
-	"github.com/itsektionen/mimer/internal/db"
-	"github.com/itsektionen/mimer/internal/model"
-	"github.com/itsektionen/mimer/internal/repository"
-	"github.com/itsektionen/mimer/internal/service"
+	"github.com/itsektionen/mimer/db"
+	"github.com/itsektionen/mimer/model"
+	"github.com/itsektionen/mimer/repository"
+	"github.com/itsektionen/mimer/service"
 	"github.com/jackc/pgx/v5/stdlib"
 )
 

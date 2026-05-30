@@ -14,11 +14,11 @@ import (
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 
+	"github.com/itsektionen/mimer/api"
 	"github.com/itsektionen/mimer/cfg"
-	"github.com/itsektionen/mimer/internal/api"
-	"github.com/itsektionen/mimer/internal/db"
-	"github.com/itsektionen/mimer/internal/repository"
-	"github.com/itsektionen/mimer/internal/service"
+	"github.com/itsektionen/mimer/db"
+	"github.com/itsektionen/mimer/repository"
+	"github.com/itsektionen/mimer/service"
 )
 
 //go:embed db/migrations/*.sql

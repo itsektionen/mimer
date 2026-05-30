@@ -1,8 +1,8 @@
 package mapper
 
 import (
-	"github.com/itsektionen/mimer/internal/db"
-	"github.com/itsektionen/mimer/internal/model"
+	"github.com/itsektionen/mimer/db"
+	"github.com/itsektionen/mimer/model"
 )
 
 func PositionFromDB(p db.Position) model.Position {
