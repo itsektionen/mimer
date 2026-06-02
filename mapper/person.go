@@ -5,7 +5,7 @@ import (
 	"github.com/itsektionen/mimer/model"
 )
 
-func PersonFromDB(p db.Person) model.Person {
+func ToPerson(p db.Person) model.Person {
 	return model.Person{
 		ID:        p.ID,
 		FirstName: p.FirstName,
@@ -14,10 +14,10 @@ func PersonFromDB(p db.Person) model.Person {
 	}
 }
 
-func PeopleFromDB(people []db.Person) []model.Person {
+func ToPeople(people []db.Person) []model.Person {
 	result := make([]model.Person, len(people))
 	for i, p := range people {
-		result[i] = PersonFromDB(p)
+		result[i] = ToPerson(p)
 	}
 	return result
 }

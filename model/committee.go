@@ -2,7 +2,7 @@ package model
 
 import "github.com/google/uuid"
 
-type Committee struct {
+type Group struct {
 	ID          uuid.UUID `json:"id" example:"00000000-0000-0000-0000-000000000000"`
 	Slug        string    `json:"slug" example:"init"`
 	Name        string    `json:"name" example:"init"`

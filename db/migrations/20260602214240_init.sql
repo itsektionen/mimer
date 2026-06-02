@@ -9,7 +9,7 @@ END;
 $$ LANGUAGE plpgsql;
 -- +goose StatementEnd
 
-CREATE TABLE committee (
+CREATE TABLE group (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     slug VARCHAR(255) UNIQUE NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE position (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
-    committee_id UUID NOT NULL REFERENCES committee(id) ON DELETE CASCADE,
+    group_id UUID NOT NULL REFERENCES group(id) ON DELETE CASCADE,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -59,8 +59,8 @@ CREATE TABLE trustee (
     deleted_at TIMESTAMP DEFAULT NULL
 );
 
-CREATE TRIGGER update_timestamp_committee
-BEFORE UPDATE ON committee
+CREATE TRIGGER update_timestamp_group
+BEFORE UPDATE ON group
 FOR EACH ROW EXECUTE FUNCTION update_timestamp();
 
 CREATE TRIGGER update_timestamp_person
@@ -79,9 +79,9 @@ FOR EACH ROW EXECUTE FUNCTION update_timestamp();
 DROP TRIGGER IF EXISTS update_timestamp_trustee ON trustee;
 DROP TRIGGER IF EXISTS update_timestamp_position ON position;
 DROP TRIGGER IF EXISTS update_timestamp_person ON person;
-DROP TRIGGER IF EXISTS update_timestamp_committee ON committee;
+DROP TRIGGER IF EXISTS update_timestamp_group ON group;
 DROP TABLE IF EXISTS trustee;
 DROP TABLE IF EXISTS position;
 DROP TABLE IF EXISTS person;
-DROP TABLE IF EXISTS committee;
+DROP TABLE IF EXISTS group;
 DROP FUNCTION IF EXISTS update_timestamp();

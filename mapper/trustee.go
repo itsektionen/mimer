@@ -38,8 +38,8 @@ func TrusteeFromDB(t db.Trustee, p db.Person, pos db.Position) model.Trustee {
 		ID:        t.ID,
 		StartDate: t.StartDate.Time,
 		EndDate:   t.EndDate.Time,
-		Person:    PersonFromDB(p),
-		Position:  PositionFromDB(pos),
+		Person:    ToPerson(p),
+		Position:  ToPosition(pos),
 	}
 }
 

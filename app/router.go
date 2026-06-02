@@ -12,7 +12,7 @@ import (
 )
 
 func SetupAppRouter(
-	committeeService service.CommitteeService,
+	committeeService service.GroupService,
 	personService service.PersonService,
 	positionService service.PositionService,
 	trusteeService service.TrusteeService,

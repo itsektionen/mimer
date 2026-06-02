@@ -32,12 +32,12 @@ func main() {
 
 	queries := db.New(conn)
 
-	committeeRepo := repository.NewCommitteeRepository(queries)
+	committeeRepo := repository.NewGroupRepository(queries)
 	personRepo := repository.NewPersonRepository(queries)
 	positionRepo := repository.NewPositionRepository(queries)
 	trusteeRepo := repository.NewTrusteeRepository(queries)
 
-	committeeService := service.NewCommitteeService(committeeRepo, trusteeRepo)
+	committeeService := service.NewGroupService(committeeRepo, trusteeRepo)
 	personService := service.NewPersonService(personRepo)
 	positionService := service.NewPositionService(positionRepo, trusteeRepo)
 	trusteeService := service.NewTrusteeService(trusteeRepo)

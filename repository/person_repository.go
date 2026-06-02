@@ -30,7 +30,7 @@ func (r *personRepository) List(ctx context.Context) ([]model.Person, error) {
 	if err != nil {
 		return nil, err
 	}
-	return mapper.PeopleFromDB(people), nil
+	return mapper.ToPeople(people), nil
 }
 
 func (r *personRepository) GetByID(ctx context.Context, id uuid.UUID) (model.Person, error) {
@@ -38,7 +38,7 @@ func (r *personRepository) GetByID(ctx context.Context, id uuid.UUID) (model.Per
 	if err != nil {
 		return model.Person{}, err
 	}
-	return mapper.PersonFromDB(person), nil
+	return mapper.ToPerson(person), nil
 }
 
 func (r *personRepository) Create(ctx context.Context, params db.CreatePersonParams) (model.Person, error) {
@@ -46,7 +46,7 @@ func (r *personRepository) Create(ctx context.Context, params db.CreatePersonPar
 	if err != nil {
 		return model.Person{}, err
 	}
-	return mapper.PersonFromDB(person), nil
+	return mapper.ToPerson(person), nil
 }
 
 func (r *personRepository) Update(ctx context.Context, params db.UpdatePersonParams) (model.Person, error) {
@@ -54,7 +54,7 @@ func (r *personRepository) Update(ctx context.Context, params db.UpdatePersonPar
 	if err != nil {
 		return model.Person{}, err
 	}
-	return mapper.PersonFromDB(person), nil
+	return mapper.ToPerson(person), nil
 }
 
 func (r *personRepository) Delete(ctx context.Context, id uuid.UUID) (model.Person, error) {
@@ -62,5 +62,5 @@ func (r *personRepository) Delete(ctx context.Context, id uuid.UUID) (model.Pers
 	if err != nil {
 		return model.Person{}, err
 	}
-	return mapper.PersonFromDB(person), nil
+	return mapper.ToPerson(person), nil
 }

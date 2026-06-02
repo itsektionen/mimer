@@ -30,7 +30,7 @@ func (r *positionRepository) List(ctx context.Context) ([]model.Position, error)
 	if err != nil {
 		return nil, err
 	}
-	return mapper.PositionsFromDB(positions), nil
+	return mapper.ToPositions(positions), nil
 }
 
 func (r *positionRepository) GetByID(ctx context.Context, id uuid.UUID) (model.Position, error) {
@@ -38,7 +38,7 @@ func (r *positionRepository) GetByID(ctx context.Context, id uuid.UUID) (model.P
 	if err != nil {
 		return model.Position{}, err
 	}
-	return mapper.PositionFromDB(position), nil
+	return mapper.ToPosition(position), nil
 }
 
 func (r *positionRepository) Create(ctx context.Context, params db.CreatePositionParams) (model.Position, error) {
@@ -46,7 +46,7 @@ func (r *positionRepository) Create(ctx context.Context, params db.CreatePositio
 	if err != nil {
 		return model.Position{}, err
 	}
-	return mapper.PositionFromDB(position), nil
+	return mapper.ToPosition(position), nil
 }
 
 func (r *positionRepository) Update(ctx context.Context, params db.UpdatePositionParams) (model.Position, error) {
@@ -54,7 +54,7 @@ func (r *positionRepository) Update(ctx context.Context, params db.UpdatePositio
 	if err != nil {
 		return model.Position{}, err
 	}
-	return mapper.PositionFromDB(position), nil
+	return mapper.ToPosition(position), nil
 }
 
 func (r *positionRepository) Delete(ctx context.Context, id uuid.UUID) (model.Position, error) {
@@ -62,5 +62,5 @@ func (r *positionRepository) Delete(ctx context.Context, id uuid.UUID) (model.Po
 	if err != nil {
 		return model.Position{}, err
 	}
-	return mapper.PositionFromDB(position), nil
+	return mapper.ToPosition(position), nil
 }

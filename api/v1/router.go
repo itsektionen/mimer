@@ -14,7 +14,7 @@ import (
 
 func SetupV1Router(
 	logger *zap.Logger,
-	committeeService service.CommitteeService,
+	committeeService service.GroupService,
 	personService service.PersonService,
 	positionService service.PositionService,
 ) http.Handler {

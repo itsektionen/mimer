@@ -1,14 +1,14 @@
--- name: GetCommittee :one
-SELECT * FROM committee
+-- name: GetGroup :one
+SELECT * FROM group
 WHERE ID = $1 AND deleted_at IS NULL AND active = TRUE LIMIT 1;
 
--- name: ListCommittees :many
-SELECT * FROM committee
+-- name: ListGroups :many
+SELECT * FROM group
 WHERE deleted_at IS NULL
 ORDER BY name;
 
--- name: CreateCommittee :one
-INSERT INTO committee (
+-- name: CreateGroup :one
+INSERT INTO group (
     name,
     slug,
     short_name,
@@ -27,8 +27,8 @@ INSERT INTO committee (
 )
 RETURNING *;
 
--- name: UpdateCommittee :one
-UPDATE committee
+-- name: UpdateGroup :one
+UPDATE group
     SET name = $2,
     slug = $3,
     short_name = $4,
@@ -39,8 +39,8 @@ UPDATE committee
 WHERE ID = $1 AND deleted_at IS NULL
 RETURNING *;
 
--- name: DeleteCommittee :one
-UPDATE committee
+-- name: DeleteGroup :one
+UPDATE group
     SET deleted_at = NOW()
 WHERE ID = $1 AND deleted_at IS NULL
 RETURNING *;

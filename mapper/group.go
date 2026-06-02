@@ -5,8 +5,8 @@ import (
 	"github.com/itsektionen/mimer/model"
 )
 
-func CommitteeFromDB(c db.Committee) model.Committee {
-	return model.Committee{
+func ToGroup(c db.Committee) model.Group {
+	return model.Group{
 		ID:          c.ID,
 		Slug:        c.Slug,
 		Name:        c.Name,
@@ -19,10 +19,10 @@ func CommitteeFromDB(c db.Committee) model.Committee {
 	}
 }
 
-func CommitteesFromDB(committees []db.Committee) []model.Committee {
-	result := make([]model.Committee, len(committees))
+func ToGroups(committees []db.Committee) []model.Group {
+	result := make([]model.Group, len(committees))
 	for i, c := range committees {
-		result[i] = CommitteeFromDB(c)
+		result[i] = ToGroup(c)
 	}
 	return result
 }

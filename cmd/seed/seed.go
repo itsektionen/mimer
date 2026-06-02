@@ -86,16 +86,16 @@ func main() {
 
 	queries := db.New(conn)
 
-	committeeRepo := repository.NewCommitteeRepository(queries)
+	committeeRepo := repository.NewGroupRepository(queries)
 	personRepo := repository.NewPersonRepository(queries)
 	positionRepo := repository.NewPositionRepository(queries)
 	trusteeRepo := repository.NewTrusteeRepository(queries)
 
-	committeeService := service.NewCommitteeService(committeeRepo, trusteeRepo)
+	committeeService := service.NewGroupService(committeeRepo, trusteeRepo)
 	personService := service.NewPersonService(personRepo)
 	positionService := service.NewPositionService(positionRepo, trusteeRepo)
 
-	committees := make([]model.Committee, 0, len(mockCommittees))
+	committees := make([]model.Group, 0, len(mockCommittees))
 	people := make([]model.Person, 0, len(mockPeople))
 
 	for _, params := range mockCommittees {

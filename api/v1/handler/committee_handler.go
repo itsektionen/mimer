@@ -11,10 +11,10 @@ import (
 )
 
 type CommitteeHandler struct {
-	committeeService service.CommitteeService
+	committeeService service.GroupService
 }
 
-func NewCommitteeHandler(s service.CommitteeService) *CommitteeHandler {
+func NewCommitteeHandler(s service.GroupService) *CommitteeHandler {
 	return &CommitteeHandler{committeeService: s}
 }
 
@@ -35,7 +35,7 @@ type ListCommiteesRequest struct {
 }
 
 type ListCommitteesResponse struct {
-	Body []model.Committee `json:"body"`
+	Body []model.Group `json:"body"`
 }
 
 func (h *CommitteeHandler) HandleListCommittees(ctx context.Context, input *ListCommiteesRequest) (*ListCommitteesResponse, error) {
@@ -54,7 +54,7 @@ type GetCommitteeByIdRequest struct {
 }
 
 type GetCommitteeByIdResponse struct {
-	Body model.Committee `json:"body"`
+	Body model.Group `json:"body"`
 }
 
 func (h *CommitteeHandler) HandleGetCommitteeById(ctx context.Context, input *GetCommitteeByIdRequest) (*GetCommitteeByIdResponse, error) {
