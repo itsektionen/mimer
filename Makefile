@@ -6,10 +6,9 @@ build:
 	@echo "✅ Finished"
 
 migrate-up:
-	@migrate -path ./migrations -database "$(DATABASE_URL)" up
-
+	cd db/migrations && goose postgres "$(DATABASE_URL)" up
 migrate-down:
-	@migrate -path ./migrations -database "$(DATABASE_URL)" down 1
+	cd db/migrations && goose postgres "$(DATABASE_URL)" down
 
 tw:
 	tailwindcss -i ./tailwind.css -o ./static/index.css --watch

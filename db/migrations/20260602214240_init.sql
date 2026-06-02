@@ -1,3 +1,5 @@
+-- +goose Up
+-- +goose StatementBegin
 CREATE OR REPLACE FUNCTION update_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -5,10 +7,10 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+-- +goose StatementEnd
 
 CREATE TABLE committee (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-
     name VARCHAR(255) NOT NULL,
     slug VARCHAR(255) UNIQUE NOT NULL,
     short_name VARCHAR(255) NOT NULL,
@@ -17,7 +19,6 @@ CREATE TABLE committee (
     image_url TEXT,
     website_url TEXT,
     active BOOLEAN NOT NULL DEFAULT false,
-
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL
@@ -25,11 +26,9 @@ CREATE TABLE committee (
 
 CREATE TABLE person (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     image_url TEXT,
-
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL
@@ -37,13 +36,10 @@ CREATE TABLE person (
 
 CREATE TABLE position (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     active BOOLEAN NOT NULL DEFAULT false,
-
     committee_id UUID NOT NULL REFERENCES committee(id) ON DELETE CASCADE,
-
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL
@@ -51,34 +47,38 @@ CREATE TABLE position (
 
 CREATE TABLE trustee (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
-
     position_id UUID NOT NULL REFERENCES position(id) ON DELETE CASCADE,
     person_id UUID NOT NULL REFERENCES person(id) ON DELETE CASCADE,
-
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL
 );
 
-CREATE TRIGGER update_timestamp_trigger
+CREATE TRIGGER update_timestamp_committee
 BEFORE UPDATE ON committee
-FOR EACH ROW
-EXECUTE FUNCTION update_timestamp();
+FOR EACH ROW EXECUTE FUNCTION update_timestamp();
 
-CREATE TRIGGER update_timestamp_trigger
+CREATE TRIGGER update_timestamp_person
 BEFORE UPDATE ON person
-FOR EACH ROW
-EXECUTE FUNCTION update_timestamp();
+FOR EACH ROW EXECUTE FUNCTION update_timestamp();
 
-CREATE TRIGGER update_timestamp_trigger
+CREATE TRIGGER update_timestamp_position
 BEFORE UPDATE ON position
-FOR EACH ROW
-EXECUTE FUNCTION update_timestamp();
+FOR EACH ROW EXECUTE FUNCTION update_timestamp();
 
-CREATE TRIGGER update_timestamp_trigger
+CREATE TRIGGER update_timestamp_trustee
 BEFORE UPDATE ON trustee
-FOR EACH ROW
-EXECUTE FUNCTION update_timestamp();
+FOR EACH ROW EXECUTE FUNCTION update_timestamp();
+
+-- +goose Down
+DROP TRIGGER IF EXISTS update_timestamp_trustee ON trustee;
+DROP TRIGGER IF EXISTS update_timestamp_position ON position;
+DROP TRIGGER IF EXISTS update_timestamp_person ON person;
+DROP TRIGGER IF EXISTS update_timestamp_committee ON committee;
+DROP TABLE IF EXISTS trustee;
+DROP TABLE IF EXISTS position;
+DROP TABLE IF EXISTS person;
+DROP TABLE IF EXISTS committee;
+DROP FUNCTION IF EXISTS update_timestamp();

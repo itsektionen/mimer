@@ -9,15 +9,6 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type ApiKey struct {
-	ID        uuid.UUID
-	Value     string
-	Active    bool
-	CreatedAt pgtype.Timestamp
-	UpdatedAt pgtype.Timestamp
-	DeletedAt pgtype.Timestamp
-}
-
 type Committee struct {
 	ID          uuid.UUID
 	Name        string

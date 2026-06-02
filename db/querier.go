@@ -11,23 +11,16 @@ import (
 )
 
 type Querier interface {
-	CreateApiKey(ctx context.Context, value string) (ApiKey, error)
 	CreateCommittee(ctx context.Context, arg CreateCommitteeParams) (Committee, error)
 	CreatePerson(ctx context.Context, arg CreatePersonParams) (Person, error)
 	CreatePosition(ctx context.Context, arg CreatePositionParams) (Position, error)
 	CreateTrustee(ctx context.Context, arg CreateTrusteeParams) (Trustee, error)
-	DeleteApiKey(ctx context.Context, id uuid.UUID) (ApiKey, error)
 	DeleteCommittee(ctx context.Context, id uuid.UUID) (Committee, error)
 	DeletePerson(ctx context.Context, id uuid.UUID) (Person, error)
 	DeletePosition(ctx context.Context, id uuid.UUID) (Position, error)
-	DisableApiKey(ctx context.Context, id uuid.UUID) error
-	EnableApiKey(ctx context.Context, id uuid.UUID) error
-	GetApiKey(ctx context.Context, id uuid.UUID) (ApiKey, error)
-	GetApiKeyByValue(ctx context.Context, value string) (ApiKey, error)
 	GetCommittee(ctx context.Context, id uuid.UUID) (Committee, error)
 	GetPerson(ctx context.Context, id uuid.UUID) (Person, error)
 	GetPosition(ctx context.Context, id uuid.UUID) (Position, error)
-	ListApiKeys(ctx context.Context) ([]ApiKey, error)
 	ListCommitteeTrustees(ctx context.Context, committeeID uuid.UUID) ([]ListCommitteeTrusteesRow, error)
 	ListCommittees(ctx context.Context) ([]Committee, error)
 	ListPeople(ctx context.Context) ([]Person, error)
