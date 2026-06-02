@@ -14,7 +14,7 @@ tw:
 	tailwindcss -i ./tailwind.css -o ./static/index.css --watch
 
 run:
-	@go tool templ generate --watch --proxy="http://localhost:8080" --cmd="go run main.go"
+	@go tool templ generate --watch --proxy="http://localhost:8888" --cmd="go run cmd/serve/serve.go"
 
 dev:
 	@make -j 2 tw run

@@ -47,6 +47,7 @@ func SetupAppRouter(
 
 		searchResults := []model.Position{}
 		positions, err := positionService.GetAllPositions(r.Context())
+
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
