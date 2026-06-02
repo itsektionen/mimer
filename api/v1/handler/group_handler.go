@@ -49,16 +49,16 @@ func (h *GroupHandler) HandleListGroups(ctx context.Context, input *ListCommitee
 	return resp, nil
 }
 
-type GetGroupByIdRequest struct {
+type GetGroupByIDRequest struct {
 	ID uuid.UUID `path:"id"`
 }
 
-type GetGroupByIdResponse struct {
+type GetGroupByIDResponse struct {
 	Body model.Group `json:"body"`
 }
 
-func (h *GroupHandler) HandleGetGroupById(ctx context.Context, input *GetGroupByIdRequest) (*GetGroupByIdResponse, error) {
-	resp := &GetGroupByIdResponse{}
+func (h *GroupHandler) HandleGetGroupById(ctx context.Context, input *GetGroupByIDRequest) (*GetGroupByIDResponse, error) {
+	resp := &GetGroupByIDResponse{}
 	group, err := h.groupService.GetByID(ctx, input.ID)
 	if err != nil {
 		return nil, err

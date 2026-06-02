@@ -32,16 +32,16 @@ func (h *PositionHandler) HandleListPositions(ctx context.Context, input *struct
 	return resp, nil
 }
 
-type GetPositionByIdRequest struct {
+type GetPositionByIDRequest struct {
 	ID uuid.UUID `path:"id"`
 }
 
-type GetPositionByIdResponse struct {
+type GetPositionByIDResponse struct {
 	Body model.Position
 }
 
-func (h *PositionHandler) HandleGetPositionById(ctx context.Context, input *GetPositionByIdRequest) (*GetPositionByIdResponse, error) {
-	resp := &GetPositionByIdResponse{}
+func (h *PositionHandler) HandleGetPositionByID(ctx context.Context, input *GetPositionByIDRequest) (*GetPositionByIDResponse, error) {
+	resp := &GetPositionByIDResponse{}
 
 	position, err := h.positionService.GetByID(ctx, input.ID)
 	if err != nil {

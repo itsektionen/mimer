@@ -51,7 +51,7 @@ func SetupV1Router(
 			Method:  http.MethodGet,
 			Tags:    []string{"Users"},
 		},
-		userHandler.HandleGetUserById,
+		userHandler.HandleGetUserByID,
 	)
 
 	huma.Register(
@@ -72,7 +72,7 @@ func SetupV1Router(
 			Method:  http.MethodGet,
 			Tags:    []string{"Positions"},
 		},
-		positionHandler.HandleGetPositionById,
+		positionHandler.HandleGetPositionByID,
 	)
 
 	huma.Register(

@@ -32,16 +32,16 @@ func (h *UserHandler) HandleListUsers(ctx context.Context, input *struct{}) (*Li
 	return resp, nil
 }
 
-type GetUserByIdRequest struct {
+type GetUserByIDRequest struct {
 	ID uuid.UUID `path:"id"`
 }
 
-type GetUserByIdResponse struct {
+type GetUserByIDResponse struct {
 	Body model.User
 }
 
-func (h *UserHandler) HandleGetUserById(ctx context.Context, input *GetUserByIdRequest) (*GetUserByIdResponse, error) {
-	resp := &GetUserByIdResponse{}
+func (h *UserHandler) HandleGetUserByID(ctx context.Context, input *GetUserByIDRequest) (*GetUserByIDResponse, error) {
+	resp := &GetUserByIDResponse{}
 	user, err := h.userService.GetByID(ctx, input.ID)
 	if err != nil {
 		log.Printf("%v", err)
