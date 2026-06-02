@@ -23,11 +23,26 @@ func NewTrusteeService(
 	}
 }
 
-func (s *trusteeService) ListActive(ctx context.Context) ([]model.Trustee, error) {
+func (s *trusteeService) ListAll(ctx context.Context) ([]model.Trustee, error) {
 	trustees, err := s.trusteeRepo.ListAll(ctx)
 	if err != nil {
 		return nil, err
 	}
-
 	return trustees, nil
+}
+
+func (s *trusteeService) ListActive(ctx context.Context) ([]model.Trustee, error) {
+	activeTrustees := make([]model.Trustee, 0)
+	allTrustees, err := s.ListAll(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, trustee := range allTrustees {
+		if trustee.IsActive() {
+			activeTrustees = append(activeTrustees, trustee)
+		}
+	}
+
+	return activeTrustees, nil
 }
