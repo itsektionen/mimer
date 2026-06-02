@@ -14,7 +14,6 @@ func SetupAPIRouter(
 	committeeService service.CommitteeService,
 	personService service.PersonService,
 	positionService service.PositionService,
-	apiKeyService service.ApiKeyService,
 ) http.Handler {
 	router := chi.NewRouter()
 
@@ -23,7 +22,6 @@ func SetupAPIRouter(
 		committeeService,
 		personService,
 		positionService,
-		apiKeyService,
 	)
 	router.Mount("/v1", apiV1Router)
 

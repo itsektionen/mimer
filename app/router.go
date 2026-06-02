@@ -15,7 +15,6 @@ func SetupAppRouter(
 	committeeService service.CommitteeService,
 	personService service.PersonService,
 	positionService service.PositionService,
-	apiKeyService service.ApiKeyService,
 	trusteeService service.TrusteeService,
 ) *chi.Mux {
 	router := chi.NewRouter()

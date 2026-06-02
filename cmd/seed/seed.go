@@ -89,13 +89,11 @@ func main() {
 	committeeRepo := repository.NewCommitteeRepository(queries)
 	personRepo := repository.NewPersonRepository(queries)
 	positionRepo := repository.NewPositionRepository(queries)
-	apiKeyRepo := repository.NewApiKeyRepository(queries)
 	trusteeRepo := repository.NewTrusteeRepository(queries)
 
 	committeeService := service.NewCommitteeService(committeeRepo, trusteeRepo)
 	personService := service.NewPersonService(personRepo)
 	positionService := service.NewPositionService(positionRepo, trusteeRepo)
-	apiKeyService := service.NewApiKeyService(apiKeyRepo)
 
 	committees := make([]model.Committee, 0, len(mockCommittees))
 	people := make([]model.Person, 0, len(mockPeople))
@@ -147,11 +145,4 @@ func main() {
 	for i, p := range positions {
 		positionService.AssignPosition(context.TODO(), p.ID, people[i].ID)
 	}
-
-	key, err := apiKeyService.CreateApiKey(context.TODO())
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println(key)
 }

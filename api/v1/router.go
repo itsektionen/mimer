@@ -17,7 +17,6 @@ func SetupV1Router(
 	committeeService service.CommitteeService,
 	personService service.PersonService,
 	positionService service.PositionService,
-	apiKeyService service.ApiKeyService,
 ) http.Handler {
 	router := chi.NewRouter()
 	humaCfg := huma.DefaultConfig("Mimer", "0.0.0")

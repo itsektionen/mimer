@@ -13,3 +13,7 @@ type Trustee struct {
 	Person    Person    `json:"person"`
 	Position  Position  `json:"position"`
 }
+
+func (t *Trustee) IsActive() bool {
+	return t.StartDate.Before(time.Now()) && t.EndDate.After(time.Now())
+}

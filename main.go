@@ -94,20 +94,17 @@ func main() {
 	committeeRepo := repository.NewCommitteeRepository(queries)
 	personRepo := repository.NewPersonRepository(queries)
 	positionRepo := repository.NewPositionRepository(queries)
-	apiKeyRepo := repository.NewApiKeyRepository(queries)
 	trusteeRepo := repository.NewTrusteeRepository(queries)
 
 	committeeService := service.NewCommitteeService(committeeRepo, trusteeRepo)
 	personService := service.NewPersonService(personRepo)
 	positionService := service.NewPositionService(positionRepo, trusteeRepo)
-	apiKeyService := service.NewApiKeyService(apiKeyRepo)
 	trusteeService := service.NewTrusteeService(trusteeRepo)
 
 	router := app.SetupAppRouter(
 		committeeService,
 		personService,
 		positionService,
-		apiKeyService,
 		trusteeService,
 	)
 	apiRouter := api.SetupAPIRouter(
@@ -115,7 +112,6 @@ func main() {
 		committeeService,
 		personService,
 		positionService,
-		apiKeyService,
 	)
 
 	router.Mount("/api", apiRouter)
