@@ -19,8 +19,8 @@ func stringPtr(s string) *string {
 }
 
 func main() {
-	mockCommittees := []db.CreateCommitteeParams{
-		db.CreateCommitteeParams{
+	mockGroups := []db.CreateGroupParams{
+		{
 			Name:        "QlubbMästeriet IN-Sektionen Kista",
 			Slug:        "qmisk",
 			ShortName:   "QMISK",
@@ -29,7 +29,7 @@ func main() {
 			ImageUrl:    nil,
 			WebsiteUrl:  stringPtr("https://qmisk.se"),
 		},
-		db.CreateCommitteeParams{
+		{
 			Name:        "TraditionsMEsterIT",
 			Slug:        "tmeit",
 			ShortName:   "TMEIT",
@@ -38,7 +38,7 @@ func main() {
 			ImageUrl:    nil,
 			WebsiteUrl:  stringPtr("https://tmeit.se"),
 		},
-		db.CreateCommitteeParams{
+		{
 			Name:        "ITerativa Klubben",
 			Slug:        "itk",
 			ShortName:   "ITK",
@@ -49,16 +49,16 @@ func main() {
 		},
 	}
 
-	mockPeople := []db.CreatePersonParams{
-		db.CreatePersonParams{
+	mockUsers := []db.CreateUserParams{
+		{
 			FirstName: "John",
 			LastName:  "Qmisk",
 		},
-		db.CreatePersonParams{
+		{
 			FirstName: "Jonny",
 			LastName:  "Tmeit",
 		},
-		db.CreatePersonParams{
+		{
 			FirstName: "Joan",
 			LastName:  "Itk",
 		},
@@ -86,49 +86,49 @@ func main() {
 
 	queries := db.New(conn)
 
-	committeeRepo := repository.NewGroupRepository(queries)
-	personRepo := repository.NewPersonRepository(queries)
+	groupRepo := repository.NewGroupRepository(queries)
+	userRepo := repository.NewUserRepository(queries)
 	positionRepo := repository.NewPositionRepository(queries)
 	trusteeRepo := repository.NewTrusteeRepository(queries)
 
-	committeeService := service.NewGroupService(committeeRepo, trusteeRepo)
-	personService := service.NewPersonService(personRepo)
+	groupService := service.NewGroupService(groupRepo, trusteeRepo)
+	userService := service.NewUserService(userRepo)
 	positionService := service.NewPositionService(positionRepo, trusteeRepo)
 
-	committees := make([]model.Group, 0, len(mockCommittees))
-	people := make([]model.Person, 0, len(mockPeople))
+	groups := make([]model.Group, 0, len(mockGroups))
+	users := make([]model.User, 0, len(mockUsers))
 
-	for _, params := range mockCommittees {
-		c, err := committeeService.Create(context.TODO(), params)
+	for _, params := range mockGroups {
+		c, err := groupService.Create(context.TODO(), params)
 		if err != nil {
 			log.Fatal(err)
 		}
-		committees = append(committees, c)
+		groups = append(groups, c)
 	}
 
-	for _, params := range mockPeople {
-		p, err := personService.Create(context.TODO(), params)
+	for _, params := range mockUsers {
+		p, err := userService.Create(context.TODO(), params)
 		if err != nil {
 			log.Fatal(err)
 		}
-		people = append(people, p)
+		users = append(users, p)
 	}
 
 	mockPositions := []db.CreatePositionParams{
-		db.CreatePositionParams{
-			Name:        "QlubbMästare",
-			Email:       "qm@qmisk.com",
-			CommitteeID: committees[0].ID,
+		{
+			Name:    "QlubbMästare",
+			Email:   "qm@qmisk.com",
+			GroupID: groups[0].ID,
 		},
-		db.CreatePositionParams{
-			Name:        "TraditionsMästare",
-			Email:       "tm@tmeit.se",
-			CommitteeID: committees[1].ID,
+		{
+			Name:    "TraditionsMästare",
+			Email:   "tm@tmeit.se",
+			GroupID: groups[1].ID,
 		},
-		db.CreatePositionParams{
-			Name:        "root",
-			Email:       "root@itk.gg",
-			CommitteeID: committees[2].ID,
+		{
+			Name:    "root",
+			Email:   "root@itk.gg",
+			GroupID: groups[2].ID,
 		},
 	}
 
@@ -143,6 +143,6 @@ func main() {
 	}
 
 	for i, p := range positions {
-		positionService.Assign(context.TODO(), p.ID, people[i].ID)
+		positionService.Assign(context.TODO(), p.ID, users[i].ID)
 	}
 }

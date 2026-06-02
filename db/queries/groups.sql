@@ -1,14 +1,14 @@
 -- name: GetGroup :one
-SELECT * FROM group
+SELECT * FROM groups
 WHERE ID = $1 AND deleted_at IS NULL AND active = TRUE LIMIT 1;
 
 -- name: ListGroups :many
-SELECT * FROM group
+SELECT * FROM groups
 WHERE deleted_at IS NULL
 ORDER BY name;
 
 -- name: CreateGroup :one
-INSERT INTO group (
+INSERT INTO groups (
     name,
     slug,
     short_name,
@@ -28,7 +28,7 @@ INSERT INTO group (
 RETURNING *;
 
 -- name: UpdateGroup :one
-UPDATE group
+UPDATE groups
     SET name = $2,
     slug = $3,
     short_name = $4,
@@ -40,7 +40,7 @@ WHERE ID = $1 AND deleted_at IS NULL
 RETURNING *;
 
 -- name: DeleteGroup :one
-UPDATE group
+UPDATE groups
     SET deleted_at = NOW()
 WHERE ID = $1 AND deleted_at IS NULL
 RETURNING *;

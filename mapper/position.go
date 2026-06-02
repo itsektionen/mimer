@@ -7,10 +7,10 @@ import (
 
 func ToPosition(p db.Position) model.Position {
 	return model.Position{
-		ID:          p.ID,
-		Name:        p.Name,
-		CommitteeID: p.CommitteeID,
-		Email:       p.Email,
+		ID:      p.ID,
+		Name:    p.Name,
+		GroupID: p.GroupID,
+		Email:   p.Email,
 	}
 }
 

@@ -1,22 +1,22 @@
--- name: ListCommitteeTrustees :many
+-- name: ListGroupTrustees :many
 SELECT
     t.id as trustee_id,
     t.start_date,
     t.end_date,
     t.created_at as trustee_created_at,
     t.updated_at as trustee_updated_at,
-    p.id as person_id,
+    p.id as user_id,
     p.first_name,
     p.last_name,
-    p.image_url as person_image_url,
+    p.image_url as user_image_url,
     pos.id as position_id,
     pos.name as position_name,
     pos.email as position_email,
-    pos.committee_id
-FROM trustee t
-INNER JOIN person p ON t.person_id = p.id
-INNER JOIN position pos ON t.position_id = pos.id
-WHERE pos.committee_id = $1
+    pos.group_id
+FROM trustees t
+INNER JOIN users p ON t.user_id = p.id
+INNER JOIN positions pos ON t.position_id = pos.id
+WHERE pos.group_id = $1
     AND t.deleted_at IS NULL
     AND p.deleted_at IS NULL
     AND pos.deleted_at IS NULL
@@ -27,21 +27,21 @@ SELECT
   t.id trustee_id,
   t.start_date,
   t.end_date,
-  p.id person_id,
-  p.first_name,
-  p.last_name,
+  u.id user_id,
+  u.first_name,
+  u.last_name,
   pos.id position_id,
   pos.name position_name,
-  c.name committee_name,
-  c.id committee_id
-FROM trustee t
-INNER JOIN person p ON t.person_id = p.id
-INNER JOIN position pos ON t.position_id = pos.id
-INNER JOIN committee c ON pos.committee_id = c.id;
+  g.name group_name,
+  g.id group_id
+FROM trustees t
+INNER JOIN users u ON t.user_id = u.id
+INNER JOIN positions pos ON t.position_id = pos.id
+INNER JOIN groups g ON pos.group_id = g.id;
 
 -- name: CreateTrustee :one
-INSERT INTO trustee (
-  person_id,
+INSERT INTO trustees (
+  user_id,
   position_id,
   start_date,
   end_date

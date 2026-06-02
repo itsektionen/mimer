@@ -24,14 +24,14 @@ templ indexView(trustees []model.Trustee) {
 				for _, trustee := range trustees {
 					<tr>
 						<td>
-							<a href={ "/position/" + trustee.Position.ID.String() }>{ trustee.Position.Name }</a>
+							<a href={ "/positions/" + trustee.Position.ID.String() }>{ trustee.Position.Name }</a>
 						</td>
 						<td>
 							TODO
 						</td>
 						<td>
-							<a href={ "/person/" + trustee.Person.ID.String() }>
-								{ trustee.Person.FirstName } { trustee.Person.LastName }
+							<a href={ "/users/" + trustee.User.ID.String() }>
+								{ trustee.User.FirstName } { trustee.User.LastName }
 							</a>
 						</td>
 						<td>

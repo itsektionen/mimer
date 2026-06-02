@@ -32,26 +32,26 @@ func main() {
 
 	queries := db.New(conn)
 
-	committeeRepo := repository.NewGroupRepository(queries)
-	personRepo := repository.NewPersonRepository(queries)
+	groupRepo := repository.NewGroupRepository(queries)
+	userRepo := repository.NewUserRepository(queries)
 	positionRepo := repository.NewPositionRepository(queries)
 	trusteeRepo := repository.NewTrusteeRepository(queries)
 
-	committeeService := service.NewGroupService(committeeRepo, trusteeRepo)
-	personService := service.NewPersonService(personRepo)
+	groupService := service.NewGroupService(groupRepo, trusteeRepo)
+	userService := service.NewUserService(userRepo)
 	positionService := service.NewPositionService(positionRepo, trusteeRepo)
 	trusteeService := service.NewTrusteeService(trusteeRepo)
 
 	router := app.SetupAppRouter(
-		committeeService,
-		personService,
+		groupService,
+		userService,
 		positionService,
 		trusteeService,
 	)
 	apiRouter := api.SetupAPIRouter(
 		logger,
-		committeeService,
-		personService,
+		groupService,
+		userService,
 		positionService,
 	)
 

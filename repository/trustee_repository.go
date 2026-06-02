@@ -12,7 +12,7 @@ import (
 )
 
 type TrusteeRepository interface {
-	ListByCommitteeID(ctx context.Context, committeeID uuid.UUID) ([]model.Trustee, error)
+	ListByGroupID(ctx context.Context, groupID uuid.UUID) ([]model.Trustee, error)
 	ListAll(ctx context.Context) ([]model.Trustee, error)
 	Create(ctx context.Context, positionID uuid.UUID, personID uuid.UUID, startDate time.Time, endDate time.Time) (*model.Trustee, error)
 }
@@ -25,12 +25,12 @@ func NewTrusteeRepository(q db.Querier) TrusteeRepository {
 	return &trusteeRepository{q: q}
 }
 
-func (r *trusteeRepository) ListByCommitteeID(ctx context.Context, committeeID uuid.UUID) ([]model.Trustee, error) {
-	trustees, err := r.q.ListCommitteeTrustees(ctx, committeeID)
+func (r *trusteeRepository) ListByGroupID(ctx context.Context, groupID uuid.UUID) ([]model.Trustee, error) {
+	trustees, err := r.q.ListGroupTrustees(ctx, groupID)
 	if err != nil {
 		return nil, err
 	}
-	return mapper.ToCommitteeTrustees(trustees), nil
+	return mapper.ToGroupTrustees(trustees), nil
 }
 
 func (r *trusteeRepository) ListAll(ctx context.Context) ([]model.Trustee, error) {
@@ -42,10 +42,10 @@ func (r *trusteeRepository) ListAll(ctx context.Context) ([]model.Trustee, error
 	return mapper.ToListTrustees(trustees), nil
 }
 
-func (r *trusteeRepository) Create(ctx context.Context, positionID uuid.UUID, personID uuid.UUID, startDate time.Time, endDate time.Time) (*model.Trustee, error) {
+func (r *trusteeRepository) Create(ctx context.Context, positionID uuid.UUID, userID uuid.UUID, startDate time.Time, endDate time.Time) (*model.Trustee, error) {
 	trustee, err := r.q.CreateTrustee(ctx, db.CreateTrusteeParams{
 		PositionID: positionID,
-		PersonID:   personID,
+		UserID:     userID,
 		StartDate: pgtype.Date{
 			Time:  startDate,
 			Valid: true,
@@ -59,7 +59,7 @@ func (r *trusteeRepository) Create(ctx context.Context, positionID uuid.UUID, pe
 		return nil, err
 	}
 
-	person, err := r.q.GetPerson(ctx, trustee.PersonID)
+	person, err := r.q.GetUser(ctx, trustee.UserID)
 	if err != nil {
 		return nil, err
 	}

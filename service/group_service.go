@@ -12,9 +12,9 @@ import (
 
 type GroupService interface {
 	List(ctx context.Context, inactive bool) ([]model.Group, error)
-	Create(ctx context.Context, params db.CreateCommitteeParams) (model.Group, error)
+	Create(ctx context.Context, params db.CreateGroupParams) (model.Group, error)
 	GetByID(ctx context.Context, id uuid.UUID) (model.Group, error)
-	ListTrustees(ctx context.Context, committeeID uuid.UUID, inactive bool) ([]model.Trustee, error)
+	ListTrustees(ctx context.Context, groupID uuid.UUID, inactive bool) ([]model.Trustee, error)
 }
 
 type groupService struct {
@@ -30,26 +30,26 @@ func NewGroupService(repo repository.GroupRepository, trusteeRepo repository.Tru
 }
 
 func (s *groupService) List(ctx context.Context, inactive bool) ([]model.Group, error) {
-	committees, err := s.repo.List(ctx)
+	groups, err := s.repo.List(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	if inactive {
-		return committees, nil
+		return groups, nil
 	}
 
-	activeCommittees := []model.Group{}
-	for _, committee := range committees {
-		if committee.Active {
-			activeCommittees = append(activeCommittees, committee)
+	activeGroups := []model.Group{}
+	for _, group := range groups {
+		if group.Active {
+			activeGroups = append(activeGroups, group)
 		}
 	}
 
-	return activeCommittees, nil
+	return activeGroups, nil
 }
 
-func (s *groupService) Create(ctx context.Context, params db.CreateCommitteeParams) (model.Group, error) {
+func (s *groupService) Create(ctx context.Context, params db.CreateGroupParams) (model.Group, error) {
 	return s.repo.Create(ctx, params)
 }
 
@@ -57,8 +57,8 @@ func (s *groupService) GetByID(ctx context.Context, id uuid.UUID) (model.Group, 
 	return s.repo.GetByID(ctx, id)
 }
 
-func (s *groupService) ListTrustees(ctx context.Context, committeeID uuid.UUID, inactive bool) ([]model.Trustee, error) {
-	trustees, err := s.trusteeRepo.ListByCommitteeID(ctx, committeeID)
+func (s *groupService) ListTrustees(ctx context.Context, groupID uuid.UUID, inactive bool) ([]model.Trustee, error) {
+	trustees, err := s.trusteeRepo.ListByGroupID(ctx, groupID)
 	if err != nil {
 		return nil, err
 	}

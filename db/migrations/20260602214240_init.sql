@@ -9,7 +9,7 @@ END;
 $$ LANGUAGE plpgsql;
 -- +goose StatementEnd
 
-CREATE TABLE group (
+CREATE TABLE groups (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     slug VARCHAR(255) UNIQUE NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE group (
     deleted_at TIMESTAMP DEFAULT NULL
 );
 
-CREATE TABLE person (
+CREATE TABLE users (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
@@ -36,23 +36,23 @@ CREATE TABLE person (
     deleted_at TIMESTAMP DEFAULT NULL
 );
 
-CREATE TABLE position (
+CREATE TABLE positions (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
-    group_id UUID NOT NULL REFERENCES group(id) ON DELETE CASCADE,
+    group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL
 );
 
-CREATE TABLE trustee (
+CREATE TABLE trustees (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
-    position_id UUID NOT NULL REFERENCES position(id) ON DELETE CASCADE,
-    person_id UUID NOT NULL REFERENCES person(id) ON DELETE CASCADE,
+    position_id UUID NOT NULL REFERENCES positions(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -60,28 +60,28 @@ CREATE TABLE trustee (
 );
 
 CREATE TRIGGER update_timestamp_group
-BEFORE UPDATE ON group
+BEFORE UPDATE ON groups
 FOR EACH ROW EXECUTE FUNCTION update_timestamp();
 
-CREATE TRIGGER update_timestamp_person
-BEFORE UPDATE ON person
+CREATE TRIGGER update_timestamp_user
+BEFORE UPDATE ON users
 FOR EACH ROW EXECUTE FUNCTION update_timestamp();
 
 CREATE TRIGGER update_timestamp_position
-BEFORE UPDATE ON position
+BEFORE UPDATE ON positions
 FOR EACH ROW EXECUTE FUNCTION update_timestamp();
 
 CREATE TRIGGER update_timestamp_trustee
-BEFORE UPDATE ON trustee
+BEFORE UPDATE ON trustees
 FOR EACH ROW EXECUTE FUNCTION update_timestamp();
 
 -- +goose Down
-DROP TRIGGER IF EXISTS update_timestamp_trustee ON trustee;
-DROP TRIGGER IF EXISTS update_timestamp_position ON position;
-DROP TRIGGER IF EXISTS update_timestamp_person ON person;
-DROP TRIGGER IF EXISTS update_timestamp_group ON group;
-DROP TABLE IF EXISTS trustee;
-DROP TABLE IF EXISTS position;
-DROP TABLE IF EXISTS person;
-DROP TABLE IF EXISTS group;
+DROP TRIGGER IF EXISTS update_timestamp_trustee ON trustees;
+DROP TRIGGER IF EXISTS update_timestamp_position ON positions;
+DROP TRIGGER IF EXISTS update_timestamp_user ON users;
+DROP TRIGGER IF EXISTS update_timestamp_group ON groups;
+DROP TABLE IF EXISTS trustees;
+DROP TABLE IF EXISTS positions;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS groups;
 DROP FUNCTION IF EXISTS update_timestamp();

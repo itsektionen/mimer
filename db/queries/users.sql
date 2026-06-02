@@ -1,13 +1,13 @@
--- name: GetPerson :one
-SELECT * FROM person
+-- name: GetUser :one
+SELECT * FROM users
 WHERE ID = $1 LIMIT 1;
 
--- name: ListPeople :many
-SELECT * FROM person
+-- name: ListUsers :many
+SELECT * FROM users
 ORDER BY last_name;
 
--- name: CreatePerson :one
-INSERT INTO person (
+-- name: CreateUser :one
+INSERT INTO users (
     first_name,
     last_name
 ) VALUES (
@@ -16,16 +16,16 @@ INSERT INTO person (
 )
 RETURNING *;
 
--- name: UpdatePerson :one
-UPDATE person
+-- name: UpdateUser :one
+UPDATE users
     SET first_name = $2,
     last_name = $3,
     image_url = $4
 WHERE id = $1
 RETURNING *;
 
--- name: DeletePerson :one
-UPDATE person
+-- name: DeleteUser :one
+UPDATE users
     SET deleted_at = NOW()
 WHERE id = $1 AND deleted_at IS NULL
 RETURNING *;

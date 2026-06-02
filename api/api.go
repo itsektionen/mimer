@@ -11,16 +11,16 @@ import (
 
 func SetupAPIRouter(
 	logger *zap.Logger,
-	committeeService service.GroupService,
-	personService service.PersonService,
+	groupService service.GroupService,
+	userService service.UserService,
 	positionService service.PositionService,
 ) http.Handler {
 	router := chi.NewRouter()
 
 	apiV1Router := v1.SetupV1Router(
 		logger,
-		committeeService,
-		personService,
+		groupService,
+		userService,
 		positionService,
 	)
 	router.Mount("/v1", apiV1Router)

@@ -56,7 +56,7 @@ func (h *PositionHandler) HandleGetPositionById(ctx context.Context, input *GetP
 type AssignPositionRequest struct {
 	PositionID uuid.UUID `path:"id"`
 	Body       struct {
-		PersonID uuid.UUID `json:"personId"`
+		UserID uuid.UUID `json:"userId"`
 	}
 }
 
@@ -67,7 +67,7 @@ type AssignPositionResponse struct {
 func (h *PositionHandler) HandleAssignPosition(ctx context.Context, input *AssignPositionRequest) (*AssignPositionResponse, error) {
 	resp := &AssignPositionResponse{}
 
-	trustee, err := h.positionService.Assign(ctx, input.PositionID, input.Body.PersonID)
+	trustee, err := h.positionService.Assign(ctx, input.PositionID, input.Body.UserID)
 	if err != nil {
 		return nil, err
 	}

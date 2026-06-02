@@ -12,8 +12,8 @@ import (
 )
 
 func SetupAppRouter(
-	committeeService service.GroupService,
-	personService service.PersonService,
+	groupService service.GroupService,
+	userService service.UserService,
 	positionService service.PositionService,
 	trusteeService service.TrusteeService,
 ) *chi.Mux {

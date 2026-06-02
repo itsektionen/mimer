@@ -9,7 +9,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type Committee struct {
+type Group struct {
 	ID          uuid.UUID
 	Name        string
 	Slug        string
@@ -24,24 +24,14 @@ type Committee struct {
 	DeletedAt   pgtype.Timestamp
 }
 
-type Person struct {
+type Position struct {
 	ID        uuid.UUID
-	FirstName string
-	LastName  string
-	ImageUrl  *string
+	Name      string
+	Email     string
+	GroupID   uuid.UUID
 	CreatedAt pgtype.Timestamp
 	UpdatedAt pgtype.Timestamp
 	DeletedAt pgtype.Timestamp
-}
-
-type Position struct {
-	ID          uuid.UUID
-	Name        string
-	Email       string
-	CommitteeID uuid.UUID
-	CreatedAt   pgtype.Timestamp
-	UpdatedAt   pgtype.Timestamp
-	DeletedAt   pgtype.Timestamp
 }
 
 type Trustee struct {
@@ -49,8 +39,18 @@ type Trustee struct {
 	StartDate  pgtype.Date
 	EndDate    pgtype.Date
 	PositionID uuid.UUID
-	PersonID   uuid.UUID
+	UserID     uuid.UUID
 	CreatedAt  pgtype.Timestamp
 	UpdatedAt  pgtype.Timestamp
 	DeletedAt  pgtype.Timestamp
+}
+
+type User struct {
+	ID        uuid.UUID
+	FirstName string
+	LastName  string
+	ImageUrl  *string
+	CreatedAt pgtype.Timestamp
+	UpdatedAt pgtype.Timestamp
+	DeletedAt pgtype.Timestamp
 }

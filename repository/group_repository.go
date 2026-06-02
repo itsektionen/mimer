@@ -12,8 +12,8 @@ import (
 type GroupRepository interface {
 	List(ctx context.Context) ([]model.Group, error)
 	GetByID(ctx context.Context, id uuid.UUID) (model.Group, error)
-	Create(ctx context.Context, params db.CreateCommitteeParams) (model.Group, error)
-	Update(ctx context.Context, params db.UpdateCommitteeParams) (model.Group, error)
+	Create(ctx context.Context, params db.CreateGroupParams) (model.Group, error)
+	Update(ctx context.Context, params db.UpdateGroupParams) (model.Group, error)
 	Delete(ctx context.Context, id uuid.UUID) (model.Group, error)
 }
 
@@ -26,41 +26,41 @@ func NewGroupRepository(q db.Querier) GroupRepository {
 }
 
 func (r *groupRepository) List(ctx context.Context) ([]model.Group, error) {
-	committees, err := r.q.ListCommittees(ctx)
+	groups, err := r.q.ListGroups(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return mapper.ToGroups(committees), nil
+	return mapper.ToGroups(groups), nil
 }
 
 func (r *groupRepository) GetByID(ctx context.Context, id uuid.UUID) (model.Group, error) {
-	committee, err := r.q.GetCommittee(ctx, id)
+	group, err := r.q.GetGroup(ctx, id)
 	if err != nil {
 		return model.Group{}, err
 	}
-	return mapper.ToGroup(committee), nil
+	return mapper.ToGroup(group), nil
 }
 
-func (r *groupRepository) Create(ctx context.Context, params db.CreateCommitteeParams) (model.Group, error) {
-	committee, err := r.q.CreateCommittee(ctx, params)
+func (r *groupRepository) Create(ctx context.Context, params db.CreateGroupParams) (model.Group, error) {
+	group, err := r.q.CreateGroup(ctx, params)
 	if err != nil {
 		return model.Group{}, err
 	}
-	return mapper.ToGroup(committee), nil
+	return mapper.ToGroup(group), nil
 }
 
-func (r *groupRepository) Update(ctx context.Context, params db.UpdateCommitteeParams) (model.Group, error) {
-	committee, err := r.q.UpdateCommittee(ctx, params)
+func (r *groupRepository) Update(ctx context.Context, params db.UpdateGroupParams) (model.Group, error) {
+	group, err := r.q.UpdateGroup(ctx, params)
 	if err != nil {
 		return model.Group{}, err
 	}
-	return mapper.ToGroup(committee), nil
+	return mapper.ToGroup(group), nil
 }
 
 func (r *groupRepository) Delete(ctx context.Context, id uuid.UUID) (model.Group, error) {
-	committee, err := r.q.DeleteCommittee(ctx, id)
+	group, err := r.q.DeleteGroup(ctx, id)
 	if err != nil {
 		return model.Group{}, err
 	}
-	return mapper.ToGroup(committee), nil
+	return mapper.ToGroup(group), nil
 }

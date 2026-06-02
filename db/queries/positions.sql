@@ -1,17 +1,17 @@
 -- name: GetPosition :one
-SELECT * FROM position
+SELECT * FROM positions
 WHERE id = $1 AND deleted_at IS NULL LIMIT 1;
 
 -- name: ListPositions :many
-SELECT * FROM position
+SELECT * FROM positions
 WHERE deleted_at IS NULL
 ORDER BY name;
 
 -- name: CreatePosition :one
-INSERT INTO position (
+INSERT INTO positions (
     name,
     email,
-    committee_id
+    group_id
 ) VALUES (
     $1,
     $2,
@@ -20,15 +20,15 @@ INSERT INTO position (
 RETURNING *;
 
 -- name: UpdatePosition :one
-UPDATE position
+UPDATE positions
     SET name = $2,
     email = $3,
-    committee_id = $4
+    group_id = $4
 WHERE id = $1 AND deleted_at IS NULL
 RETURNING *;
 
 -- name: DeletePosition :one
-UPDATE position
+UPDATE positions
     SET deleted_at = NOW()
 WHERE id = $1 AND deleted_at IS NULL
 RETURNING *;
