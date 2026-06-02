@@ -13,6 +13,7 @@ import (
 
 type TrusteeRepository interface {
 	ListCommitteeTrustees(ctx context.Context, committeeID uuid.UUID) ([]model.Trustee, error)
+	ListAll(ctx context.Context) ([]model.Trustee, error)
 	CreateTrustee(ctx context.Context, positionID uuid.UUID, personID uuid.UUID, startDate time.Time, endDate time.Time) (*model.Trustee, error)
 }
 
@@ -29,7 +30,16 @@ func (r *trusteeRepository) ListCommitteeTrustees(ctx context.Context, committee
 	if err != nil {
 		return nil, err
 	}
-	return mapper.TrusteesFromDBRows(trustees), nil
+	return mapper.ToCommitteeTrustees(trustees), nil
+}
+
+func (r *trusteeRepository) ListAll(ctx context.Context) ([]model.Trustee, error) {
+	trustees, err := r.q.ListTrustees(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return mapper.ToListTrustees(trustees), nil
 }
 
 func (r *trusteeRepository) CreateTrustee(ctx context.Context, positionID uuid.UUID, personID uuid.UUID, startDate time.Time, endDate time.Time) (*model.Trustee, error) {

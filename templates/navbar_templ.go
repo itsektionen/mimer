@@ -29,7 +29,7 @@ func Navbar() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header class=\"border-b\"><nav class=\"flex p-4 max-w-5xl mx-auto\"><a href=\"/\">Mimer</a></nav></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header class=\"border-b\"><nav class=\"flex p-4 max-w-5xl mx-auto\"><a href=\"/\">Mimer</a> <span class=\"htmx-indicator\"><img src=\"/img/bars.svg\" alt=\"\"> Searching...</span><div class=\"relative w-full\"><input class=\"form-control\" type=\"search\" name=\"search\" placeholder=\"Begin Typing To Search Users...\" hx-post=\"/search\" hx-trigger=\"input changed delay:500ms, keyup[key=='Enter'], load\" hx-target=\"#search-results\" hx-indicator=\".htmx-indicator\"><div class=\"absolute top-full left-0 bg-background px-2 py-1 rounded right-0 border\" id=\"search-results\"></div></div></nav></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

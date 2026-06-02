@@ -131,3 +131,65 @@ func (q *Queries) ListCommitteeTrustees(ctx context.Context, committeeID uuid.UU
 	}
 	return items, nil
 }
+
+const listTrustees = `-- name: ListTrustees :many
+SELECT
+  t.id trustee_id,
+  t.start_date,
+  t.end_date,
+  p.id person_id,
+  p.first_name,
+  p.last_name,
+  pos.id position_id,
+  pos.name position_name,
+  c.name committee_name,
+  c.id committee_id
+FROM trustee t
+INNER JOIN person p ON t.person_id = p.id
+INNER JOIN position pos ON t.position_id = pos.id
+INNER JOIN committee c ON pos.committee_id = c.id
+`
+
+type ListTrusteesRow struct {
+	TrusteeID     uuid.UUID
+	StartDate     pgtype.Date
+	EndDate       pgtype.Date
+	PersonID      uuid.UUID
+	FirstName     string
+	LastName      string
+	PositionID    uuid.UUID
+	PositionName  string
+	CommitteeName string
+	CommitteeID   uuid.UUID
+}
+
+func (q *Queries) ListTrustees(ctx context.Context) ([]ListTrusteesRow, error) {
+	rows, err := q.db.Query(ctx, listTrustees)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListTrusteesRow
+	for rows.Next() {
+		var i ListTrusteesRow
+		if err := rows.Scan(
+			&i.TrusteeID,
+			&i.StartDate,
+			&i.EndDate,
+			&i.PersonID,
+			&i.FirstName,
+			&i.LastName,
+			&i.PositionID,
+			&i.PositionName,
+			&i.CommitteeName,
+			&i.CommitteeID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

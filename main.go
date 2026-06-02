@@ -101,12 +101,14 @@ func main() {
 	personService := service.NewPersonService(personRepo)
 	positionService := service.NewPositionService(positionRepo, trusteeRepo)
 	apiKeyService := service.NewApiKeyService(apiKeyRepo)
+	trusteeService := service.NewTrusteeService(trusteeRepo)
 
 	router := app.SetupAppRouter(
 		committeeService,
 		personService,
 		positionService,
 		apiKeyService,
+		trusteeService,
 	)
 	apiRouter := api.SetupAPIRouter(
 		logger,

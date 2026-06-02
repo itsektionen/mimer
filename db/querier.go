@@ -32,6 +32,7 @@ type Querier interface {
 	ListCommittees(ctx context.Context) ([]Committee, error)
 	ListPeople(ctx context.Context) ([]Person, error)
 	ListPositions(ctx context.Context) ([]Position, error)
+	ListTrustees(ctx context.Context) ([]ListTrusteesRow, error)
 	UpdateCommittee(ctx context.Context, arg UpdateCommitteeParams) (Committee, error)
 	UpdatePerson(ctx context.Context, arg UpdatePersonParams) (Person, error)
 	UpdatePosition(ctx context.Context, arg UpdatePositionParams) (Position, error)

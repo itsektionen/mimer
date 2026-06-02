@@ -23,6 +23,23 @@ WHERE pos.committee_id = $1
     AND pos.deleted_at IS NULL
 ORDER BY t.start_date DESC, pos.name ASC;
 
+-- name: ListTrustees :many
+SELECT
+  t.id trustee_id,
+  t.start_date,
+  t.end_date,
+  p.id person_id,
+  p.first_name,
+  p.last_name,
+  pos.id position_id,
+  pos.name position_name,
+  c.name committee_name,
+  c.id committee_id
+FROM trustee t
+INNER JOIN person p ON t.person_id = p.id
+INNER JOIN position pos ON t.position_id = pos.id
+INNER JOIN committee c ON pos.committee_id = c.id;
+
 -- name: CreateTrustee :one
 INSERT INTO trustee (
   person_id,
