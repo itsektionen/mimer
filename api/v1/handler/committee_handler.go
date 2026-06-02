@@ -40,7 +40,7 @@ type ListCommitteesResponse struct {
 
 func (h *CommitteeHandler) HandleListCommittees(ctx context.Context, input *ListCommiteesRequest) (*ListCommitteesResponse, error) {
 	resp := &ListCommitteesResponse{}
-	committees, err := h.committeeService.GetAllCommittees(ctx, input.Inactive)
+	committees, err := h.committeeService.List(ctx, input.Inactive)
 	if err != nil {
 		log.Printf("%v", err)
 		return nil, err
@@ -59,7 +59,7 @@ type GetCommitteeByIdResponse struct {
 
 func (h *CommitteeHandler) HandleGetCommitteeById(ctx context.Context, input *GetCommitteeByIdRequest) (*GetCommitteeByIdResponse, error) {
 	resp := &GetCommitteeByIdResponse{}
-	committee, err := h.committeeService.GetCommitteeById(ctx, input.ID)
+	committee, err := h.committeeService.GetByID(ctx, input.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +82,7 @@ func (h *CommitteeHandler) HandleListCommitteeTrustees(
 ) (*GetCommitteeTrusteesResponse, error) {
 	resp := &GetCommitteeTrusteesResponse{}
 
-	trustees, err := h.committeeService.GetCommitteeTrustees(ctx, input.CommitteeID, input.Inactive)
+	trustees, err := h.committeeService.ListTrustees(ctx, input.CommitteeID, input.Inactive)
 	if err != nil {
 		return nil, err
 	}

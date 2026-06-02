@@ -8,6 +8,7 @@ import (
 )
 
 type TrusteeService interface {
+	ListAll(ctx context.Context) ([]model.Trustee, error)
 	ListActive(ctx context.Context) ([]model.Trustee, error)
 }
 

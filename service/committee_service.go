@@ -11,10 +11,10 @@ import (
 )
 
 type CommitteeService interface {
-	GetAllCommittees(ctx context.Context, inactive bool) ([]model.Committee, error)
-	CreateCommittee(ctx context.Context, params db.CreateCommitteeParams) (model.Committee, error)
-	GetCommitteeById(ctx context.Context, id uuid.UUID) (model.Committee, error)
-	GetCommitteeTrustees(ctx context.Context, committeeID uuid.UUID, inactive bool) ([]model.Trustee, error)
+	List(ctx context.Context, inactive bool) ([]model.Committee, error)
+	Create(ctx context.Context, params db.CreateCommitteeParams) (model.Committee, error)
+	GetByID(ctx context.Context, id uuid.UUID) (model.Committee, error)
+	ListTrustees(ctx context.Context, committeeID uuid.UUID, inactive bool) ([]model.Trustee, error)
 }
 
 type committeeService struct {
@@ -29,7 +29,7 @@ func NewCommitteeService(repo repository.CommitteeRepository, trusteeRepo reposi
 	}
 }
 
-func (s *committeeService) GetAllCommittees(ctx context.Context, inactive bool) ([]model.Committee, error) {
+func (s *committeeService) List(ctx context.Context, inactive bool) ([]model.Committee, error) {
 	committees, err := s.repo.List(ctx)
 	if err != nil {
 		return nil, err
@@ -49,16 +49,16 @@ func (s *committeeService) GetAllCommittees(ctx context.Context, inactive bool) 
 	return activeCommittees, nil
 }
 
-func (s *committeeService) CreateCommittee(ctx context.Context, params db.CreateCommitteeParams) (model.Committee, error) {
+func (s *committeeService) Create(ctx context.Context, params db.CreateCommitteeParams) (model.Committee, error) {
 	return s.repo.Create(ctx, params)
 }
 
-func (s *committeeService) GetCommitteeById(ctx context.Context, id uuid.UUID) (model.Committee, error) {
+func (s *committeeService) GetByID(ctx context.Context, id uuid.UUID) (model.Committee, error) {
 	return s.repo.GetByID(ctx, id)
 }
 
-func (s *committeeService) GetCommitteeTrustees(ctx context.Context, committeeID uuid.UUID, inactive bool) ([]model.Trustee, error) {
-	trustees, err := s.trusteeRepo.ListCommitteeTrustees(ctx, committeeID)
+func (s *committeeService) ListTrustees(ctx context.Context, committeeID uuid.UUID, inactive bool) ([]model.Trustee, error) {
+	trustees, err := s.trusteeRepo.ListByCommitteeID(ctx, committeeID)
 	if err != nil {
 		return nil, err
 	}

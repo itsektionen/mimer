@@ -23,7 +23,7 @@ type ListPositionsResponse struct {
 
 func (h *PositionHandler) HandleListPositions(ctx context.Context, input *struct{}) (*ListPositionsResponse, error) {
 	resp := &ListPositionsResponse{}
-	positions, err := h.positionService.GetAllPositions(ctx)
+	positions, err := h.positionService.List(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ type GetPositionByIdResponse struct {
 func (h *PositionHandler) HandleGetPositionById(ctx context.Context, input *GetPositionByIdRequest) (*GetPositionByIdResponse, error) {
 	resp := &GetPositionByIdResponse{}
 
-	position, err := h.positionService.GetPositionById(ctx, input.ID)
+	position, err := h.positionService.GetByID(ctx, input.ID)
 	if err != nil {
 		log.Printf("%v", err)
 		return nil, err
@@ -67,7 +67,7 @@ type AssignPositionResponse struct {
 func (h *PositionHandler) HandleAssignPosition(ctx context.Context, input *AssignPositionRequest) (*AssignPositionResponse, error) {
 	resp := &AssignPositionResponse{}
 
-	trustee, err := h.positionService.AssignPosition(ctx, input.PositionID, input.Body.PersonID)
+	trustee, err := h.positionService.Assign(ctx, input.PositionID, input.Body.PersonID)
 	if err != nil {
 		return nil, err
 	}

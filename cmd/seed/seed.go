@@ -99,7 +99,7 @@ func main() {
 	people := make([]model.Person, 0, len(mockPeople))
 
 	for _, params := range mockCommittees {
-		c, err := committeeService.CreateCommittee(context.TODO(), params)
+		c, err := committeeService.Create(context.TODO(), params)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -107,7 +107,7 @@ func main() {
 	}
 
 	for _, params := range mockPeople {
-		p, err := personService.CreatePerson(context.TODO(), params)
+		p, err := personService.Create(context.TODO(), params)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -135,7 +135,7 @@ func main() {
 	positions := make([]model.Position, 0, len(mockPositions))
 
 	for _, params := range mockPositions {
-		p, err := positionService.CreatePosition(context.TODO(), params)
+		p, err := positionService.Create(context.TODO(), params)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -143,6 +143,6 @@ func main() {
 	}
 
 	for i, p := range positions {
-		positionService.AssignPosition(context.TODO(), p.ID, people[i].ID)
+		positionService.Assign(context.TODO(), p.ID, people[i].ID)
 	}
 }

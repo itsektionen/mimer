@@ -10,9 +10,9 @@ import (
 )
 
 type PersonService interface {
-	GetAllPeople(ctx context.Context) ([]model.Person, error)
-	CreatePerson(ctx context.Context, params db.CreatePersonParams) (model.Person, error)
-	GetPersonById(ctx context.Context, id uuid.UUID) (model.Person, error)
+	List(ctx context.Context) ([]model.Person, error)
+	Create(ctx context.Context, params db.CreatePersonParams) (model.Person, error)
+	GetByID(ctx context.Context, id uuid.UUID) (model.Person, error)
 }
 
 type personService struct {
@@ -23,14 +23,14 @@ func NewPersonService(repo repository.PersonRepository) PersonService {
 	return &personService{repo: repo}
 }
 
-func (s *personService) GetAllPeople(ctx context.Context) ([]model.Person, error) {
+func (s *personService) List(ctx context.Context) ([]model.Person, error) {
 	return s.repo.List(ctx)
 }
 
-func (s *personService) CreatePerson(ctx context.Context, params db.CreatePersonParams) (model.Person, error) {
+func (s *personService) Create(ctx context.Context, params db.CreatePersonParams) (model.Person, error) {
 	return s.repo.Create(ctx, params)
 }
 
-func (s *personService) GetPersonById(ctx context.Context, id uuid.UUID) (model.Person, error) {
+func (s *personService) GetByID(ctx context.Context, id uuid.UUID) (model.Person, error) {
 	return s.repo.GetByID(ctx, id)
 }

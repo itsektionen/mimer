@@ -12,9 +12,9 @@ import (
 )
 
 type TrusteeRepository interface {
-	ListCommitteeTrustees(ctx context.Context, committeeID uuid.UUID) ([]model.Trustee, error)
+	ListByCommitteeID(ctx context.Context, committeeID uuid.UUID) ([]model.Trustee, error)
 	ListAll(ctx context.Context) ([]model.Trustee, error)
-	CreateTrustee(ctx context.Context, positionID uuid.UUID, personID uuid.UUID, startDate time.Time, endDate time.Time) (*model.Trustee, error)
+	Create(ctx context.Context, positionID uuid.UUID, personID uuid.UUID, startDate time.Time, endDate time.Time) (*model.Trustee, error)
 }
 
 type trusteeRepository struct {
@@ -25,7 +25,7 @@ func NewTrusteeRepository(q db.Querier) TrusteeRepository {
 	return &trusteeRepository{q: q}
 }
 
-func (r *trusteeRepository) ListCommitteeTrustees(ctx context.Context, committeeID uuid.UUID) ([]model.Trustee, error) {
+func (r *trusteeRepository) ListByCommitteeID(ctx context.Context, committeeID uuid.UUID) ([]model.Trustee, error) {
 	trustees, err := r.q.ListCommitteeTrustees(ctx, committeeID)
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func (r *trusteeRepository) ListAll(ctx context.Context) ([]model.Trustee, error
 	return mapper.ToListTrustees(trustees), nil
 }
 
-func (r *trusteeRepository) CreateTrustee(ctx context.Context, positionID uuid.UUID, personID uuid.UUID, startDate time.Time, endDate time.Time) (*model.Trustee, error) {
+func (r *trusteeRepository) Create(ctx context.Context, positionID uuid.UUID, personID uuid.UUID, startDate time.Time, endDate time.Time) (*model.Trustee, error) {
 	trustee, err := r.q.CreateTrustee(ctx, db.CreateTrusteeParams{
 		PositionID: positionID,
 		PersonID:   personID,

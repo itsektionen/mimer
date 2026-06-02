@@ -23,7 +23,7 @@ type ListPeopleResponse struct {
 
 func (h *PersonHandler) HandleListPeople(ctx context.Context, input *struct{}) (*ListPeopleResponse, error) {
 	resp := &ListPeopleResponse{}
-	people, err := h.personService.GetAllPeople(ctx)
+	people, err := h.personService.List(ctx)
 	if err != nil {
 		log.Printf("%v", err)
 		return nil, err
@@ -42,7 +42,7 @@ type GetPersonByIdResponse struct {
 
 func (h *PersonHandler) HandleGetPersonById(ctx context.Context, input *GetPersonByIdRequest) (*GetPersonByIdResponse, error) {
 	resp := &GetPersonByIdResponse{}
-	person, err := h.personService.GetPersonById(ctx, input.ID)
+	person, err := h.personService.GetByID(ctx, input.ID)
 	if err != nil {
 		log.Printf("%v", err)
 		return nil, err
