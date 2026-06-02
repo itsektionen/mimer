@@ -9,7 +9,6 @@ func PositionFromDB(p db.Position) model.Position {
 	return model.Position{
 		ID:          p.ID,
 		Name:        p.Name,
-		Active:      p.Active,
 		CommitteeID: p.CommitteeID,
 		Email:       p.Email,
 	}

@@ -68,7 +68,6 @@ SELECT
     pos.id as position_id,
     pos.name as position_name,
     pos.email as position_email,
-    pos.active as position_active,
     pos.committee_id
 FROM trustee t
 INNER JOIN person p ON t.person_id = p.id
@@ -93,7 +92,6 @@ type ListCommitteeTrusteesRow struct {
 	PositionID       uuid.UUID
 	PositionName     string
 	PositionEmail    string
-	PositionActive   bool
 	CommitteeID      uuid.UUID
 }
 
@@ -119,7 +117,6 @@ func (q *Queries) ListCommitteeTrustees(ctx context.Context, committeeID uuid.UU
 			&i.PositionID,
 			&i.PositionName,
 			&i.PositionEmail,
-			&i.PositionActive,
 			&i.CommitteeID,
 		); err != nil {
 			return nil, err

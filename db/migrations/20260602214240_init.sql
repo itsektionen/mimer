@@ -19,6 +19,7 @@ CREATE TABLE committee (
     image_url TEXT,
     website_url TEXT,
     active BOOLEAN NOT NULL DEFAULT false,
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL
@@ -29,6 +30,7 @@ CREATE TABLE person (
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     image_url TEXT,
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL
@@ -38,8 +40,8 @@ CREATE TABLE position (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
-    active BOOLEAN NOT NULL DEFAULT false,
     committee_id UUID NOT NULL REFERENCES committee(id) ON DELETE CASCADE,
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL
@@ -51,6 +53,7 @@ CREATE TABLE trustee (
     end_date DATE NOT NULL,
     position_id UUID NOT NULL REFERENCES position(id) ON DELETE CASCADE,
     person_id UUID NOT NULL REFERENCES person(id) ON DELETE CASCADE,
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL

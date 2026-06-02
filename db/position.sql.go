@@ -21,7 +21,7 @@ INSERT INTO position (
     $2,
     $3
 )
-RETURNING id, name, email, active, committee_id, created_at, updated_at, deleted_at
+RETURNING id, name, email, committee_id, created_at, updated_at, deleted_at
 `
 
 type CreatePositionParams struct {
@@ -37,7 +37,6 @@ func (q *Queries) CreatePosition(ctx context.Context, arg CreatePositionParams) 
 		&i.ID,
 		&i.Name,
 		&i.Email,
-		&i.Active,
 		&i.CommitteeID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -49,8 +48,8 @@ func (q *Queries) CreatePosition(ctx context.Context, arg CreatePositionParams) 
 const deletePosition = `-- name: DeletePosition :one
 UPDATE position
     SET deleted_at = NOW()
-WHERE ID = $1 AND deleted_at IS NULL
-RETURNING id, name, email, active, committee_id, created_at, updated_at, deleted_at
+WHERE id = $1 AND deleted_at IS NULL
+RETURNING id, name, email, committee_id, created_at, updated_at, deleted_at
 `
 
 func (q *Queries) DeletePosition(ctx context.Context, id uuid.UUID) (Position, error) {
@@ -60,7 +59,6 @@ func (q *Queries) DeletePosition(ctx context.Context, id uuid.UUID) (Position, e
 		&i.ID,
 		&i.Name,
 		&i.Email,
-		&i.Active,
 		&i.CommitteeID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -70,8 +68,8 @@ func (q *Queries) DeletePosition(ctx context.Context, id uuid.UUID) (Position, e
 }
 
 const getPosition = `-- name: GetPosition :one
-SELECT id, name, email, active, committee_id, created_at, updated_at, deleted_at FROM position
-WHERE ID = $1 AND deleted_at IS NULL AND active = TRUE LIMIT 1
+SELECT id, name, email, committee_id, created_at, updated_at, deleted_at FROM position
+WHERE id = $1 AND deleted_at IS NULL LIMIT 1
 `
 
 func (q *Queries) GetPosition(ctx context.Context, id uuid.UUID) (Position, error) {
@@ -81,7 +79,6 @@ func (q *Queries) GetPosition(ctx context.Context, id uuid.UUID) (Position, erro
 		&i.ID,
 		&i.Name,
 		&i.Email,
-		&i.Active,
 		&i.CommitteeID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -91,8 +88,8 @@ func (q *Queries) GetPosition(ctx context.Context, id uuid.UUID) (Position, erro
 }
 
 const listPositions = `-- name: ListPositions :many
-SELECT id, name, email, active, committee_id, created_at, updated_at, deleted_at FROM position
-WHERE deleted_at IS NULL AND active = TRUE
+SELECT id, name, email, committee_id, created_at, updated_at, deleted_at FROM position
+WHERE deleted_at IS NULL
 ORDER BY name
 `
 
@@ -109,7 +106,6 @@ func (q *Queries) ListPositions(ctx context.Context) ([]Position, error) {
 			&i.ID,
 			&i.Name,
 			&i.Email,
-			&i.Active,
 			&i.CommitteeID,
 			&i.CreatedAt,
 			&i.UpdatedAt,
@@ -130,8 +126,8 @@ UPDATE position
     SET name = $2,
     email = $3,
     committee_id = $4
-WHERE ID = $1 AND deleted_at IS NULL
-RETURNING id, name, email, active, committee_id, created_at, updated_at, deleted_at
+WHERE id = $1 AND deleted_at IS NULL
+RETURNING id, name, email, committee_id, created_at, updated_at, deleted_at
 `
 
 type UpdatePositionParams struct {
@@ -153,7 +149,6 @@ func (q *Queries) UpdatePosition(ctx context.Context, arg UpdatePositionParams) 
 		&i.ID,
 		&i.Name,
 		&i.Email,
-		&i.Active,
 		&i.CommitteeID,
 		&i.CreatedAt,
 		&i.UpdatedAt,

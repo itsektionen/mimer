@@ -12,7 +12,6 @@ SELECT
     pos.id as position_id,
     pos.name as position_name,
     pos.email as position_email,
-    pos.active as position_active,
     pos.committee_id
 FROM trustee t
 INNER JOIN person p ON t.person_id = p.id

@@ -38,7 +38,6 @@ type Position struct {
 	ID          uuid.UUID
 	Name        string
 	Email       string
-	Active      bool
 	CommitteeID uuid.UUID
 	CreatedAt   pgtype.Timestamp
 	UpdatedAt   pgtype.Timestamp

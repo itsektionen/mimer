@@ -19,7 +19,6 @@ func ToCommitteeTrustee(row db.ListCommitteeTrusteesRow) model.Trustee {
 		Position: model.Position{
 			ID:          row.PositionID,
 			Name:        row.PositionName,
-			Active:      row.PositionActive,
 			CommitteeID: row.CommitteeID,
 			Email:       row.PositionEmail,
 		},
