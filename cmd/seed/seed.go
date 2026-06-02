@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/itsektionen/mimer/cfg"
 	"github.com/itsektionen/mimer/db"
 	"github.com/itsektionen/mimer/model"
 	"github.com/itsektionen/mimer/repository"
 	"github.com/itsektionen/mimer/service"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/stdlib"
 )
 
@@ -28,6 +30,10 @@ func main() {
 			Color:       "#800000",
 			ImageUrl:    nil,
 			WebsiteUrl:  stringPtr("https://qmisk.se"),
+			EstablishedAt: pgtype.Date{
+				Time:  time.Date(1994, time.January, 1, 0, 0, 0, 0, time.UTC),
+				Valid: true,
+			},
 		},
 		{
 			Name:        "TraditionsMEsterIT",
@@ -37,6 +43,10 @@ func main() {
 			Color:       "#000067",
 			ImageUrl:    nil,
 			WebsiteUrl:  stringPtr("https://tmeit.se"),
+			EstablishedAt: pgtype.Date{
+				Time:  time.Date(2004, time.January, 1, 0, 0, 0, 0, time.UTC),
+				Valid: true,
+			},
 		},
 		{
 			Name:        "ITerativa Klubben",
@@ -46,6 +56,27 @@ func main() {
 			Color:       "#006700",
 			ImageUrl:    nil,
 			WebsiteUrl:  stringPtr("https://itk.gg"),
+			EstablishedAt: pgtype.Date{
+				Time:  time.Date(2006, time.January, 1, 0, 0, 0, 0, time.UTC),
+				Valid: true,
+			},
+		},
+		{
+			Name:        "QLAN",
+			Slug:        "qlan",
+			ShortName:   "QLAN",
+			Description: stringPtr("Vi anordnar inte heller fester"),
+			Color:       "#800000",
+			ImageUrl:    nil,
+			WebsiteUrl:  stringPtr("https://qlan.se"),
+			EstablishedAt: pgtype.Date{
+				Time:  time.Date(1995, time.January, 1, 0, 0, 0, 0, time.UTC),
+				Valid: true,
+			},
+			DissolvedAt: pgtype.Date{
+				Time:  time.Date(2006, time.January, 1, 0, 0, 0, 0, time.UTC),
+				Valid: true,
+			},
 		},
 	}
 
@@ -119,16 +150,28 @@ func main() {
 			Name:    "QlubbMästare",
 			Email:   "qm@qmisk.com",
 			GroupID: groups[0].ID,
+			EstablishedAt: pgtype.Date{
+				Time:  time.Date(1995, time.January, 1, 0, 0, 0, 0, time.UTC),
+				Valid: true,
+			},
 		},
 		{
 			Name:    "TraditionsMästare",
 			Email:   "tm@tmeit.se",
 			GroupID: groups[1].ID,
+			EstablishedAt: pgtype.Date{
+				Time:  time.Date(2004, time.January, 1, 0, 0, 0, 0, time.UTC),
+				Valid: true,
+			},
 		},
 		{
 			Name:    "root",
 			Email:   "root@itk.gg",
 			GroupID: groups[2].ID,
+			EstablishedAt: pgtype.Date{
+				Time:  time.Date(2006, time.January, 1, 0, 0, 0, 0, time.UTC),
+				Valid: true,
+			},
 		},
 	}
 

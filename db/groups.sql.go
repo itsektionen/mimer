@@ -9,6 +9,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createGroup = `-- name: CreateGroup :one
@@ -19,7 +20,9 @@ INSERT INTO groups (
     description,
     color,
     image_url,
-    website_url
+    website_url,
+    established_at,
+    dissolved_at
 ) VALUES (
     $1,
     $2,
@@ -27,19 +30,23 @@ INSERT INTO groups (
     $4,
     $5,
     $6,
-    $7
+    $7,
+    $8,
+    $9
 )
-RETURNING id, name, slug, short_name, description, color, image_url, website_url, active, created_at, updated_at, deleted_at
+RETURNING id, name, slug, short_name, description, color, image_url, website_url, established_at, dissolved_at, created_at, updated_at, deleted_at
 `
 
 type CreateGroupParams struct {
-	Name        string
-	Slug        string
-	ShortName   string
-	Description *string
-	Color       string
-	ImageUrl    *string
-	WebsiteUrl  *string
+	Name          string
+	Slug          string
+	ShortName     string
+	Description   *string
+	Color         string
+	ImageUrl      *string
+	WebsiteUrl    *string
+	EstablishedAt pgtype.Date
+	DissolvedAt   pgtype.Date
 }
 
 func (q *Queries) CreateGroup(ctx context.Context, arg CreateGroupParams) (Group, error) {
@@ -51,6 +58,8 @@ func (q *Queries) CreateGroup(ctx context.Context, arg CreateGroupParams) (Group
 		arg.Color,
 		arg.ImageUrl,
 		arg.WebsiteUrl,
+		arg.EstablishedAt,
+		arg.DissolvedAt,
 	)
 	var i Group
 	err := row.Scan(
@@ -62,7 +71,8 @@ func (q *Queries) CreateGroup(ctx context.Context, arg CreateGroupParams) (Group
 		&i.Color,
 		&i.ImageUrl,
 		&i.WebsiteUrl,
-		&i.Active,
+		&i.EstablishedAt,
+		&i.DissolvedAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,
@@ -74,7 +84,7 @@ const deleteGroup = `-- name: DeleteGroup :one
 UPDATE groups
     SET deleted_at = NOW()
 WHERE ID = $1 AND deleted_at IS NULL
-RETURNING id, name, slug, short_name, description, color, image_url, website_url, active, created_at, updated_at, deleted_at
+RETURNING id, name, slug, short_name, description, color, image_url, website_url, established_at, dissolved_at, created_at, updated_at, deleted_at
 `
 
 func (q *Queries) DeleteGroup(ctx context.Context, id uuid.UUID) (Group, error) {
@@ -89,7 +99,8 @@ func (q *Queries) DeleteGroup(ctx context.Context, id uuid.UUID) (Group, error) 
 		&i.Color,
 		&i.ImageUrl,
 		&i.WebsiteUrl,
-		&i.Active,
+		&i.EstablishedAt,
+		&i.DissolvedAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,
@@ -98,7 +109,7 @@ func (q *Queries) DeleteGroup(ctx context.Context, id uuid.UUID) (Group, error) 
 }
 
 const getGroup = `-- name: GetGroup :one
-SELECT id, name, slug, short_name, description, color, image_url, website_url, active, created_at, updated_at, deleted_at FROM groups
+SELECT id, name, slug, short_name, description, color, image_url, website_url, established_at, dissolved_at, created_at, updated_at, deleted_at FROM groups
 WHERE ID = $1 AND deleted_at IS NULL AND active = TRUE LIMIT 1
 `
 
@@ -114,7 +125,8 @@ func (q *Queries) GetGroup(ctx context.Context, id uuid.UUID) (Group, error) {
 		&i.Color,
 		&i.ImageUrl,
 		&i.WebsiteUrl,
-		&i.Active,
+		&i.EstablishedAt,
+		&i.DissolvedAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,
@@ -123,7 +135,7 @@ func (q *Queries) GetGroup(ctx context.Context, id uuid.UUID) (Group, error) {
 }
 
 const listGroups = `-- name: ListGroups :many
-SELECT id, name, slug, short_name, description, color, image_url, website_url, active, created_at, updated_at, deleted_at FROM groups
+SELECT id, name, slug, short_name, description, color, image_url, website_url, established_at, dissolved_at, created_at, updated_at, deleted_at FROM groups
 WHERE deleted_at IS NULL
 ORDER BY name
 `
@@ -146,7 +158,8 @@ func (q *Queries) ListGroups(ctx context.Context) ([]Group, error) {
 			&i.Color,
 			&i.ImageUrl,
 			&i.WebsiteUrl,
-			&i.Active,
+			&i.EstablishedAt,
+			&i.DissolvedAt,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.DeletedAt,
@@ -169,20 +182,24 @@ UPDATE groups
     description = $5,
     color = $6,
     image_url = $7,
-    website_url = $8
+    website_url = $8,
+    established_at = $9,
+    dissolved_at = $10
 WHERE ID = $1 AND deleted_at IS NULL
-RETURNING id, name, slug, short_name, description, color, image_url, website_url, active, created_at, updated_at, deleted_at
+RETURNING id, name, slug, short_name, description, color, image_url, website_url, established_at, dissolved_at, created_at, updated_at, deleted_at
 `
 
 type UpdateGroupParams struct {
-	ID          uuid.UUID
-	Name        string
-	Slug        string
-	ShortName   string
-	Description *string
-	Color       string
-	ImageUrl    *string
-	WebsiteUrl  *string
+	ID            uuid.UUID
+	Name          string
+	Slug          string
+	ShortName     string
+	Description   *string
+	Color         string
+	ImageUrl      *string
+	WebsiteUrl    *string
+	EstablishedAt pgtype.Date
+	DissolvedAt   pgtype.Date
 }
 
 func (q *Queries) UpdateGroup(ctx context.Context, arg UpdateGroupParams) (Group, error) {
@@ -195,6 +212,8 @@ func (q *Queries) UpdateGroup(ctx context.Context, arg UpdateGroupParams) (Group
 		arg.Color,
 		arg.ImageUrl,
 		arg.WebsiteUrl,
+		arg.EstablishedAt,
+		arg.DissolvedAt,
 	)
 	var i Group
 	err := row.Scan(
@@ -206,7 +225,8 @@ func (q *Queries) UpdateGroup(ctx context.Context, arg UpdateGroupParams) (Group
 		&i.Color,
 		&i.ImageUrl,
 		&i.WebsiteUrl,
-		&i.Active,
+		&i.EstablishedAt,
+		&i.DissolvedAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,

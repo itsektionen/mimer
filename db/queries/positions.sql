@@ -11,11 +11,15 @@ ORDER BY name;
 INSERT INTO positions (
     name,
     email,
-    group_id
+    group_id,
+    established_at,
+    dissolved_at
 ) VALUES (
     $1,
     $2,
-    $3
+    $3,
+    $4,
+    $5
 )
 RETURNING *;
 
@@ -23,7 +27,9 @@ RETURNING *;
 UPDATE positions
     SET name = $2,
     email = $3,
-    group_id = $4
+    group_id = $4,
+    established_at = $5,
+    dissolved_at = $6
 WHERE id = $1 AND deleted_at IS NULL
 RETURNING *;
 

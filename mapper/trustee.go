@@ -57,7 +57,6 @@ func toListTrustee(row db.ListTrusteesRow) model.Trustee {
 		Position: model.Position{
 			ID:      row.PositionID,
 			Name:    row.PositionName,
-			Active:  true,        // TODO: Get actual active status
 			GroupID: row.GroupID, // TODO: Replace with group
 			Email:   "",          // TODO: Get actual email
 		},

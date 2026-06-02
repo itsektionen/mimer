@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/itsektionen/mimer/db"
@@ -41,7 +40,7 @@ func (s *groupService) List(ctx context.Context, inactive bool) ([]model.Group, 
 
 	activeGroups := []model.Group{}
 	for _, group := range groups {
-		if group.Active {
+		if group.IsActive() {
 			activeGroups = append(activeGroups, group)
 		}
 	}
@@ -67,11 +66,9 @@ func (s *groupService) ListTrustees(ctx context.Context, groupID uuid.UUID, inac
 		return trustees, nil
 	}
 
-	// Filter for currently elected trustees
-	now := time.Now()
 	var current []model.Trustee
 	for _, trustee := range trustees {
-		if trustee.StartDate.After(now) && !trustee.EndDate.Before(now) {
+		if trustee.IsActive() {
 			current = append(current, trustee)
 		}
 	}

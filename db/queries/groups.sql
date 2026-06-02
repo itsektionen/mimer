@@ -15,7 +15,9 @@ INSERT INTO groups (
     description,
     color,
     image_url,
-    website_url
+    website_url,
+    established_at,
+    dissolved_at
 ) VALUES (
     $1,
     $2,
@@ -23,7 +25,9 @@ INSERT INTO groups (
     $4,
     $5,
     $6,
-    $7
+    $7,
+    $8,
+    $9
 )
 RETURNING *;
 
@@ -35,7 +39,9 @@ UPDATE groups
     description = $5,
     color = $6,
     image_url = $7,
-    website_url = $8
+    website_url = $8,
+    established_at = $9,
+    dissolved_at = $10
 WHERE ID = $1 AND deleted_at IS NULL
 RETURNING *;
 

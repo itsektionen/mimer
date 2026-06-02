@@ -9,35 +9,50 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createPosition = `-- name: CreatePosition :one
 INSERT INTO positions (
     name,
     email,
-    group_id
+    group_id,
+    established_at,
+    dissolved_at
 ) VALUES (
     $1,
     $2,
-    $3
+    $3,
+    $4,
+    $5
 )
-RETURNING id, name, email, group_id, created_at, updated_at, deleted_at
+RETURNING id, name, email, group_id, established_at, dissolved_at, created_at, updated_at, deleted_at
 `
 
 type CreatePositionParams struct {
-	Name    string
-	Email   string
-	GroupID uuid.UUID
+	Name          string
+	Email         string
+	GroupID       uuid.UUID
+	EstablishedAt pgtype.Date
+	DissolvedAt   pgtype.Date
 }
 
 func (q *Queries) CreatePosition(ctx context.Context, arg CreatePositionParams) (Position, error) {
-	row := q.db.QueryRow(ctx, createPosition, arg.Name, arg.Email, arg.GroupID)
+	row := q.db.QueryRow(ctx, createPosition,
+		arg.Name,
+		arg.Email,
+		arg.GroupID,
+		arg.EstablishedAt,
+		arg.DissolvedAt,
+	)
 	var i Position
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
 		&i.Email,
 		&i.GroupID,
+		&i.EstablishedAt,
+		&i.DissolvedAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,
@@ -49,7 +64,7 @@ const deletePosition = `-- name: DeletePosition :one
 UPDATE positions
     SET deleted_at = NOW()
 WHERE id = $1 AND deleted_at IS NULL
-RETURNING id, name, email, group_id, created_at, updated_at, deleted_at
+RETURNING id, name, email, group_id, established_at, dissolved_at, created_at, updated_at, deleted_at
 `
 
 func (q *Queries) DeletePosition(ctx context.Context, id uuid.UUID) (Position, error) {
@@ -60,6 +75,8 @@ func (q *Queries) DeletePosition(ctx context.Context, id uuid.UUID) (Position, e
 		&i.Name,
 		&i.Email,
 		&i.GroupID,
+		&i.EstablishedAt,
+		&i.DissolvedAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,
@@ -68,7 +85,7 @@ func (q *Queries) DeletePosition(ctx context.Context, id uuid.UUID) (Position, e
 }
 
 const getPosition = `-- name: GetPosition :one
-SELECT id, name, email, group_id, created_at, updated_at, deleted_at FROM positions
+SELECT id, name, email, group_id, established_at, dissolved_at, created_at, updated_at, deleted_at FROM positions
 WHERE id = $1 AND deleted_at IS NULL LIMIT 1
 `
 
@@ -80,6 +97,8 @@ func (q *Queries) GetPosition(ctx context.Context, id uuid.UUID) (Position, erro
 		&i.Name,
 		&i.Email,
 		&i.GroupID,
+		&i.EstablishedAt,
+		&i.DissolvedAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,
@@ -88,7 +107,7 @@ func (q *Queries) GetPosition(ctx context.Context, id uuid.UUID) (Position, erro
 }
 
 const listPositions = `-- name: ListPositions :many
-SELECT id, name, email, group_id, created_at, updated_at, deleted_at FROM positions
+SELECT id, name, email, group_id, established_at, dissolved_at, created_at, updated_at, deleted_at FROM positions
 WHERE deleted_at IS NULL
 ORDER BY name
 `
@@ -107,6 +126,8 @@ func (q *Queries) ListPositions(ctx context.Context) ([]Position, error) {
 			&i.Name,
 			&i.Email,
 			&i.GroupID,
+			&i.EstablishedAt,
+			&i.DissolvedAt,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.DeletedAt,
@@ -125,16 +146,20 @@ const updatePosition = `-- name: UpdatePosition :one
 UPDATE positions
     SET name = $2,
     email = $3,
-    group_id = $4
+    group_id = $4,
+    established_at = $5,
+    dissolved_at = $6
 WHERE id = $1 AND deleted_at IS NULL
-RETURNING id, name, email, group_id, created_at, updated_at, deleted_at
+RETURNING id, name, email, group_id, established_at, dissolved_at, created_at, updated_at, deleted_at
 `
 
 type UpdatePositionParams struct {
-	ID      uuid.UUID
-	Name    string
-	Email   string
-	GroupID uuid.UUID
+	ID            uuid.UUID
+	Name          string
+	Email         string
+	GroupID       uuid.UUID
+	EstablishedAt pgtype.Date
+	DissolvedAt   pgtype.Date
 }
 
 func (q *Queries) UpdatePosition(ctx context.Context, arg UpdatePositionParams) (Position, error) {
@@ -143,6 +168,8 @@ func (q *Queries) UpdatePosition(ctx context.Context, arg UpdatePositionParams) 
 		arg.Name,
 		arg.Email,
 		arg.GroupID,
+		arg.EstablishedAt,
+		arg.DissolvedAt,
 	)
 	var i Position
 	err := row.Scan(
@@ -150,6 +177,8 @@ func (q *Queries) UpdatePosition(ctx context.Context, arg UpdatePositionParams) 
 		&i.Name,
 		&i.Email,
 		&i.GroupID,
+		&i.EstablishedAt,
+		&i.DissolvedAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,

@@ -18,7 +18,8 @@ CREATE TABLE groups (
     color VARCHAR(128) NOT NULL,
     image_url TEXT,
     website_url TEXT,
-    active BOOLEAN NOT NULL DEFAULT false,
+    established_at DATE NOT NULL,
+    dissolved_at DATE,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -42,6 +43,9 @@ CREATE TABLE positions (
     email VARCHAR(255) NOT NULL,
     group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
 
+    established_at DATE NOT NULL,
+    dissolved_at DATE,
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL
@@ -50,7 +54,7 @@ CREATE TABLE positions (
 CREATE TABLE trustees (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     start_date DATE NOT NULL,
-    end_date DATE NOT NULL,
+    end_date DATE,
     position_id UUID NOT NULL REFERENCES positions(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 

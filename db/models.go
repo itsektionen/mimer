@@ -10,28 +10,31 @@ import (
 )
 
 type Group struct {
-	ID          uuid.UUID
-	Name        string
-	Slug        string
-	ShortName   string
-	Description *string
-	Color       string
-	ImageUrl    *string
-	WebsiteUrl  *string
-	Active      bool
-	CreatedAt   pgtype.Timestamp
-	UpdatedAt   pgtype.Timestamp
-	DeletedAt   pgtype.Timestamp
+	ID            uuid.UUID
+	Name          string
+	Slug          string
+	ShortName     string
+	Description   *string
+	Color         string
+	ImageUrl      *string
+	WebsiteUrl    *string
+	EstablishedAt pgtype.Date
+	DissolvedAt   pgtype.Date
+	CreatedAt     pgtype.Timestamp
+	UpdatedAt     pgtype.Timestamp
+	DeletedAt     pgtype.Timestamp
 }
 
 type Position struct {
-	ID        uuid.UUID
-	Name      string
-	Email     string
-	GroupID   uuid.UUID
-	CreatedAt pgtype.Timestamp
-	UpdatedAt pgtype.Timestamp
-	DeletedAt pgtype.Timestamp
+	ID            uuid.UUID
+	Name          string
+	Email         string
+	GroupID       uuid.UUID
+	EstablishedAt pgtype.Date
+	DissolvedAt   pgtype.Date
+	CreatedAt     pgtype.Timestamp
+	UpdatedAt     pgtype.Timestamp
+	DeletedAt     pgtype.Timestamp
 }
 
 type Trustee struct {

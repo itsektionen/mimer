@@ -7,15 +7,16 @@ import (
 
 func ToGroup(c db.Group) model.Group {
 	return model.Group{
-		ID:          c.ID,
-		Slug:        c.Slug,
-		Name:        c.Name,
-		ShortName:   c.ShortName,
-		Description: c.Description,
-		ImageUrl:    c.ImageUrl,
-		WebsiteUrl:  c.WebsiteUrl,
-		Color:       c.Color,
-		Active:      c.Active,
+		ID:            c.ID,
+		Slug:          c.Slug,
+		Name:          c.Name,
+		ShortName:     c.ShortName,
+		Description:   c.Description,
+		ImageUrl:      c.ImageUrl,
+		WebsiteUrl:    c.WebsiteUrl,
+		Color:         c.Color,
+		EstablishedAt: c.EstablishedAt.Time,
+		DissolvedAt:   &c.DissolvedAt.Time,
 	}
 }
 
