@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/google/uuid"
-	"github.com/itsektionen/mimer/db"
 	"github.com/itsektionen/mimer/model"
 	"github.com/itsektionen/mimer/service"
 )
@@ -16,35 +15,6 @@ type PositionHandler struct {
 
 func NewPositionHandler(s service.PositionService) *PositionHandler {
 	return &PositionHandler{positionService: s}
-}
-
-type CreatePositionRequest struct {
-	Body struct {
-		Name        string    `json:"name"`
-		Email       string    `json:"email"`
-		CommitteeID uuid.UUID `json:"committee_id"`
-	}
-}
-
-type CreatePositionResponse struct {
-	Body model.Position
-}
-
-func (h *PositionHandler) HandleCreatePosition(ctx context.Context, input *CreatePositionRequest) (*CreatePositionResponse, error) {
-	resp := &CreatePositionResponse{}
-	newPosition := db.CreatePositionParams{
-		Name:        input.Body.Name,
-		Email:       input.Body.Email,
-		CommitteeID: input.Body.CommitteeID,
-	}
-
-	position, err := h.positionService.CreatePosition(ctx, newPosition)
-	if err != nil {
-		return nil, err
-	}
-
-	resp.Body = position
-	return resp, nil
 }
 
 type ListPositionsResponse struct {

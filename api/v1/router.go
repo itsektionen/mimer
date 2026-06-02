@@ -30,12 +30,6 @@ func SetupV1Router(
 	loggingMiddleware := middleware.LoggingMiddleware(logger)
 	api.UseMiddleware(loggingMiddleware)
 
-	protected := huma.NewGroup(api)
-
-	// NOTE: I do not know if passing the group instead of the root api is the idiomatic way to go about this, but it felt right
-	authMiddleware := middleware.AuthMiddleware(protected, apiKeyService)
-	protected.UseMiddleware(authMiddleware)
-
 	committeeHandler := handler.NewCommitteeHandler(committeeService)
 	personHandler := handler.NewPersonHandler(personService)
 	positionHandler := handler.NewPositionHandler(positionService)
@@ -49,17 +43,6 @@ func SetupV1Router(
 			Tags:    []string{"People"},
 		},
 		personHandler.HandleListPeople,
-	)
-	huma.Register(
-		protected,
-		huma.Operation{
-			Path:          "/people",
-			Summary:       "Create person",
-			Method:        http.MethodPost,
-			Tags:          []string{"People"},
-			DefaultStatus: http.StatusCreated,
-		},
-		personHandler.HandleCreatePerson,
 	)
 	huma.Register(
 		api,
@@ -85,33 +68,12 @@ func SetupV1Router(
 	huma.Register(
 		api,
 		huma.Operation{
-			Path:          "/positions",
-			Summary:       "Create position",
-			Method:        http.MethodPost,
-			Tags:          []string{"Positions"},
-			DefaultStatus: http.StatusCreated,
-		},
-		positionHandler.HandleCreatePosition,
-	)
-	huma.Register(
-		api,
-		huma.Operation{
 			Path:    "/positions/{id}",
 			Summary: "Get position",
 			Method:  http.MethodGet,
 			Tags:    []string{"Positions"},
 		},
 		positionHandler.HandleGetPositionById,
-	)
-	huma.Register(
-		protected,
-		huma.Operation{
-			Path:    "/positions/{id}/assign",
-			Summary: "Assign position",
-			Method:  http.MethodPost,
-			Tags:    []string{"Positions", "People"},
-		},
-		positionHandler.HandleAssignPosition,
 	)
 
 	huma.Register(
@@ -123,17 +85,6 @@ func SetupV1Router(
 			Tags:    []string{"Committees"},
 		},
 		committeeHandler.HandleListCommittees,
-	)
-	huma.Register(
-		api,
-		huma.Operation{
-			Path:          "/committees",
-			Summary:       "Create new committee",
-			Method:        http.MethodPost,
-			Tags:          []string{"Committees"},
-			DefaultStatus: http.StatusCreated,
-		},
-		committeeHandler.HandleCreateCommittee,
 	)
 
 	huma.Register(

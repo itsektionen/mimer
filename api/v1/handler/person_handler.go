@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/google/uuid"
-	"github.com/itsektionen/mimer/db"
 	"github.com/itsektionen/mimer/model"
 	"github.com/itsektionen/mimer/service"
 )
@@ -16,28 +15,6 @@ type PersonHandler struct {
 
 func NewPersonHandler(s service.PersonService) *PersonHandler {
 	return &PersonHandler{personService: s}
-}
-
-type CreatePersonRequest struct {
-	Body struct {
-		FirstName string `json:"first_name"`
-		LastName  string `json:"last_name"`
-	}
-}
-
-type CreatePersonResponse struct {
-	Body model.Person
-}
-
-func (h *PersonHandler) HandleCreatePerson(ctx context.Context, input *CreatePersonRequest) (*CreatePersonResponse, error) {
-	person, err := h.personService.CreatePerson(ctx, db.CreatePersonParams{
-		FirstName: input.Body.FirstName,
-		LastName:  input.Body.LastName,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &CreatePersonResponse{Body: person}, nil
 }
 
 type ListPeopleResponse struct {

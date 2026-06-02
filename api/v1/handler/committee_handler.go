@@ -6,7 +6,6 @@ import (
 	"log"
 
 	"github.com/google/uuid"
-	"github.com/itsektionen/mimer/db"
 	"github.com/itsektionen/mimer/model"
 	"github.com/itsektionen/mimer/service"
 )
@@ -29,34 +28,6 @@ type CreateCommitteeRequest struct {
 		ImageUrl    *string `json:"imageUrl,omitempty"`
 		WebsiteUrl  *string `json:"websiteUrl,omitempty"`
 	}
-}
-
-type CreateCommitteeResponse struct {
-	Body model.Committee
-}
-
-func (h *CommitteeHandler) HandleCreateCommittee(
-	ctx context.Context,
-	input *CreateCommitteeRequest,
-) (*CreateCommitteeResponse, error) {
-	resp := &CreateCommitteeResponse{}
-	newCommittee := db.CreateCommitteeParams{
-		Name:        input.Body.Name,
-		Slug:        input.Body.Slug,
-		ShortName:   input.Body.ShortName,
-		Description: input.Body.Description,
-		Color:       input.Body.Color,
-		ImageUrl:    input.Body.ImageUrl,
-		WebsiteUrl:  input.Body.WebsiteUrl,
-	}
-
-	committee, err := h.committeeService.CreateCommittee(ctx, newCommittee)
-	if err != nil {
-		return nil, err
-	}
-
-	resp.Body = committee
-	return resp, nil
 }
 
 type ListCommiteesRequest struct {
