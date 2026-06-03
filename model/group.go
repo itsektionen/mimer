@@ -16,7 +16,7 @@ type Group struct {
 	ImageUrl      *string    `json:"imageUrl,omitempty"`
 	WebsiteUrl    *string    `json:"websiteUrl,omitempty" example:"https://init.kth.it"`
 	EstablishedAt time.Time  `json:"establishedAt" example:"2021-01-01"`
-	DissolvedAt   *time.Time `json:"dissolvedAt" example:"2021-01-01"`
+	DissolvedAt   *time.Time `json:"dissolvedAt,omitempty" example:"2021-01-01"`
 }
 
 func (g *Group) IsActive() bool {
