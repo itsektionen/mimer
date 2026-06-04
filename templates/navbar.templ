@@ -12,13 +12,13 @@ templ Navbar() {
 					class="form-control"
 					type="search"
 					name="search"
-					placeholder="Begin Typing To Search Users..."
+					placeholder="Search for positions..."
 					hx-post="/search"
 					hx-trigger="input changed delay:500ms, keyup[key=='Enter'], load"
 					hx-target="#search-results"
 					hx-indicator=".htmx-indicator"
 				/>
-				<div class="absolute top-full left-0 bg-background px-2 py-1 rounded right-0 border" id="search-results"></div>
+				<div class="absolute top-full left-0 bg-background p-2 rounded right-0 border" id="search-results"></div>
 			</div>
 		</nav>
 	</header>
