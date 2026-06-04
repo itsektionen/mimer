@@ -13,8 +13,8 @@ type Group struct {
 	ShortName     string     `json:"shortName,omitempty" example:"init"`
 	Description   *string    `json:"description,omitempty" example:"init is always spelled in lowercase, regardless of context."`
 	Color         string     `json:"color,omitempty" example:"#000000"`
-	ImageUrl      *string    `json:"imageUrl,omitempty"`
-	WebsiteUrl    *string    `json:"websiteUrl,omitempty" example:"https://init.kth.it"`
+	ImageURL      *string    `json:"imageUrl,omitempty"`
+	WebsiteURL    *string    `json:"websiteUrl,omitempty" example:"https://init.kth.it"`
 	EstablishedAt time.Time  `json:"establishedAt" example:"2021-01-01"`
 	DissolvedAt   *time.Time `json:"dissolvedAt,omitempty" example:"2021-01-01"`
 }
