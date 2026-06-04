@@ -24,13 +24,13 @@ func main() {
 	logger, _ := zap.NewProduction()
 	defer logger.Sync()
 
-	conn, err := db.SetupPostgresDB(ctx, connString)
+	pool, err := db.SetupPostgresPool(ctx, connString)
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		log.Fatalf("failed to connect to db: %v", err)
 	}
-	defer conn.Close(ctx)
+	defer pool.Close()
 
-	queries := db.New(conn)
+	queries := db.New(pool)
 
 	groupRepo := repository.NewGroupRepository(queries)
 	userRepo := repository.NewUserRepository(queries)

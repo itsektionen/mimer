@@ -13,7 +13,6 @@ import (
 	"github.com/itsektionen/mimer/repository"
 	"github.com/itsektionen/mimer/service"
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/jackc/pgx/v5/stdlib"
 )
 
 func stringPtr(s string) *string {
@@ -105,17 +104,13 @@ func main() {
 
 	ctx := context.Background()
 
-	conn, err := db.SetupPostgresDB(ctx, config.Database.URL)
+	pool, err := db.SetupPostgresPool(ctx, config.Database.URL)
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		log.Fatalf("failed to connect to database: %v", err)
 	}
-	defer conn.Close(ctx)
+	defer pool.Close()
 
-	// Create *sql.DB from pgx connection for migrations
-	sqlDB := stdlib.OpenDB(*conn.Config())
-	defer sqlDB.Close()
-
-	queries := db.New(conn)
+	queries := db.New(pool)
 
 	groupRepo := repository.NewGroupRepository(queries)
 	userRepo := repository.NewUserRepository(queries)
