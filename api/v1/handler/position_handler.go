@@ -52,26 +52,3 @@ func (h *PositionHandler) HandleGetPositionByID(ctx context.Context, input *GetP
 	resp.Body = position
 	return resp, nil
 }
-
-type AssignPositionRequest struct {
-	PositionID uuid.UUID `path:"id"`
-	Body       struct {
-		UserID uuid.UUID `json:"userId"`
-	}
-}
-
-type AssignPositionResponse struct {
-	Body model.Trustee
-}
-
-func (h *PositionHandler) HandleAssignPosition(ctx context.Context, input *AssignPositionRequest) (*AssignPositionResponse, error) {
-	resp := &AssignPositionResponse{}
-
-	trustee, err := h.positionService.Assign(ctx, input.PositionID, input.Body.UserID)
-	if err != nil {
-		return nil, err
-	}
-
-	resp.Body = *trustee
-	return resp, nil
-}
