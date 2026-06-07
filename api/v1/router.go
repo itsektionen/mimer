@@ -14,10 +14,9 @@ import (
 
 func SetupV1Router(
 	logger *zap.Logger,
-	committeeService service.CommitteeService,
-	personService service.PersonService,
+	groupService service.GroupService,
+	userService service.UserService,
 	positionService service.PositionService,
-	apiKeyService service.ApiKeyService,
 ) http.Handler {
 	router := chi.NewRouter()
 	humaCfg := huma.DefaultConfig("Mimer", "0.0.0")
@@ -30,46 +29,29 @@ func SetupV1Router(
 	loggingMiddleware := middleware.LoggingMiddleware(logger)
 	api.UseMiddleware(loggingMiddleware)
 
-	protected := huma.NewGroup(api)
-
-	// NOTE: I do not know if passing the group instead of the root api is the idiomatic way to go about this, but it felt right
-	authMiddleware := middleware.AuthMiddleware(protected, apiKeyService)
-	protected.UseMiddleware(authMiddleware)
-
-	committeeHandler := handler.NewCommitteeHandler(committeeService)
-	personHandler := handler.NewPersonHandler(personService)
+	groupHandler := handler.NewGroupHandler(groupService)
+	userHandler := handler.NewUserHandler(userService)
 	positionHandler := handler.NewPositionHandler(positionService)
 
 	huma.Register(
 		api,
 		huma.Operation{
-			Path:    "/people",
-			Summary: "List all people",
+			Path:    "/users",
+			Summary: "List all users",
 			Method:  http.MethodGet,
-			Tags:    []string{"People"},
+			Tags:    []string{"Users"},
 		},
-		personHandler.HandleListPeople,
-	)
-	huma.Register(
-		protected,
-		huma.Operation{
-			Path:          "/people",
-			Summary:       "Create person",
-			Method:        http.MethodPost,
-			Tags:          []string{"People"},
-			DefaultStatus: http.StatusCreated,
-		},
-		personHandler.HandleCreatePerson,
+		userHandler.HandleListUsers,
 	)
 	huma.Register(
 		api,
 		huma.Operation{
-			Path:    "/people/{id}",
-			Summary: "Get person",
+			Path:    "/users/{id}",
+			Summary: "Get user",
 			Method:  http.MethodGet,
-			Tags:    []string{"People"},
+			Tags:    []string{"Users"},
 		},
-		personHandler.HandleGetPersonById,
+		userHandler.HandleGetUserByID,
 	)
 
 	huma.Register(
@@ -85,76 +67,44 @@ func SetupV1Router(
 	huma.Register(
 		api,
 		huma.Operation{
-			Path:          "/positions",
-			Summary:       "Create position",
-			Method:        http.MethodPost,
-			Tags:          []string{"Positions"},
-			DefaultStatus: http.StatusCreated,
-		},
-		positionHandler.HandleCreatePosition,
-	)
-	huma.Register(
-		api,
-		huma.Operation{
 			Path:    "/positions/{id}",
 			Summary: "Get position",
 			Method:  http.MethodGet,
 			Tags:    []string{"Positions"},
 		},
-		positionHandler.HandleGetPositionById,
-	)
-	huma.Register(
-		protected,
-		huma.Operation{
-			Path:    "/positions/{id}/assign",
-			Summary: "Assign position",
-			Method:  http.MethodPost,
-			Tags:    []string{"Positions", "People"},
-		},
-		positionHandler.HandleAssignPosition,
+		positionHandler.HandleGetPositionByID,
 	)
 
 	huma.Register(
 		api,
 		huma.Operation{
-			Path:    "/committees",
-			Summary: "List all committees",
+			Path:    "/groups",
+			Summary: "List all groups",
 			Method:  http.MethodGet,
-			Tags:    []string{"Committees"},
+			Tags:    []string{"Groups"},
 		},
-		committeeHandler.HandleListCommittees,
-	)
-	huma.Register(
-		api,
-		huma.Operation{
-			Path:          "/committees",
-			Summary:       "Create new committee",
-			Method:        http.MethodPost,
-			Tags:          []string{"Committees"},
-			DefaultStatus: http.StatusCreated,
-		},
-		committeeHandler.HandleCreateCommittee,
+		groupHandler.HandleListGroups,
 	)
 
 	huma.Register(
 		api,
 		huma.Operation{
-			Path:    "/committees/{id}",
-			Summary: "Get committee",
+			Path:    "/groups/{id}",
+			Summary: "Get group",
 			Method:  http.MethodGet,
-			Tags:    []string{"Committees"},
+			Tags:    []string{"Groups"},
 		},
-		committeeHandler.HandleGetCommitteeById,
+		groupHandler.HandleGetGroupById,
 	)
 	huma.Register(
 		api,
 		huma.Operation{
-			Path:    "/committees/{id}/trustees",
-			Summary: "List committee trustees",
+			Path:    "/groups/{id}/trustees",
+			Summary: "List group trustees",
 			Method:  http.MethodGet,
-			Tags:    []string{"Committees"},
+			Tags:    []string{"Groups"},
 		},
-		committeeHandler.HandleListCommitteeTrustees,
+		groupHandler.HandleListGroupTrustees,
 	)
 
 	huma.Register(
@@ -166,7 +116,6 @@ func SetupV1Router(
 		},
 		handler.GetHealth,
 	)
-	router.HandleFunc("GET /", handler.GetIndex)
 
 	return router
 }

@@ -5,20 +5,21 @@ import (
 	"github.com/itsektionen/mimer/model"
 )
 
-func PositionFromDB(p db.Position) model.Position {
+func ToPosition(p db.Position) model.Position {
 	return model.Position{
-		ID:          p.ID,
-		Name:        p.Name,
-		Active:      p.Active,
-		CommitteeID: p.CommitteeID,
-		Email:       p.Email,
+		ID:            p.ID,
+		Name:          p.Name,
+		GroupID:       p.GroupID,
+		Email:         p.Email,
+		EstablishedAt: p.EstablishedAt.Time,
+		DissolvedAt:   &p.DissolvedAt.Time,
 	}
 }
 
-func PositionsFromDB(positions []db.Position) []model.Position {
+func ToPositions(positions []db.Position) []model.Position {
 	result := make([]model.Position, len(positions))
 	for i, p := range positions {
-		result[i] = PositionFromDB(p)
+		result[i] = ToPosition(p)
 	}
 	return result
 }

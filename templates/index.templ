@@ -1,0 +1,45 @@
+package templates
+
+import "github.com/itsektionen/mimer/model"
+
+templ Index(trustees []model.Trustee) {
+	@Layout() {
+		@indexView(trustees)
+	}
+}
+
+templ indexView(trustees []model.Trustee) {
+	<div>
+		<h2 class="text-2xl font-bold mb-4">Positions</h2>
+		<table class="table-auto w-full">
+			<thead>
+				<tr class="[&>th]:text-left">
+					<th>Position</th>
+					<th>Group</th>
+					<th>Holder</th>
+					<th>Term</th>
+				</tr>
+			</thead>
+			<tbody>
+				for _, trustee := range trustees {
+					<tr>
+						<td>
+							<a href={ "/positions/" + trustee.Position.ID.String() }>{ trustee.Position.Name }</a>
+						</td>
+						<td>
+							TODO
+						</td>
+						<td>
+							<a href={ "/users/" + trustee.User.ID.String() }>
+								{ trustee.User.FirstName } { trustee.User.LastName }
+							</a>
+						</td>
+						<td>
+							{ trustee.StartDate.Format("2006-01-02") } — { trustee.EndDate.Format("2006-01-02") }
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}

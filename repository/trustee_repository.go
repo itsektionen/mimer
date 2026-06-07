@@ -12,8 +12,9 @@ import (
 )
 
 type TrusteeRepository interface {
-	ListCommitteeTrustees(ctx context.Context, committeeID uuid.UUID) ([]model.Trustee, error)
-	CreateTrustee(ctx context.Context, positionID uuid.UUID, personID uuid.UUID, startDate time.Time, endDate time.Time) (*model.Trustee, error)
+	ListByGroupID(ctx context.Context, groupID uuid.UUID) ([]model.Trustee, error)
+	ListAll(ctx context.Context) ([]model.Trustee, error)
+	Create(ctx context.Context, positionID uuid.UUID, personID uuid.UUID, startDate time.Time, endDate time.Time) (*model.Trustee, error)
 }
 
 type trusteeRepository struct {
@@ -24,18 +25,27 @@ func NewTrusteeRepository(q db.Querier) TrusteeRepository {
 	return &trusteeRepository{q: q}
 }
 
-func (r *trusteeRepository) ListCommitteeTrustees(ctx context.Context, committeeID uuid.UUID) ([]model.Trustee, error) {
-	trustees, err := r.q.ListCommitteeTrustees(ctx, committeeID)
+func (r *trusteeRepository) ListByGroupID(ctx context.Context, groupID uuid.UUID) ([]model.Trustee, error) {
+	trustees, err := r.q.ListGroupTrustees(ctx, groupID)
 	if err != nil {
 		return nil, err
 	}
-	return mapper.TrusteesFromDBRows(trustees), nil
+	return mapper.ToGroupTrustees(trustees), nil
 }
 
-func (r *trusteeRepository) CreateTrustee(ctx context.Context, positionID uuid.UUID, personID uuid.UUID, startDate time.Time, endDate time.Time) (*model.Trustee, error) {
+func (r *trusteeRepository) ListAll(ctx context.Context) ([]model.Trustee, error) {
+	trustees, err := r.q.ListTrustees(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return mapper.ToListTrustees(trustees), nil
+}
+
+func (r *trusteeRepository) Create(ctx context.Context, positionID uuid.UUID, userID uuid.UUID, startDate time.Time, endDate time.Time) (*model.Trustee, error) {
 	trustee, err := r.q.CreateTrustee(ctx, db.CreateTrusteeParams{
 		PositionID: positionID,
-		PersonID:   personID,
+		UserID:     userID,
 		StartDate: pgtype.Date{
 			Time:  startDate,
 			Valid: true,
@@ -49,7 +59,7 @@ func (r *trusteeRepository) CreateTrustee(ctx context.Context, positionID uuid.U
 		return nil, err
 	}
 
-	person, err := r.q.GetPerson(ctx, trustee.PersonID)
+	person, err := r.q.GetUser(ctx, trustee.UserID)
 	if err != nil {
 		return nil, err
 	}

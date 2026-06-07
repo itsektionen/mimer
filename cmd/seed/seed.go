@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/itsektionen/mimer/cfg"
 	"github.com/itsektionen/mimer/db"
 	"github.com/itsektionen/mimer/model"
 	"github.com/itsektionen/mimer/repository"
 	"github.com/itsektionen/mimer/service"
-	"github.com/jackc/pgx/v5/stdlib"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 func stringPtr(s string) *string {
@@ -19,8 +20,8 @@ func stringPtr(s string) *string {
 }
 
 func main() {
-	mockCommittees := []db.CreateCommitteeParams{
-		db.CreateCommitteeParams{
+	mockGroups := []db.CreateGroupParams{
+		{
 			Name:        "QlubbMästeriet IN-Sektionen Kista",
 			Slug:        "qmisk",
 			ShortName:   "QMISK",
@@ -28,8 +29,12 @@ func main() {
 			Color:       "#800000",
 			ImageUrl:    nil,
 			WebsiteUrl:  stringPtr("https://qmisk.se"),
+			EstablishedAt: pgtype.Date{
+				Time:  time.Date(1994, time.January, 1, 0, 0, 0, 0, time.UTC),
+				Valid: true,
+			},
 		},
-		db.CreateCommitteeParams{
+		{
 			Name:        "TraditionsMEsterIT",
 			Slug:        "tmeit",
 			ShortName:   "TMEIT",
@@ -37,8 +42,12 @@ func main() {
 			Color:       "#000067",
 			ImageUrl:    nil,
 			WebsiteUrl:  stringPtr("https://tmeit.se"),
+			EstablishedAt: pgtype.Date{
+				Time:  time.Date(2004, time.January, 1, 0, 0, 0, 0, time.UTC),
+				Valid: true,
+			},
 		},
-		db.CreateCommitteeParams{
+		{
 			Name:        "ITerativa Klubben",
 			Slug:        "itk",
 			ShortName:   "ITK",
@@ -46,19 +55,40 @@ func main() {
 			Color:       "#006700",
 			ImageUrl:    nil,
 			WebsiteUrl:  stringPtr("https://itk.gg"),
+			EstablishedAt: pgtype.Date{
+				Time:  time.Date(2006, time.January, 1, 0, 0, 0, 0, time.UTC),
+				Valid: true,
+			},
+		},
+		{
+			Name:        "QLAN",
+			Slug:        "qlan",
+			ShortName:   "QLAN",
+			Description: stringPtr("Vi anordnar inte heller fester"),
+			Color:       "#800000",
+			ImageUrl:    nil,
+			WebsiteUrl:  stringPtr("https://qlan.se"),
+			EstablishedAt: pgtype.Date{
+				Time:  time.Date(1995, time.January, 1, 0, 0, 0, 0, time.UTC),
+				Valid: true,
+			},
+			DissolvedAt: pgtype.Date{
+				Time:  time.Date(2006, time.January, 1, 0, 0, 0, 0, time.UTC),
+				Valid: true,
+			},
 		},
 	}
 
-	mockPeople := []db.CreatePersonParams{
-		db.CreatePersonParams{
+	mockUsers := []db.CreateUserParams{
+		{
 			FirstName: "John",
 			LastName:  "Qmisk",
 		},
-		db.CreatePersonParams{
+		{
 			FirstName: "Jonny",
 			LastName:  "Tmeit",
 		},
-		db.CreatePersonParams{
+		{
 			FirstName: "Joan",
 			LastName:  "Itk",
 		},
@@ -74,70 +104,76 @@ func main() {
 
 	ctx := context.Background()
 
-	conn, err := db.SetupPostgresDB(ctx, config.Database.URL)
+	pool, err := db.SetupPostgresPool(ctx, config.Database.URL)
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		log.Fatalf("failed to connect to database: %v", err)
 	}
-	defer conn.Close(ctx)
+	defer pool.Close()
 
-	// Create *sql.DB from pgx connection for migrations
-	sqlDB := stdlib.OpenDB(*conn.Config())
-	defer sqlDB.Close()
+	queries := db.New(pool)
 
-	queries := db.New(conn)
-
-	committeeRepo := repository.NewCommitteeRepository(queries)
-	personRepo := repository.NewPersonRepository(queries)
+	groupRepo := repository.NewGroupRepository(queries)
+	userRepo := repository.NewUserRepository(queries)
 	positionRepo := repository.NewPositionRepository(queries)
-	apiKeyRepo := repository.NewApiKeyRepository(queries)
 	trusteeRepo := repository.NewTrusteeRepository(queries)
 
-	committeeService := service.NewCommitteeService(committeeRepo, trusteeRepo)
-	personService := service.NewPersonService(personRepo)
+	groupService := service.NewGroupService(groupRepo, trusteeRepo)
+	userService := service.NewUserService(userRepo)
 	positionService := service.NewPositionService(positionRepo, trusteeRepo)
-	apiKeyService := service.NewApiKeyService(apiKeyRepo)
 
-	committees := make([]model.Committee, 0, len(mockCommittees))
-	people := make([]model.Person, 0, len(mockPeople))
+	groups := make([]model.Group, 0, len(mockGroups))
+	users := make([]model.User, 0, len(mockUsers))
 
-	for _, params := range mockCommittees {
-		c, err := committeeService.CreateCommittee(context.TODO(), params)
+	for _, params := range mockGroups {
+		c, err := groupService.Create(context.TODO(), params)
 		if err != nil {
 			log.Fatal(err)
 		}
-		committees = append(committees, c)
+		groups = append(groups, c)
 	}
 
-	for _, params := range mockPeople {
-		p, err := personService.CreatePerson(context.TODO(), params)
+	for _, params := range mockUsers {
+		p, err := userService.Create(context.TODO(), params)
 		if err != nil {
 			log.Fatal(err)
 		}
-		people = append(people, p)
+		users = append(users, p)
 	}
 
 	mockPositions := []db.CreatePositionParams{
-		db.CreatePositionParams{
-			Name:        "QlubbMästare",
-			Email:       "qm@qmisk.com",
-			CommitteeID: committees[0].ID,
+		{
+			Name:    "QlubbMästare",
+			Email:   "qm@qmisk.com",
+			GroupID: groups[0].ID,
+			EstablishedAt: pgtype.Date{
+				Time:  time.Date(1995, time.January, 1, 0, 0, 0, 0, time.UTC),
+				Valid: true,
+			},
 		},
-		db.CreatePositionParams{
-			Name:        "TraditionsMästare",
-			Email:       "tm@tmeit.se",
-			CommitteeID: committees[1].ID,
+		{
+			Name:    "TraditionsMästare",
+			Email:   "tm@tmeit.se",
+			GroupID: groups[1].ID,
+			EstablishedAt: pgtype.Date{
+				Time:  time.Date(2004, time.January, 1, 0, 0, 0, 0, time.UTC),
+				Valid: true,
+			},
 		},
-		db.CreatePositionParams{
-			Name:        "root",
-			Email:       "root@itk.gg",
-			CommitteeID: committees[2].ID,
+		{
+			Name:    "root",
+			Email:   "root@itk.gg",
+			GroupID: groups[2].ID,
+			EstablishedAt: pgtype.Date{
+				Time:  time.Date(2006, time.January, 1, 0, 0, 0, 0, time.UTC),
+				Valid: true,
+			},
 		},
 	}
 
 	positions := make([]model.Position, 0, len(mockPositions))
 
 	for _, params := range mockPositions {
-		p, err := positionService.CreatePosition(context.TODO(), params)
+		p, err := positionService.Create(context.TODO(), params)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -145,13 +181,6 @@ func main() {
 	}
 
 	for i, p := range positions {
-		positionService.AssignPosition(context.TODO(), p.ID, people[i].ID)
+		positionService.Assign(context.TODO(), p.ID, users[i].ID)
 	}
-
-	key, err := apiKeyService.CreateApiKey(context.TODO())
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println(key)
 }

@@ -9,49 +9,32 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type ApiKey struct {
-	ID        uuid.UUID
-	Value     string
-	Active    bool
-	CreatedAt pgtype.Timestamp
-	UpdatedAt pgtype.Timestamp
-	DeletedAt pgtype.Timestamp
-}
-
-type Committee struct {
-	ID          uuid.UUID
-	Name        string
-	Slug        string
-	ShortName   string
-	Description *string
-	Color       string
-	ImageUrl    *string
-	WebsiteUrl  *string
-	Active      bool
-	CreatedAt   pgtype.Timestamp
-	UpdatedAt   pgtype.Timestamp
-	DeletedAt   pgtype.Timestamp
-}
-
-type Person struct {
-	ID        uuid.UUID
-	FirstName string
-	LastName  string
-	ImageUrl  *string
-	CreatedAt pgtype.Timestamp
-	UpdatedAt pgtype.Timestamp
-	DeletedAt pgtype.Timestamp
+type Group struct {
+	ID            uuid.UUID
+	Name          string
+	Slug          string
+	ShortName     string
+	Description   *string
+	Color         string
+	ImageUrl      *string
+	WebsiteUrl    *string
+	EstablishedAt pgtype.Date
+	DissolvedAt   pgtype.Date
+	CreatedAt     pgtype.Timestamp
+	UpdatedAt     pgtype.Timestamp
+	DeletedAt     pgtype.Timestamp
 }
 
 type Position struct {
-	ID          uuid.UUID
-	Name        string
-	Email       string
-	Active      bool
-	CommitteeID uuid.UUID
-	CreatedAt   pgtype.Timestamp
-	UpdatedAt   pgtype.Timestamp
-	DeletedAt   pgtype.Timestamp
+	ID            uuid.UUID
+	Name          string
+	Email         string
+	GroupID       uuid.UUID
+	EstablishedAt pgtype.Date
+	DissolvedAt   pgtype.Date
+	CreatedAt     pgtype.Timestamp
+	UpdatedAt     pgtype.Timestamp
+	DeletedAt     pgtype.Timestamp
 }
 
 type Trustee struct {
@@ -59,8 +42,18 @@ type Trustee struct {
 	StartDate  pgtype.Date
 	EndDate    pgtype.Date
 	PositionID uuid.UUID
-	PersonID   uuid.UUID
+	UserID     uuid.UUID
 	CreatedAt  pgtype.Timestamp
 	UpdatedAt  pgtype.Timestamp
 	DeletedAt  pgtype.Timestamp
+}
+
+type User struct {
+	ID        uuid.UUID
+	FirstName string
+	LastName  string
+	ImageUrl  *string
+	CreatedAt pgtype.Timestamp
+	UpdatedAt pgtype.Timestamp
+	DeletedAt pgtype.Timestamp
 }

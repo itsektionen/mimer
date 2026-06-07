@@ -9,23 +9,21 @@ import (
 	"go.uber.org/zap"
 )
 
-func SetupRouter(
+func SetupAPIRouter(
 	logger *zap.Logger,
-	committeeService service.CommitteeService,
-	personService service.PersonService,
+	groupService service.GroupService,
+	userService service.UserService,
 	positionService service.PositionService,
-	apiKeyService service.ApiKeyService,
 ) http.Handler {
 	router := chi.NewRouter()
 
 	apiV1Router := v1.SetupV1Router(
 		logger,
-		committeeService,
-		personService,
+		groupService,
+		userService,
 		positionService,
-		apiKeyService,
 	)
-	router.Mount("/api/v1", apiV1Router)
+	router.Mount("/v1", apiV1Router)
 
 	return router
 }

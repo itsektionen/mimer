@@ -11,10 +11,10 @@ import (
 )
 
 type PositionService interface {
-	GetAllPositions(ctx context.Context) ([]model.Position, error)
-	CreatePosition(ctx context.Context, params db.CreatePositionParams) (model.Position, error)
-	GetPositionById(ctx context.Context, id uuid.UUID) (model.Position, error)
-	AssignPosition(ctx context.Context, positionID uuid.UUID, personID uuid.UUID) (*model.Trustee, error)
+	List(ctx context.Context) ([]model.Position, error)
+	Create(ctx context.Context, params db.CreatePositionParams) (model.Position, error)
+	GetByID(ctx context.Context, id uuid.UUID) (model.Position, error)
+	Assign(ctx context.Context, positionID uuid.UUID, personID uuid.UUID) (*model.Trustee, error)
 }
 
 type positionService struct {
@@ -26,19 +26,19 @@ func NewPositionService(repo repository.PositionRepository, trusteeRepo reposito
 	return &positionService{repo: repo, trusteeRepo: trusteeRepo}
 }
 
-func (s *positionService) GetAllPositions(ctx context.Context) ([]model.Position, error) {
+func (s *positionService) List(ctx context.Context) ([]model.Position, error) {
 	return s.repo.List(ctx)
 }
 
-func (s *positionService) CreatePosition(ctx context.Context, params db.CreatePositionParams) (model.Position, error) {
+func (s *positionService) Create(ctx context.Context, params db.CreatePositionParams) (model.Position, error) {
 	return s.repo.Create(ctx, params)
 }
 
-func (s *positionService) GetPositionById(ctx context.Context, id uuid.UUID) (model.Position, error) {
+func (s *positionService) GetByID(ctx context.Context, id uuid.UUID) (model.Position, error) {
 	return s.repo.GetByID(ctx, id)
 }
 
-func (s *positionService) AssignPosition(ctx context.Context, positionID uuid.UUID, personID uuid.UUID) (*model.Trustee, error) {
+func (s *positionService) Assign(ctx context.Context, positionID uuid.UUID, personID uuid.UUID) (*model.Trustee, error) {
 	now := time.Now()
-	return s.trusteeRepo.CreateTrustee(ctx, positionID, personID, now, now.AddDate(1, 0, 0))
+	return s.trusteeRepo.Create(ctx, positionID, personID, now, now.AddDate(1, 0, 0))
 }

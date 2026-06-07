@@ -6,11 +6,15 @@ build:
 	@echo "✅ Finished"
 
 migrate-up:
-	@migrate -path ./migrations -database "$(DATABASE_URL)" up
-
+	cd db/migrations && goose postgres "$(DATABASE_URL)" up
 migrate-down:
-	@migrate -path ./migrations -database "$(DATABASE_URL)" down 1
+	cd db/migrations && goose postgres "$(DATABASE_URL)" down
+
+tw:
+	tailwindcss -i ./tailwind.css -o ./static/index.css --watch
 
 run:
-	@echo "🧌 Running..."
-	@go tool templ generate --watch --proxy="http://localhost:8080" --cmd="go run main.go"
+	@go tool templ generate --watch --proxy="http://localhost:8888" --cmd="go run cmd/serve/serve.go"
+
+dev:
+	@make -j 2 tw run
