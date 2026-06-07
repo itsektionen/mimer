@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/google/uuid"
@@ -86,9 +85,6 @@ func (h *GroupHandler) HandleListGroupTrustees(
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Println("FAH")
-	fmt.Println(trustees)
 
 	resp.Body = trustees
 	return resp, nil

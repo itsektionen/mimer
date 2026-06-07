@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -98,7 +97,6 @@ func main() {
 	if env == "" {
 		env = "development"
 	}
-	fmt.Println("env:", env)
 
 	cfg := config.Load()
 
