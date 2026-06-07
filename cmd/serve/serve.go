@@ -10,14 +10,14 @@ import (
 
 	"github.com/itsektionen/mimer/api"
 	"github.com/itsektionen/mimer/app"
-	"github.com/itsektionen/mimer/cfg"
+	"github.com/itsektionen/mimer/config"
 	"github.com/itsektionen/mimer/db"
 	"github.com/itsektionen/mimer/repository"
 	"github.com/itsektionen/mimer/service"
 )
 
 func main() {
-	cfg := cfg.Load()
+	cfg := config.Load()
 	connString := cfg.Database.URL
 	ctx := context.Background()
 

@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/itsektionen/mimer/cfg"
+	"github.com/itsektionen/mimer/config"
 	"github.com/itsektionen/mimer/db"
 	"github.com/itsektionen/mimer/model"
 	"github.com/itsektionen/mimer/repository"
@@ -100,11 +100,11 @@ func main() {
 	}
 	fmt.Println("env:", env)
 
-	config := cfg.Load()
+	cfg := config.Load()
 
 	ctx := context.Background()
 
-	pool, err := db.SetupPostgresPool(ctx, config.Database.URL)
+	pool, err := db.SetupPostgresPool(ctx, cfg.Database.URL)
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
