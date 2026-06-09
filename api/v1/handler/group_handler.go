@@ -39,12 +39,21 @@ type ListGroupsResponse struct {
 
 func (h *GroupHandler) HandleListGroups(ctx context.Context, input *ListCommiteesRequest) (*ListGroupsResponse, error) {
 	resp := &ListGroupsResponse{}
-	groups, err := h.groupService.List(ctx, input.Inactive)
-	if err != nil {
-		log.Printf("%v", err)
-		return nil, err
+	if input.Inactive {
+		groups, err := h.groupService.ListActive(ctx)
+		if err != nil {
+			log.Printf("%v", err)
+			return nil, err
+		}
+		resp.Body = groups
+	} else {
+		groups, err := h.groupService.ListAll(ctx)
+		if err != nil {
+			log.Printf("%v", err)
+			return nil, err
+		}
+		resp.Body = groups
 	}
-	resp.Body = groups
 	return resp, nil
 }
 

@@ -10,7 +10,8 @@ import (
 )
 
 type GroupService interface {
-	List(ctx context.Context, inactive bool) ([]model.Group, error)
+	ListAll(ctx context.Context) ([]model.Group, error)
+	ListActive(ctx context.Context) ([]model.Group, error)
 	Create(ctx context.Context, params db.CreateGroupParams) (model.Group, error)
 	GetByID(ctx context.Context, id uuid.UUID) (model.Group, error)
 	ListTrustees(ctx context.Context, groupID uuid.UUID, inactive bool) ([]model.Trustee, error)
@@ -28,14 +29,10 @@ func NewGroupService(repo repository.GroupRepository, trusteeRepo repository.Tru
 	}
 }
 
-func (s *groupService) List(ctx context.Context, inactive bool) ([]model.Group, error) {
+func (s *groupService) ListActive(ctx context.Context) ([]model.Group, error) {
 	groups, err := s.repo.List(ctx)
 	if err != nil {
 		return nil, err
-	}
-
-	if inactive {
-		return groups, nil
 	}
 
 	activeGroups := []model.Group{}
@@ -46,6 +43,15 @@ func (s *groupService) List(ctx context.Context, inactive bool) ([]model.Group, 
 	}
 
 	return activeGroups, nil
+}
+
+func (s *groupService) ListAll(ctx context.Context) ([]model.Group, error) {
+	groups, err := s.repo.List(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return groups, nil
 }
 
 func (s *groupService) Create(ctx context.Context, params db.CreateGroupParams) (model.Group, error) {

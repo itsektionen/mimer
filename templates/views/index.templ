@@ -1,0 +1,39 @@
+package views
+
+import "github.com/itsektionen/mimer/model"
+import "github.com/itsektionen/mimer/templates/components"
+
+templ Index(trustees []model.Trustee) {
+	@Layout() {
+		@indexView(trustees)
+	}
+}
+
+templ groupMarker() {
+	<div class="border-b px-4 pt-4 bg-muted">
+		<div class="bg-background border-x border-t w-fit px-3 py-1 text-sm -mb-px">
+			<p>The Board</p>
+		</div>
+	</div>
+}
+
+templ trusteeItem(trustee model.Trustee) {
+	<div class="p-6 w-full flex items-center gap-6">
+		@components.Avatar(trustee.User)
+		<div>
+			<p class="font-semibold">{ trustee.Position.Name }</p>
+			<p class="text-sm">{ trustee.User.FullName() }</p>
+		</div>
+	</div>
+}
+
+templ indexView(trustees []model.Trustee) {
+	<section class="divide-y">
+		@groupMarker()
+		<div class="table-auto w-full divide-y">
+			for _, trustee := range trustees {
+				@trusteeItem(trustee)
+			}
+		</div>
+	</section>
+}

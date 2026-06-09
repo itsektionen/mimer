@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -16,4 +17,11 @@ type Trustee struct {
 
 func (t *Trustee) IsActive() bool {
 	return t.StartDate.Before(time.Now()) && t.EndDate.After(time.Now())
+}
+
+func (t *Trustee) Timespan() string {
+	start := t.StartDate.Format("2006")
+
+	end := t.EndDate.Format("2006")
+	return fmt.Sprintf("%s - %s", start, end)
 }

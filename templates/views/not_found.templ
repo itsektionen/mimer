@@ -1,0 +1,13 @@
+package views
+
+templ NotFound() {
+	@Layout() {
+		@notFoundView()
+	}
+}
+
+templ notFoundView() {
+	<section class="h-full w-full flex items-center justify-center">
+		<p class="text-4xl">404</p>
+	</section>
+}

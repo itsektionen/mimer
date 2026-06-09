@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --font-poppins: "Poppins", sans-serif;
+  --font-poppins: "Geist Mono", sans-serif;
   --radius: 0.5rem;
   --background: oklch(0.97 0.01 286.15);
   --foreground: oklch(0.3 0.06 282.42);
@@ -173,9 +173,12 @@
     @apply border-border outline-ring/50 font-sans;
   }
 
+  html {
+    @apply overscroll-none;
+  }
+
   body {
     @apply bg-background text-foreground;
-    overscroll-behavior: none;
     scrollbar-gutter: stable both-edges;
   }
 }
@@ -195,4 +198,12 @@ body::selection {
 
 input {
   @apply rounded-md px-2 py-1 border h-9 w-full;
+}
+
+.striped {
+  background-image: repeating-linear-gradient(45deg,
+      color-mix(in srgb, var(--accent), var(--background) 20%) 10px,
+      color-mix(in srgb, var(--accent), var(--background) 20%) 11px,
+      transparent 12px,
+      transparent 20px);
 }

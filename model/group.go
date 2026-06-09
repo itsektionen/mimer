@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -21,4 +22,15 @@ type Group struct {
 
 func (g *Group) IsActive() bool {
 	return g.DissolvedAt == nil || g.DissolvedAt.IsZero()
+}
+
+func (g *Group) Timespan() string {
+	start := g.EstablishedAt.Format("2006")
+
+	if g.IsActive() {
+		return fmt.Sprintf("%s - Now", start)
+	}
+
+	end := g.DissolvedAt.Format("2006")
+	return fmt.Sprintf("%s - %s", start, end)
 }

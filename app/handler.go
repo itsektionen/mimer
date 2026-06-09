@@ -6,8 +6,8 @@ import (
 
 	"github.com/itsektionen/mimer/model"
 	"github.com/itsektionen/mimer/service"
-	"github.com/itsektionen/mimer/templates"
 	"github.com/itsektionen/mimer/templates/partials"
+	"github.com/itsektionen/mimer/templates/views"
 )
 
 type AppHandler struct {
@@ -42,7 +42,7 @@ func (h *AppHandler) HandleHome(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	_ = templates.Index(trustees).Render(r.Context(), w)
+	_ = views.Index(trustees).Render(r.Context(), w)
 }
 
 func (h *AppHandler) HandleSearch(w http.ResponseWriter, r *http.Request) {
@@ -84,4 +84,32 @@ func (h *AppHandler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+}
+
+func (h *AppHandler) HandlePositions(w http.ResponseWriter, r *http.Request) {
+	positions, err := h.positionService.List(r.Context())
+	if err != nil {
+		return
+	}
+	_ = views.Positions(positions).Render(r.Context(), w)
+}
+
+func (h *AppHandler) HandleGroups(w http.ResponseWriter, r *http.Request) {
+	groups, err := h.groupService.ListActive(r.Context())
+	if err != nil {
+		return
+	}
+	_ = views.Groups(groups).Render(r.Context(), w)
+}
+
+func (h *AppHandler) HandleUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := h.userService.List(r.Context())
+	if err != nil {
+		return
+	}
+	_ = views.Users(users).Render(r.Context(), w)
+}
+
+func (h *AppHandler) HandleNotFound(w http.ResponseWriter, r *http.Request) {
+	_ = views.NotFound().Render(r.Context(), w)
 }

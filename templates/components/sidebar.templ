@@ -1,0 +1,17 @@
+package components
+
+templ sidebarItem(label string, href string) {
+	<a class="flex p-6 hover:bg-muted font-semibold" href={ href }>
+		{ label }
+	</a>
+}
+
+templ Sidebar() {
+	<aside class="min-w-[300px] border-r">
+		<nav class="divide-y border-b">
+			@sidebarItem("Trustees", "/")
+			@sidebarItem("Positions", "/positions")
+			@sidebarItem("Groups", "/groups")
+		</nav>
+	</aside>
+}
