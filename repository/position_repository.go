@@ -15,6 +15,7 @@ type PositionRepository interface {
 	Create(ctx context.Context, params db.CreatePositionParams) (model.Position, error)
 	Update(ctx context.Context, params db.UpdatePositionParams) (model.Position, error)
 	Delete(ctx context.Context, id uuid.UUID) (model.Position, error)
+	ListByGroupIDWithActiveTrustee(ctx context.Context, groupID uuid.UUID) ([]model.PositionWithTrustee, error)
 }
 
 type positionRepository struct {
@@ -63,4 +64,12 @@ func (r *positionRepository) Delete(ctx context.Context, id uuid.UUID) (model.Po
 		return model.Position{}, err
 	}
 	return mapper.ToPosition(position), nil
+}
+
+func (r *positionRepository) ListByGroupIDWithActiveTrustee(ctx context.Context, groupID uuid.UUID) ([]model.PositionWithTrustee, error) {
+	rows, err := r.q.ListGroupPositionsWithActiveTrustees(ctx, groupID)
+	if err != nil {
+		return nil, err
+	}
+	return mapper.ToPositionWithTrustees(rows), nil
 }

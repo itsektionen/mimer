@@ -1,6 +1,6 @@
 -- name: GetGroup :one
 SELECT * FROM groups
-WHERE ID = $1 AND deleted_at IS NULL AND active = TRUE LIMIT 1;
+WHERE ID = $1 AND deleted_at IS NULL LIMIT 1;
 
 -- name: ListGroups :many
 SELECT * FROM groups

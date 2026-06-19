@@ -1,29 +1,32 @@
 package app
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
+	"github.com/go-chi/chi/v5"
+	"github.com/google/uuid"
 	"github.com/itsektionen/mimer/model"
 	"github.com/itsektionen/mimer/service"
 	"github.com/itsektionen/mimer/templates/partials"
 	"github.com/itsektionen/mimer/templates/views"
 )
 
-type AppHandler struct {
+type PublicHandler struct {
 	groupService    service.GroupService
 	userService     service.UserService
 	positionService service.PositionService
 	trusteeService  service.TrusteeService
 }
 
-func NewAppHandler(
+func NewPublicHandler(
 	groupService service.GroupService,
 	userService service.UserService,
 	positionService service.PositionService,
 	trusteeService service.TrusteeService,
-) AppHandler {
-	return AppHandler{
+) PublicHandler {
+	return PublicHandler{
 		groupService,
 		userService,
 		positionService,
@@ -31,21 +34,21 @@ func NewAppHandler(
 	}
 }
 
-func (h *AppHandler) HandleStatic(w http.ResponseWriter, r *http.Request) {
+func (h *PublicHandler) HandleStatic(w http.ResponseWriter, r *http.Request) {
 	fs := http.StripPrefix("/static/", http.FileServer(http.Dir("./static")))
 	fs.ServeHTTP(w, r)
 }
 
-func (h *AppHandler) HandleHome(w http.ResponseWriter, r *http.Request) {
-	trustees, err := h.trusteeService.ListActive(r.Context())
+func (h *PublicHandler) HandleHome(w http.ResponseWriter, r *http.Request) {
+	groups, err := h.groupService.ListActiveWithPositions(r.Context())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	_ = views.Index(trustees).Render(r.Context(), w)
+	_ = views.Index(groups).Render(r.Context(), w)
 }
 
-func (h *AppHandler) HandleSearch(w http.ResponseWriter, r *http.Request) {
+func (h *PublicHandler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		http.Error(w, "invalid form data", http.StatusBadRequest)
 		return
@@ -86,7 +89,7 @@ func (h *AppHandler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *AppHandler) HandlePositions(w http.ResponseWriter, r *http.Request) {
+func (h *PublicHandler) HandlePositions(w http.ResponseWriter, r *http.Request) {
 	positions, err := h.positionService.List(r.Context())
 	if err != nil {
 		return
@@ -94,7 +97,7 @@ func (h *AppHandler) HandlePositions(w http.ResponseWriter, r *http.Request) {
 	_ = views.Positions(positions).Render(r.Context(), w)
 }
 
-func (h *AppHandler) HandleGroups(w http.ResponseWriter, r *http.Request) {
+func (h *PublicHandler) HandleGroups(w http.ResponseWriter, r *http.Request) {
 	groups, err := h.groupService.ListActive(r.Context())
 	if err != nil {
 		return
@@ -102,7 +105,7 @@ func (h *AppHandler) HandleGroups(w http.ResponseWriter, r *http.Request) {
 	_ = views.Groups(groups).Render(r.Context(), w)
 }
 
-func (h *AppHandler) HandleUsers(w http.ResponseWriter, r *http.Request) {
+func (h *PublicHandler) HandleUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := h.userService.List(r.Context())
 	if err != nil {
 		return
@@ -110,6 +113,50 @@ func (h *AppHandler) HandleUsers(w http.ResponseWriter, r *http.Request) {
 	_ = views.Users(users).Render(r.Context(), w)
 }
 
-func (h *AppHandler) HandleNotFound(w http.ResponseWriter, r *http.Request) {
+func (h *PublicHandler) HandleGroupByID(w http.ResponseWriter, r *http.Request) {
+	groupIDString := chi.URLParam(r, "groupID")
+	groupID, err := uuid.Parse(groupIDString)
+	if err != nil {
+		fmt.Print(err)
+		return
+	}
+
+	group, err := h.groupService.GetByID(r.Context(), groupID)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	trustees, err := h.groupService.ListTrustees(r.Context(), groupID, false)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	_ = views.Group(group, trustees).Render(r.Context(), w)
+}
+
+func (h *PublicHandler) HandlePositionByID(w http.ResponseWriter, r *http.Request) {
+	positionIDString := chi.URLParam(r, "positionID")
+	positionID, err := uuid.Parse(positionIDString)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	position, err := h.positionService.GetByID(r.Context(), positionID)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	trustees, err := h.positionService.ListTrustees(r.Context(), positionID)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	_ = views.Position(position, trustees).Render(r.Context(), w)
+}
+
+func (h *PublicHandler) HandleNotFound(w http.ResponseWriter, r *http.Request) {
 	_ = views.NotFound().Render(r.Context(), w)
 }

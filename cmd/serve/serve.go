@@ -37,7 +37,7 @@ func main() {
 	positionRepo := repository.NewPositionRepository(queries)
 	trusteeRepo := repository.NewTrusteeRepository(queries)
 
-	groupService := service.NewGroupService(groupRepo, trusteeRepo)
+	groupService := service.NewGroupService(groupRepo, trusteeRepo, positionRepo)
 	userService := service.NewUserService(userRepo)
 	positionService := service.NewPositionService(positionRepo, trusteeRepo)
 	trusteeService := service.NewTrusteeService(trusteeRepo)

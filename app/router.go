@@ -13,15 +13,17 @@ func SetupAppRouter(
 ) *chi.Mux {
 	router := chi.NewRouter()
 
-	appHandler := NewAppHandler(groupService, userService, positionService, trusteeService)
+	publicHandler := NewPublicHandler(groupService, userService, positionService, trusteeService)
 
-	router.Get("/static/*", appHandler.HandleStatic)
-	router.Get("/", appHandler.HandleHome)
-	router.Get("/positions", appHandler.HandlePositions)
-	router.Get("/groups", appHandler.HandleGroups)
-	router.Get("/users", appHandler.HandleUsers)
-	router.Post("/search", appHandler.HandleSearch)
-	router.NotFound(appHandler.HandleNotFound)
+	router.Get("/static/*", publicHandler.HandleStatic)
+	router.Get("/", publicHandler.HandleHome)
+	router.Get("/positions", publicHandler.HandlePositions)
+	router.Get("/positions/{positionID}", publicHandler.HandlePositionByID)
+	router.Get("/groups", publicHandler.HandleGroups)
+	router.Get("/groups/{groupID}", publicHandler.HandleGroupByID)
+	router.Get("/users", publicHandler.HandleUsers)
+	router.Post("/search", publicHandler.HandleSearch)
+	router.NotFound(publicHandler.HandleNotFound)
 
 	return router
 }

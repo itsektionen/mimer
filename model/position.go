@@ -30,3 +30,8 @@ func (p *Position) Timespan() string {
 	end := p.DissolvedAt.Format("2006")
 	return fmt.Sprintf("%s - %s", start, end)
 }
+
+type PositionWithTrustee struct {
+	Position Position
+	Trustee  *Trustee
+}

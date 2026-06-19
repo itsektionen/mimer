@@ -34,3 +34,8 @@ func (g *Group) Timespan() string {
 	end := g.DissolvedAt.Format("2006")
 	return fmt.Sprintf("%s - %s", start, end)
 }
+
+type GroupWithPositions struct {
+	Group     Group
+	Positions []PositionWithTrustee
+}

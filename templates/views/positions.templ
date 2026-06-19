@@ -9,10 +9,10 @@ templ Positions(positions []model.Position) {
 }
 
 templ positionItem(position model.Position) {
-	<div class="p-4">
+	<a href={ "/positions/" + position.ID.String() } class="p-4 block hover:bg-muted">
 		<p class="font-semibold">{ position.Name }</p>
 		<p class="text-sm text-muted-foreground">{ position.Timespan() }</p>
-	</div>
+	</a>
 }
 
 templ positionsView(positions []model.Position) {

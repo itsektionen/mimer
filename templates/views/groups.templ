@@ -9,10 +9,13 @@ templ Groups(groups []model.Group) {
 }
 
 templ groupItem(group model.Group) {
-	<div class="p-4">
-		<p class="font-semibold">{ group.Name }</p>
-		<p class="text-sm text-muted-foreground">{ group.Timespan() }</p>
-	</div>
+	<a href={ "/groups/" + group.ID.String() } class="relative p-4 pl-6 block hover:bg-muted">
+		<div style={ "background:" + group.Color } class="absolute top-0 left-0 bottom-0 w-2 self-stretch"></div>
+		<div>
+			<p class="font-semibold">{ group.Name }</p>
+			<p class="text-sm text-muted-foreground">{ group.Timespan() }</p>
+		</div>
+	</a>
 }
 
 templ groupsView(groups []model.Group) {

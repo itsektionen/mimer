@@ -1,0 +1,39 @@
+package views
+
+import "github.com/itsektionen/mimer/model"
+
+templ Position(position model.Position, trustees []model.Trustee) {
+	@Layout() {
+		@positionView(position, trustees)
+	}
+}
+
+templ positionView(position model.Position, trustees []model.Trustee) {
+	<section>
+		<div class="p-8 border-b striped bg-muted">
+			<h2 class="font-semibold text-xl">{ position.Name }</h2>
+		</div>
+	</section>
+	<section class="p-8">
+		<table class="table-auto w-full border-collapse border text-sm">
+			<thead>
+				<tr class="bg-secondary">
+					<th class="border p-4 text-left font-semibold">Name</th>
+					<th class="border p-4 text-left font-semibold">Year</th>
+				</tr>
+			</thead>
+			<tbody>
+				for _, trustee := range trustees {
+					<tr class="hover:bg-muted">
+						<td class="border p-4 text-left">
+							{ trustee.User.FullName() }
+						</td>
+						<td class="border p-4 text-left">
+							{ trustee.StartDate.Year() }
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</section>
+}

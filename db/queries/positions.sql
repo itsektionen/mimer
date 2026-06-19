@@ -38,3 +38,29 @@ UPDATE positions
     SET deleted_at = NOW()
 WHERE id = $1 AND deleted_at IS NULL
 RETURNING *;
+
+-- name: ListGroupPositionsWithActiveTrustees :many
+SELECT
+    pos.id as position_id,
+    pos.name as position_name,
+    pos.email as position_email,
+    pos.group_id,
+    pos.established_at as position_established_at,
+    pos.dissolved_at as position_dissolved_at,
+    t.id as trustee_id,
+    t.start_date,
+    t.end_date,
+    u.id as user_id,
+    u.first_name,
+    u.last_name,
+    u.image_url as user_image_url
+FROM positions pos
+LEFT JOIN trustees t ON t.position_id = pos.id 
+    AND t.deleted_at IS NULL 
+    AND (t.end_date IS NULL OR t.end_date > CURRENT_DATE)
+    AND t.start_date <= CURRENT_DATE
+LEFT JOIN users u ON t.user_id = u.id AND u.deleted_at IS NULL
+WHERE pos.group_id = $1
+    AND pos.deleted_at IS NULL
+    AND (pos.dissolved_at IS NULL OR pos.dissolved_at > CURRENT_DATE)
+ORDER BY pos.name ASC;

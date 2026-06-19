@@ -146,13 +146,13 @@ func main() {
 	positionRepo := repository.NewPositionRepository(queries)
 	trusteeRepo := repository.NewTrusteeRepository(queries)
 
-	groupService := service.NewGroupService(groupRepo, trusteeRepo)
+	groupService := service.NewGroupService(groupRepo, trusteeRepo, positionRepo)
 	userService := service.NewUserService(userRepo)
 	positionService := service.NewPositionService(positionRepo, trusteeRepo)
 
 	users := make(map[string]uuid.UUID)
 
-	dataDir := "data"
+	dataDir := ".data"
 	entries, err := os.ReadDir(dataDir)
 	if err != nil {
 		log.Fatal(err)
@@ -241,17 +241,39 @@ func main() {
 			}
 
 			for _, row := range parsed.History {
-				for _, name := range row.Spring {
-					uID := getOrCreateUser(ctx, userService, users, name)
-					if uID != uuid.Nil {
-						_, _ = trusteeRepo.Create(ctx, p.ID, uID, time.Date(row.Year, time.January, 1, 0, 0, 0, 0, time.UTC), time.Date(row.Year, time.June, 30, 0, 0, 0, 0, time.UTC))
-					}
+				springSet := make(map[string]bool)
+				for _, n := range row.Spring {
+					springSet[titleCase(n)] = true
 				}
-				for _, name := range row.Fall {
+				fallSet := make(map[string]bool)
+				for _, n := range row.Fall {
+					fallSet[titleCase(n)] = true
+				}
+
+				allNames := make(map[string]bool)
+				for n := range springSet {
+					allNames[n] = true
+				}
+				for n := range fallSet {
+					allNames[n] = true
+				}
+
+				for name := range allNames {
 					uID := getOrCreateUser(ctx, userService, users, name)
-					if uID != uuid.Nil {
-						_, _ = trusteeRepo.Create(ctx, p.ID, uID, time.Date(row.Year, time.July, 1, 0, 0, 0, 0, time.UTC), time.Date(row.Year, time.December, 31, 0, 0, 0, 0, time.UTC))
+					if uID == uuid.Nil {
+						continue
 					}
+
+					startDate := time.Date(row.Year, time.January, 1, 0, 0, 0, 0, time.UTC)
+					endDate := time.Date(row.Year, time.December, 31, 0, 0, 0, 0, time.UTC)
+
+					if springSet[name] && !fallSet[name] {
+						endDate = time.Date(row.Year, time.June, 30, 0, 0, 0, 0, time.UTC)
+					} else if !springSet[name] && fallSet[name] {
+						startDate = time.Date(row.Year, time.July, 1, 0, 0, 0, 0, time.UTC)
+					}
+
+					_, _ = trusteeRepo.Create(ctx, p.ID, uID, startDate, endDate)
 				}
 			}
 		}
@@ -260,7 +282,7 @@ func main() {
 }
 
 func titleCase(s string) string {
-	parts := strings.Split(s, " ")
+	parts := strings.Fields(s)
 	for i, p := range parts {
 		if len(p) > 0 {
 			parts[i] = strings.ToUpper(p[:1]) + strings.ToLower(p[1:])
@@ -270,6 +292,7 @@ func titleCase(s string) string {
 }
 
 func getOrCreateUser(ctx context.Context, s service.UserService, cache map[string]uuid.UUID, fullName string) uuid.UUID {
+	fullName = titleCase(fullName)
 	if id, ok := cache[fullName]; ok {
 		return id
 	}

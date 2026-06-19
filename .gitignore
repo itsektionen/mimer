@@ -5,3 +5,4 @@ dist
 mimer
 config.yaml
 .data/
+.data

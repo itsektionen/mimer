@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --font-poppins: "Geist Mono", sans-serif;
+  --font-poppins: "Poppins", sans-serif;
   --radius: 0.5rem;
   --background: oklch(0.97 0.01 286.15);
   --foreground: oklch(0.3 0.06 282.42);

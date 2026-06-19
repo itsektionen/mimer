@@ -71,3 +71,28 @@ func ToListTrustees(rows []db.ListTrusteesRow) []model.Trustee {
 
 	return result
 }
+
+func ToLIstTrusteesByPosition(rows []db.ListTrusteesByPositionRow) []model.Trustee {
+	result := make([]model.Trustee, len(rows))
+	for i, row := range rows {
+		result[i] = model.Trustee{
+			ID:        row.TrusteeID,
+			StartDate: row.StartDate.Time,
+			EndDate:   row.EndDate.Time,
+			User: model.User{
+				ID:        row.UserID,
+				FirstName: row.FirstName,
+				LastName:  row.LastName,
+				ImageURL:  nil,
+			},
+			Position: model.Position{
+				ID:      row.PositionID,
+				Name:    row.PositionName,
+				GroupID: row.GroupID, // TODO: Replace with group
+				Email:   "",          // TODO: Get actual email
+			},
+		}
+	}
+
+	return result
+}

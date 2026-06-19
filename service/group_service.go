@@ -15,17 +15,24 @@ type GroupService interface {
 	Create(ctx context.Context, params db.CreateGroupParams) (model.Group, error)
 	GetByID(ctx context.Context, id uuid.UUID) (model.Group, error)
 	ListTrustees(ctx context.Context, groupID uuid.UUID, inactive bool) ([]model.Trustee, error)
+	ListActiveWithPositions(ctx context.Context) ([]model.GroupWithPositions, error)
 }
 
 type groupService struct {
-	repo        repository.GroupRepository
-	trusteeRepo repository.TrusteeRepository
+	repo         repository.GroupRepository
+	trusteeRepo  repository.TrusteeRepository
+	positionRepo repository.PositionRepository
 }
 
-func NewGroupService(repo repository.GroupRepository, trusteeRepo repository.TrusteeRepository) GroupService {
+func NewGroupService(
+	repo repository.GroupRepository,
+	trusteeRepo repository.TrusteeRepository,
+	positionRepo repository.PositionRepository,
+) GroupService {
 	return &groupService{
-		repo:        repo,
-		trusteeRepo: trusteeRepo,
+		repo:         repo,
+		trusteeRepo:  trusteeRepo,
+		positionRepo: positionRepo,
 	}
 }
 
@@ -80,4 +87,28 @@ func (s *groupService) ListTrustees(ctx context.Context, groupID uuid.UUID, inac
 	}
 
 	return current, nil
+}
+
+func (s *groupService) ListActiveWithPositions(ctx context.Context) ([]model.GroupWithPositions, error) {
+	groups, err := s.ListActive(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]model.GroupWithPositions, 0, len(groups))
+	for _, g := range groups {
+		positions, err := s.positionRepo.ListByGroupIDWithActiveTrustee(ctx, g.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		if len(positions) > 0 {
+			result = append(result, model.GroupWithPositions{
+				Group:     g,
+				Positions: positions,
+			})
+		}
+	}
+
+	return result, nil
 }

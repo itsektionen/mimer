@@ -15,6 +15,7 @@ type TrusteeRepository interface {
 	ListByGroupID(ctx context.Context, groupID uuid.UUID) ([]model.Trustee, error)
 	ListAll(ctx context.Context) ([]model.Trustee, error)
 	Create(ctx context.Context, positionID uuid.UUID, personID uuid.UUID, startDate time.Time, endDate time.Time) (*model.Trustee, error)
+	ListByPositionID(ctx context.Context, positionID uuid.UUID) ([]model.Trustee, error)
 }
 
 type trusteeRepository struct {
@@ -72,4 +73,12 @@ func (r *trusteeRepository) Create(ctx context.Context, positionID uuid.UUID, us
 	resp := mapper.TrusteeFromDB(trustee, person, position)
 
 	return &resp, nil
+}
+
+func (r *trusteeRepository) ListByPositionID(ctx context.Context, positionID uuid.UUID) ([]model.Trustee, error) {
+	trustees, err := r.q.ListTrusteesByPosition(ctx, positionID)
+	if err != nil {
+		return nil, err
+	}
+	return mapper.ToLIstTrusteesByPosition(trustees), nil
 }

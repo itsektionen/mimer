@@ -51,3 +51,22 @@ INSERT INTO trustees (
   $3,
   $4
 ) RETURNING *;
+
+-- name: ListTrusteesByPosition :many
+SELECT
+  t.id trustee_id,
+  t.start_date,
+  t.end_date,
+  u.id user_id,
+  u.first_name,
+  u.last_name,
+  p.id position_id,
+  p.name position_name,
+  g.name group_name,
+  g.id group_id
+FROM positions p 
+INNER JOIN trustees t ON t.position_id = p.id
+INNER JOIN users u ON t.user_id = u.id
+INNER JOIN groups g on p.group_id = g.id
+WHERE p.id = $1
+ORDER BY t.start_date DESC;

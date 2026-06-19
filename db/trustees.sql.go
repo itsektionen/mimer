@@ -190,3 +190,67 @@ func (q *Queries) ListTrustees(ctx context.Context) ([]ListTrusteesRow, error) {
 	}
 	return items, nil
 }
+
+const listTrusteesByPosition = `-- name: ListTrusteesByPosition :many
+SELECT
+  t.id trustee_id,
+  t.start_date,
+  t.end_date,
+  u.id user_id,
+  u.first_name,
+  u.last_name,
+  p.id position_id,
+  p.name position_name,
+  g.name group_name,
+  g.id group_id
+FROM positions p 
+INNER JOIN trustees t ON t.position_id = p.id
+INNER JOIN users u ON t.user_id = u.id
+INNER JOIN groups g on p.group_id = g.id
+WHERE p.id = $1
+ORDER BY t.start_date DESC
+`
+
+type ListTrusteesByPositionRow struct {
+	TrusteeID    uuid.UUID
+	StartDate    pgtype.Date
+	EndDate      pgtype.Date
+	UserID       uuid.UUID
+	FirstName    string
+	LastName     string
+	PositionID   uuid.UUID
+	PositionName string
+	GroupName    string
+	GroupID      uuid.UUID
+}
+
+func (q *Queries) ListTrusteesByPosition(ctx context.Context, id uuid.UUID) ([]ListTrusteesByPositionRow, error) {
+	rows, err := q.db.Query(ctx, listTrusteesByPosition, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListTrusteesByPositionRow
+	for rows.Next() {
+		var i ListTrusteesByPositionRow
+		if err := rows.Scan(
+			&i.TrusteeID,
+			&i.StartDate,
+			&i.EndDate,
+			&i.UserID,
+			&i.FirstName,
+			&i.LastName,
+			&i.PositionID,
+			&i.PositionName,
+			&i.GroupName,
+			&i.GroupID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
