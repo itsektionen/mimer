@@ -1,0 +1,51 @@
+package views
+
+import "github.com/itsektionen/mimer/model"
+import "github.com/itsektionen/mimer/templates/components"
+
+templ Index(groups []model.GroupWithPositions) {
+	@Layout("Home") {
+		@indexView(groups)
+	}
+}
+
+templ groupMarker(group model.Group) {
+	<div class="border-b px-4 pt-4 bg-muted striped">
+		<a href={ "/groups/" + group.ID.String() } class="hover:underline underline-offset-4 bg-background border-x border-t w-fit px-3 py-1 text-sm -mb-px flex">
+			{ group.Name }
+		</a>
+	</div>
+}
+
+templ trusteeItem(p model.PositionWithTrustee) {
+	<div class="p-6 w-full flex items-center gap-6">
+		if p.Trustee != nil {
+			@components.Avatar(p.Trustee.User)
+		} else {
+			<div class="size-10 rounded-full border bg-muted flex items-center justify-center">
+				<p class="font-bold text-muted-foreground">?</p>
+			</div>
+		}
+		<div>
+			<a href={ "/positions/" + p.Position.ID.String() } class="font-semibold hover:underline underline-offset-4">{ p.Position.Name }</a>
+			if p.Trustee != nil {
+				<p class="text-sm">{ p.Trustee.User.FullName() }</p>
+			} else {
+				<p class="text-sm text-muted-foreground">Vacant</p>
+			}
+		</div>
+	</div>
+}
+
+templ indexView(groups []model.GroupWithPositions) {
+	<section class="divide-y">
+		for _, gwp := range groups {
+			@groupMarker(gwp.Group)
+			<div class="w-full divide-y">
+				for _, pos := range gwp.Positions {
+					@trusteeItem(pos)
+				}
+			</div>
+		}
+	</section>
+}

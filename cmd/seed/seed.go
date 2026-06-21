@@ -2,12 +2,11 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"time"
 
-	"github.com/itsektionen/mimer/cfg"
+	"github.com/itsektionen/mimer/config"
 	"github.com/itsektionen/mimer/db"
 	"github.com/itsektionen/mimer/model"
 	"github.com/itsektionen/mimer/repository"
@@ -98,13 +97,12 @@ func main() {
 	if env == "" {
 		env = "development"
 	}
-	fmt.Println("env:", env)
 
-	config := cfg.Load()
+	cfg := config.Load()
 
 	ctx := context.Background()
 
-	pool, err := db.SetupPostgresPool(ctx, config.Database.URL)
+	pool, err := db.SetupPostgresPool(ctx, cfg.Database.URL)
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
@@ -117,7 +115,7 @@ func main() {
 	positionRepo := repository.NewPositionRepository(queries)
 	trusteeRepo := repository.NewTrusteeRepository(queries)
 
-	groupService := service.NewGroupService(groupRepo, trusteeRepo)
+	groupService := service.NewGroupService(groupRepo, trusteeRepo, positionRepo)
 	userService := service.NewUserService(userRepo)
 	positionService := service.NewPositionService(positionRepo, trusteeRepo)
 

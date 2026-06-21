@@ -15,6 +15,7 @@ type PositionService interface {
 	Create(ctx context.Context, params db.CreatePositionParams) (model.Position, error)
 	GetByID(ctx context.Context, id uuid.UUID) (model.Position, error)
 	Assign(ctx context.Context, positionID uuid.UUID, personID uuid.UUID) (*model.Trustee, error)
+	ListTrustees(ctx context.Context, positionID uuid.UUID) ([]model.Trustee, error)
 }
 
 type positionService struct {
@@ -41,4 +42,8 @@ func (s *positionService) GetByID(ctx context.Context, id uuid.UUID) (model.Posi
 func (s *positionService) Assign(ctx context.Context, positionID uuid.UUID, personID uuid.UUID) (*model.Trustee, error) {
 	now := time.Now()
 	return s.trusteeRepo.Create(ctx, positionID, personID, now, now.AddDate(1, 0, 0))
+}
+
+func (s *positionService) ListTrustees(ctx context.Context, positionID uuid.UUID) ([]model.Trustee, error) {
+	return s.trusteeRepo.ListByPositionID(ctx, positionID)
 }

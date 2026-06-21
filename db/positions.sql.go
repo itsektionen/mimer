@@ -106,6 +106,83 @@ func (q *Queries) GetPosition(ctx context.Context, id uuid.UUID) (Position, erro
 	return i, err
 }
 
+const listGroupPositionsWithActiveTrustees = `-- name: ListGroupPositionsWithActiveTrustees :many
+SELECT
+    pos.id as position_id,
+    pos.name as position_name,
+    pos.email as position_email,
+    pos.group_id,
+    pos.established_at as position_established_at,
+    pos.dissolved_at as position_dissolved_at,
+    t.id as trustee_id,
+    t.start_date,
+    t.end_date,
+    u.id as user_id,
+    u.first_name,
+    u.last_name,
+    u.image_url as user_image_url
+FROM positions pos
+LEFT JOIN trustees t ON t.position_id = pos.id 
+    AND t.deleted_at IS NULL 
+    AND (t.end_date IS NULL OR t.end_date > CURRENT_DATE)
+    AND t.start_date <= CURRENT_DATE
+LEFT JOIN users u ON t.user_id = u.id AND u.deleted_at IS NULL
+WHERE pos.group_id = $1
+    AND pos.deleted_at IS NULL
+    AND (pos.dissolved_at IS NULL OR pos.dissolved_at > CURRENT_DATE)
+ORDER BY pos.name ASC
+`
+
+type ListGroupPositionsWithActiveTrusteesRow struct {
+	PositionID            uuid.UUID
+	PositionName          string
+	PositionEmail         string
+	GroupID               uuid.UUID
+	PositionEstablishedAt pgtype.Date
+	PositionDissolvedAt   pgtype.Date
+	TrusteeID             pgtype.UUID
+	StartDate             pgtype.Date
+	EndDate               pgtype.Date
+	UserID                pgtype.UUID
+	FirstName             *string
+	LastName              *string
+	UserImageUrl          *string
+}
+
+func (q *Queries) ListGroupPositionsWithActiveTrustees(ctx context.Context, groupID uuid.UUID) ([]ListGroupPositionsWithActiveTrusteesRow, error) {
+	rows, err := q.db.Query(ctx, listGroupPositionsWithActiveTrustees, groupID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListGroupPositionsWithActiveTrusteesRow
+	for rows.Next() {
+		var i ListGroupPositionsWithActiveTrusteesRow
+		if err := rows.Scan(
+			&i.PositionID,
+			&i.PositionName,
+			&i.PositionEmail,
+			&i.GroupID,
+			&i.PositionEstablishedAt,
+			&i.PositionDissolvedAt,
+			&i.TrusteeID,
+			&i.StartDate,
+			&i.EndDate,
+			&i.UserID,
+			&i.FirstName,
+			&i.LastName,
+			&i.UserImageUrl,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listPositions = `-- name: ListPositions :many
 SELECT id, name, email, group_id, established_at, dissolved_at, created_at, updated_at, deleted_at FROM positions
 WHERE deleted_at IS NULL

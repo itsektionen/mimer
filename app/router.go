@@ -1,9 +1,19 @@
 package app
 
 import (
+	"context"
+	"net/http"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/itsektionen/mimer/service"
 )
+
+func pathMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), "current_path", r.URL.Path)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
 
 func SetupAppRouter(
 	groupService service.GroupService,
@@ -12,12 +22,19 @@ func SetupAppRouter(
 	trusteeService service.TrusteeService,
 ) *chi.Mux {
 	router := chi.NewRouter()
+	router.Use(pathMiddleware)
 
-	appHandler := NewAppHandler(groupService, userService, positionService, trusteeService)
+	publicHandler := NewPublicHandler(groupService, userService, positionService, trusteeService)
 
-	router.Get("/static/*", appHandler.HandleStatic)
-	router.Get("/", appHandler.HandleHome)
-	router.Post("/search", appHandler.HandleSearch)
+	router.Get("/static/*", publicHandler.HandleStatic)
+	router.Get("/", publicHandler.HandleHome)
+	router.Get("/positions", publicHandler.HandlePositions)
+	router.Get("/positions/{positionID}", publicHandler.HandlePositionByID)
+	router.Get("/groups", publicHandler.HandleGroups)
+	router.Get("/groups/{groupID}", publicHandler.HandleGroupByID)
+	router.Get("/users", publicHandler.HandleUsers)
+	router.Post("/search", publicHandler.HandleSearch)
+	router.NotFound(publicHandler.HandleNotFound)
 
 	return router
 }

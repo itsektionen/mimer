@@ -1,0 +1,11 @@
+package components
+
+import "github.com/itsektionen/mimer/model"
+
+templ Avatar(user model.User) {
+	<div class="size-10 rounded-full border bg-muted flex items-center justify-center">
+		if user.ImageURL == nil {
+			<p class="font-bold text-muted-foreground">{ user.Initials() }</p>
+		}
+	</div>
+}

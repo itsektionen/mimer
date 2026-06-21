@@ -110,7 +110,7 @@ func (q *Queries) DeleteGroup(ctx context.Context, id uuid.UUID) (Group, error) 
 
 const getGroup = `-- name: GetGroup :one
 SELECT id, name, slug, short_name, description, color, image_url, website_url, established_at, dissolved_at, created_at, updated_at, deleted_at FROM groups
-WHERE ID = $1 AND deleted_at IS NULL AND active = TRUE LIMIT 1
+WHERE ID = $1 AND deleted_at IS NULL LIMIT 1
 `
 
 func (q *Queries) GetGroup(ctx context.Context, id uuid.UUID) (Group, error) {

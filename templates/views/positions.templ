@@ -1,0 +1,24 @@
+package views
+
+import "github.com/itsektionen/mimer/model"
+
+templ Positions(positions []model.Position) {
+	@Layout("Positions") {
+		@positionsView(positions)
+	}
+}
+
+templ positionItem(position model.Position) {
+	<a href={ "/positions/" + position.ID.String() } class="p-4 block hover:bg-muted">
+		<p class="font-semibold">{ position.Name }</p>
+		<p class="text-sm text-muted-foreground">{ position.Timespan() }</p>
+	</a>
+}
+
+templ positionsView(positions []model.Position) {
+	<section class="divide-y">
+		for _, position := range positions {
+			@positionItem(position)
+		}
+	</section>
+}

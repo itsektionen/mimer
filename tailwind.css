@@ -173,9 +173,13 @@
     @apply border-border outline-ring/50 font-sans;
   }
 
+  html {
+    @apply overscroll-none;
+    scrollbar-gutter: stable both-edges;
+  }
+
   body {
     @apply bg-background text-foreground;
-    overscroll-behavior: none;
     scrollbar-gutter: stable both-edges;
   }
 }
@@ -195,4 +199,12 @@ body::selection {
 
 input {
   @apply rounded-md px-2 py-1 border h-9 w-full;
+}
+
+.striped {
+  background-image: repeating-linear-gradient(45deg,
+      color-mix(in srgb, var(--accent), var(--background) 20%) 10px,
+      color-mix(in srgb, var(--accent), var(--background) 20%) 11px,
+      transparent 12px,
+      transparent 20px);
 }

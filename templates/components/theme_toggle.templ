@@ -1,0 +1,5 @@
+package components
+
+templ ThemeToggle() {
+	<button class="px-3 py-1 border text-sm hover:bg-muted" hx-on:click="htmx.toggleClass(htmx.find('body'), 'dark')">Theme</button>
+}

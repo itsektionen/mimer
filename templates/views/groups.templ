@@ -1,0 +1,27 @@
+package views
+
+import "github.com/itsektionen/mimer/model"
+
+templ Groups(groups []model.Group) {
+	@Layout("Groups") {
+		@groupsView(groups)
+	}
+}
+
+templ groupItem(group model.Group) {
+	<a href={ "/groups/" + group.ID.String() } class="relative p-4 pl-6 block hover:bg-muted">
+		<div style={ "background:" + group.Color } class="absolute top-0 left-0 bottom-0 w-2 self-stretch"></div>
+		<div>
+			<p class="font-semibold">{ group.Name }</p>
+			<p class="text-sm text-muted-foreground">{ group.Timespan() }</p>
+		</div>
+	</a>
+}
+
+templ groupsView(groups []model.Group) {
+	<section class="divide-y">
+		for _, group := range groups {
+			@groupItem(group)
+		}
+	</section>
+}

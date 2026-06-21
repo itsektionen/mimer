@@ -10,14 +10,14 @@ import (
 
 	"github.com/itsektionen/mimer/api"
 	"github.com/itsektionen/mimer/app"
-	"github.com/itsektionen/mimer/cfg"
+	"github.com/itsektionen/mimer/config"
 	"github.com/itsektionen/mimer/db"
 	"github.com/itsektionen/mimer/repository"
 	"github.com/itsektionen/mimer/service"
 )
 
 func main() {
-	cfg := cfg.Load()
+	cfg := config.Load()
 	connString := cfg.Database.URL
 	ctx := context.Background()
 
@@ -37,7 +37,7 @@ func main() {
 	positionRepo := repository.NewPositionRepository(queries)
 	trusteeRepo := repository.NewTrusteeRepository(queries)
 
-	groupService := service.NewGroupService(groupRepo, trusteeRepo)
+	groupService := service.NewGroupService(groupRepo, trusteeRepo, positionRepo)
 	userService := service.NewUserService(userRepo)
 	positionService := service.NewPositionService(positionRepo, trusteeRepo)
 	trusteeService := service.NewTrusteeService(trusteeRepo)

@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -17,4 +18,20 @@ type Position struct {
 
 func (p *Position) IsActive() bool {
 	return p.DissolvedAt == nil || p.DissolvedAt.IsZero()
+}
+
+func (p *Position) Timespan() string {
+	start := p.EstablishedAt.Format("2006")
+
+	if p.IsActive() {
+		return fmt.Sprintf("%s - Now", start)
+	}
+
+	end := p.DissolvedAt.Format("2006")
+	return fmt.Sprintf("%s - %s", start, end)
+}
+
+type PositionWithTrustee struct {
+	Position Position
+	Trustee  *Trustee
 }

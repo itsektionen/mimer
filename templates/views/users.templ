@@ -1,0 +1,27 @@
+package views
+
+import (
+	"github.com/itsektionen/mimer/model"
+	"github.com/itsektionen/mimer/templates/components"
+)
+
+templ Users(users []model.User) {
+	@Layout("Users") {
+		@usersView(users)
+	}
+}
+
+templ userItem(user model.User) {
+	<div class="p-4 flex items-center gap-4">
+		@components.Avatar(user)
+		{ user.FullName() }
+	</div>
+}
+
+templ usersView(users []model.User) {
+	<section class="divide-y">
+		for _, user := range users {
+			@userItem(user)
+		}
+	</section>
+}
