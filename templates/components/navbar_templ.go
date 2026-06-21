@@ -29,7 +29,15 @@ func Navbar() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header class=\"p-4 w-full border-b border-x max-w-6xl mx-auto sticky top-0 bg-background/80 backdrop-blur-xs h-12 flex items-center z-10\"><a href=\"/\"><img src=\"/static/mimer.svg\" class=\"w-[90px]\" alt=\"Mimer\"></a><!-- <span class=\"htmx-indicator\"> --><!-- \t<img src=\"/img/bars.svg\" alt=\"\"/> Searching... --><!-- </span> --><!-- <div class=\"relative w-full\"> --><!-- \t<input --><!-- \t\tclass=\"form-control\" --><!-- \t\ttype=\"search\" --><!-- \t\tname=\"search\" --><!-- \t\tplaceholder=\"Search for positions...\" --><!-- \t\thx-post=\"/search\" --><!-- \t\thx-trigger=\"input changed delay:500ms, keyup[key=='Enter'], load\" --><!-- \t\thx-target=\"#search-results\" --><!-- \t\thx-indicator=\".htmx-indicator\" --><!-- \t/> --><!-- \t<div class=\"absolute top-full left-0 bg-background p-2 rounded right-0 border\" id=\"search-results\"></div> --><!-- </div> --></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header class=\"p-4 w-full border-b border-x max-w-6xl mx-auto sticky top-0 bg-background/80 backdrop-blur-xs h-12 flex items-center z-10\"><a href=\"/\"><img src=\"/static/mimer.svg\" class=\"w-[90px]\" alt=\"Mimer\"></a><div class=\"ml-auto\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = ThemeToggle().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><!-- <span class=\"htmx-indicator\"> --><!-- \t<img src=\"/img/bars.svg\" alt=\"\"/> Searching... --><!-- </span> --><!-- <div class=\"relative w-full\"> --><!-- \t<input --><!-- \t\tclass=\"form-control\" --><!-- \t\ttype=\"search\" --><!-- \t\tname=\"search\" --><!-- \t\tplaceholder=\"Search for positions...\" --><!-- \t\thx-post=\"/search\" --><!-- \t\thx-trigger=\"input changed delay:500ms, keyup[key=='Enter'], load\" --><!-- \t\thx-target=\"#search-results\" --><!-- \t\thx-indicator=\".htmx-indicator\" --><!-- \t/> --><!-- \t<div class=\"absolute top-full left-0 bg-background p-2 rounded right-0 border\" id=\"search-results\"></div> --><!-- </div> --></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

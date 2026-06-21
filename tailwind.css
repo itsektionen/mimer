@@ -175,6 +175,7 @@
 
   html {
     @apply overscroll-none;
+    scrollbar-gutter: stable both-edges;
   }
 
   body {
