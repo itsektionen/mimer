@@ -3,7 +3,7 @@ package views
 import "github.com/itsektionen/mimer/model"
 
 templ Position(position model.Position, trustees []model.Trustee) {
-	@Layout() {
+	@Layout(position.Name) {
 		@positionView(position, trustees)
 	}
 }

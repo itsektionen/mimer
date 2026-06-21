@@ -4,7 +4,7 @@ import "github.com/itsektionen/mimer/model"
 import "github.com/itsektionen/mimer/templates/components"
 
 templ Group(group model.Group, trustees []model.Trustee) {
-	@Layout() {
+	@Layout(group.Name) {
 		@groupView(group, trustees)
 	}
 }

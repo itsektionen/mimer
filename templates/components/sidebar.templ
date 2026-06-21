@@ -1,14 +1,30 @@
 package components
 
+import (
+	"context"
+	"strings"
+)
+
+func isLinkActive(ctx context.Context, href string) bool {
+	path, ok := ctx.Value("current_path").(string)
+	if !ok {
+		return false
+	}
+	if href == "/" {
+		return path == "/"
+	}
+	return strings.HasPrefix(path, href)
+}
+
 templ sidebarItem(label string, href string) {
-	<a class="flex p-6 hover:bg-muted font-semibold" href={ href }>
+	<a class={ "flex p-6 font-semibold hover:bg-muted", templ.KV("bg-muted", isLinkActive(ctx, href)) } href={ href }>
 		{ label }
 	</a>
 }
 
 templ Sidebar() {
 	<aside class="min-w-[300px] border-r">
-		<nav class="divide-y border-b">
+		<nav class="divide-y border-b" hx-boost="true">
 			@sidebarItem("Trustees", "/")
 			@sidebarItem("Positions", "/positions")
 			@sidebarItem("Groups", "/groups")

@@ -4,7 +4,7 @@ import "github.com/itsektionen/mimer/model"
 import "github.com/itsektionen/mimer/templates/components"
 
 templ Index(groups []model.GroupWithPositions) {
-	@Layout() {
+	@Layout("Home") {
 		@indexView(groups)
 	}
 }

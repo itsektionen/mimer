@@ -2,17 +2,23 @@ package views
 
 import "github.com/itsektionen/mimer/templates/components"
 
-templ Layout() {
-	<html>
+templ Layout(title string) {
+	<html lang="en-US">
 		<head>
-			<title>Mimer</title>
+			<title>
+				if title != "" {
+					{ title } - Mimer
+				} else {
+					Mimer
+				}
+			</title>
 			<meta name="viewport" content="width=device-width, initial-scale=1"/>
 			<meta charset="utf-8"/>
 			<link rel="stylesheet" href="/static/index.css"/>
 			<link rel="stylesheet" href="/static/fonts/index.css"/>
-			<script src="/static/vendor/htmx.min.js"></script>
+			<script src="/static/vendor/htmx.min.js" defer></script>
 		</head>
-		<body hx-boost="true" class="min-h-svh flex flex-col">
+		<body class="min-h-svh flex flex-col">
 			@components.Navbar()
 			<div class="flex grow w-full max-w-6xl mx-auto border-x">
 				@components.Sidebar()

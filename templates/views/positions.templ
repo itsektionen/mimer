@@ -3,7 +3,7 @@ package views
 import "github.com/itsektionen/mimer/model"
 
 templ Positions(positions []model.Position) {
-	@Layout() {
+	@Layout("Positions") {
 		@positionsView(positions)
 	}
 }

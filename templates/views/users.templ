@@ -6,7 +6,7 @@ import (
 )
 
 templ Users(users []model.User) {
-	@Layout() {
+	@Layout("Users") {
 		@usersView(users)
 	}
 }
