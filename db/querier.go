@@ -13,7 +13,7 @@ import (
 type Querier interface {
 	CreateGroup(ctx context.Context, arg CreateGroupParams) (Group, error)
 	CreatePosition(ctx context.Context, arg CreatePositionParams) (Position, error)
-	CreateTrustee(ctx context.Context, arg CreateTrusteeParams) (Trustee, error)
+	CreateTrustee(ctx context.Context, arg CreateTrusteeParams) (CreateTrusteeRow, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteGroup(ctx context.Context, id uuid.UUID) (Group, error)
 	DeletePosition(ctx context.Context, id uuid.UUID) (Position, error)
