@@ -40,17 +40,34 @@ INNER JOIN positions pos ON t.position_id = pos.id
 INNER JOIN groups g ON pos.group_id = g.id;
 
 -- name: CreateTrustee :one
-INSERT INTO trustees (
-  user_id,
-  position_id,
-  start_date,
-  end_date
-) VALUES (
-  $1,
-  $2,
-  $3,
-  $4
-) RETURNING *;
+WITH inserted AS (
+  INSERT INTO trustees (
+    user_id,
+    position_id,
+    start_date,
+    end_date
+  ) VALUES (
+    $1,
+    $2,
+    $3,
+    $4
+  ) RETURNING id, user_id, position_id, start_date, end_date
+)
+SELECT
+  i.id as trustee_id,
+  i.start_date,
+  i.end_date,
+  u.id as user_id,
+  u.first_name,
+  u.last_name,
+  u.image_url as user_image_url,
+  pos.id as position_id,
+  pos.name as position_name,
+  pos.email as position_email,
+  pos.group_id
+FROM inserted i
+INNER JOIN users u ON i.user_id = u.id
+INNER JOIN positions pos ON i.position_id = pos.id;
 
 -- name: ListTrusteesByPosition :many
 SELECT

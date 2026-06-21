@@ -44,7 +44,7 @@ func (r *trusteeRepository) ListAll(ctx context.Context) ([]model.Trustee, error
 }
 
 func (r *trusteeRepository) Create(ctx context.Context, positionID uuid.UUID, userID uuid.UUID, startDate time.Time, endDate time.Time) (*model.Trustee, error) {
-	trustee, err := r.q.CreateTrustee(ctx, db.CreateTrusteeParams{
+	row, err := r.q.CreateTrustee(ctx, db.CreateTrusteeParams{
 		PositionID: positionID,
 		UserID:     userID,
 		StartDate: pgtype.Date{
@@ -60,17 +60,7 @@ func (r *trusteeRepository) Create(ctx context.Context, positionID uuid.UUID, us
 		return nil, err
 	}
 
-	person, err := r.q.GetUser(ctx, trustee.UserID)
-	if err != nil {
-		return nil, err
-	}
-
-	position, err := r.q.GetPosition(ctx, trustee.PositionID)
-	if err != nil {
-		return nil, err
-	}
-
-	resp := mapper.TrusteeFromDB(trustee, person, position)
+	resp := mapper.TrusteeFromCreateRow(row)
 
 	return &resp, nil
 }

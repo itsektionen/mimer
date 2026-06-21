@@ -13,17 +13,34 @@ import (
 )
 
 const createTrustee = `-- name: CreateTrustee :one
-INSERT INTO trustees (
-  user_id,
-  position_id,
-  start_date,
-  end_date
-) VALUES (
-  $1,
-  $2,
-  $3,
-  $4
-) RETURNING id, start_date, end_date, position_id, user_id, created_at, updated_at, deleted_at
+WITH inserted AS (
+  INSERT INTO trustees (
+    user_id,
+    position_id,
+    start_date,
+    end_date
+  ) VALUES (
+    $1,
+    $2,
+    $3,
+    $4
+  ) RETURNING id, user_id, position_id, start_date, end_date
+)
+SELECT
+  i.id as trustee_id,
+  i.start_date,
+  i.end_date,
+  u.id as user_id,
+  u.first_name,
+  u.last_name,
+  u.image_url as user_image_url,
+  pos.id as position_id,
+  pos.name as position_name,
+  pos.email as position_email,
+  pos.group_id
+FROM inserted i
+INNER JOIN users u ON i.user_id = u.id
+INNER JOIN positions pos ON i.position_id = pos.id
 `
 
 type CreateTrusteeParams struct {
@@ -33,23 +50,40 @@ type CreateTrusteeParams struct {
 	EndDate    pgtype.Date
 }
 
-func (q *Queries) CreateTrustee(ctx context.Context, arg CreateTrusteeParams) (Trustee, error) {
+type CreateTrusteeRow struct {
+	TrusteeID     uuid.UUID
+	StartDate     pgtype.Date
+	EndDate       pgtype.Date
+	UserID        uuid.UUID
+	FirstName     string
+	LastName      string
+	UserImageUrl  *string
+	PositionID    uuid.UUID
+	PositionName  string
+	PositionEmail string
+	GroupID       uuid.UUID
+}
+
+func (q *Queries) CreateTrustee(ctx context.Context, arg CreateTrusteeParams) (CreateTrusteeRow, error) {
 	row := q.db.QueryRow(ctx, createTrustee,
 		arg.UserID,
 		arg.PositionID,
 		arg.StartDate,
 		arg.EndDate,
 	)
-	var i Trustee
+	var i CreateTrusteeRow
 	err := row.Scan(
-		&i.ID,
+		&i.TrusteeID,
 		&i.StartDate,
 		&i.EndDate,
-		&i.PositionID,
 		&i.UserID,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.DeletedAt,
+		&i.FirstName,
+		&i.LastName,
+		&i.UserImageUrl,
+		&i.PositionID,
+		&i.PositionName,
+		&i.PositionEmail,
+		&i.GroupID,
 	)
 	return i, err
 }
