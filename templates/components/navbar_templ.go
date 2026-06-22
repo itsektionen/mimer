@@ -29,7 +29,15 @@ func Navbar() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header class=\"p-4 w-full border-b border-x max-w-6xl mx-auto sticky top-0 bg-background/80 backdrop-blur-xs min-h-12 flex items-center z-10\"><a class=\"shrink-0\" href=\"/\" hx-boost=\"true\"><img src=\"/static/mimer.svg\" class=\"w-[90px]\" alt=\"Mimer\"></a> <span class=\"htmx-indicator\"><img src=\"/img/bars.svg\" alt=\"\"> Searching...</span><div class=\"ml-auto flex gap-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header class=\"p-4 w-full border-b border-x max-w-6xl mx-auto sticky top-0 bg-background/80 backdrop-blur-xs min-h-12 flex items-center z-10\"><a class=\"shrink-0\" href=\"/\" hx-boost=\"true\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = Logo("w-[90px] text-foreground").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</a><div class=\"ml-auto flex gap-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -41,7 +49,7 @@ func Navbar() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

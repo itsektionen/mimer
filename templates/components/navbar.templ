@@ -3,11 +3,8 @@ package components
 templ Navbar() {
 	<header class="p-4 w-full border-b border-x max-w-6xl mx-auto sticky top-0 bg-background/80 backdrop-blur-xs min-h-12 flex items-center z-10">
 		<a class="shrink-0" href="/" hx-boost="true">
-			<img src="/static/mimer.svg" class="w-[90px]" alt="Mimer"/>
+			@Logo("w-[90px] text-foreground")
 		</a>
-		<span class="htmx-indicator">
-			<img src="/img/bars.svg" alt=""/> Searching...
-		</span>
 		<div class="ml-auto flex gap-2">
 			@Search()
 			@ThemeToggle()

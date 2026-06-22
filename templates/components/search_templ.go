@@ -29,7 +29,7 @@ func Search() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"relative w-full\" id=\"search-container\"><input class=\"form-control\" type=\"search\" name=\"search\" placeholder=\"Search for positions...\" hx-post=\"/search\" hx-trigger=\"input changed delay:500ms, keyup[key=='Enter'], focus\" hx-target=\"#search-results-container\" hx-swap=\"innerHTML\" hx-indicator=\".htmx-indicator\"><div id=\"search-results-container\"></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"relative w-full\" id=\"search-container\"><input class=\"form-control\" type=\"search\" name=\"search\" placeholder=\"Search...\" hx-post=\"/search\" hx-trigger=\"input changed delay:500ms, keyup[key=='Enter'], focus\" hx-target=\"#search-results-container\" hx-swap=\"innerHTML\" hx-indicator=\".htmx-indicator\"><div id=\"search-results-container\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
