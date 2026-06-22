@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --font-poppins: "Poppins", sans-serif;
   --radius: 0.5rem;
