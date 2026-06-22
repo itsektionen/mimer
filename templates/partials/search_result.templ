@@ -2,13 +2,13 @@ package partials
 
 import "github.com/itsektionen/mimer/model"
 
-templ SearchResults(positions []model.Position) {
+templ SearchResults(results []model.SearchResult) {
 	<div class="absolute top-full left-0 bg-background right-0 border -mt-px max-h-[267px] overflow-y-auto" id="search-results">
-		if len(positions) == 0 {
+		if len(results) == 0 {
 			<p class="text-muted-foreground text-center p-4">No results</p>
 		}
-		for _, pos := range positions {
-			@searchResultItem(pos.Name, "/positions/"+pos.ID.String())
+		for _, res := range results {
+			@searchResultItem(res.Label, res.Path)
 		}
 	</div>
 }
