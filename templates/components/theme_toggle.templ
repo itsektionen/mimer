@@ -1,5 +1,24 @@
 package components
 
+import "context"
+import "github.com/itsektionen/mimer/app/ctxs"
+
+func isDarkTheme(ctx context.Context) bool {
+	theme, ok := ctxs.ThemeFromContext(ctx)
+	return ok && theme == "dark"
+}
+
 templ ThemeToggle() {
-	<button class="px-3 py-1 border text-sm hover:bg-muted" hx-on:click="htmx.toggleClass(htmx.find('body'), 'dark')">Theme</button>
+	<button
+		class="px-3 py-1 border hover:bg-muted"
+		hx-post="/toggle-theme"
+		hx-swap="outerHTML"
+		hx-on:click="htmx.toggleClass(htmx.find('html'), 'dark')"
+	>
+		if isDarkTheme(ctx) {
+			Light
+		} else {
+			Dark
+		}
+	</button>
 }

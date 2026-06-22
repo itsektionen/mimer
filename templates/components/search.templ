@@ -1,0 +1,18 @@
+package components
+
+templ Search() {
+	<div class="relative w-full" id="search-container">
+		<input
+			class="form-control"
+			type="search"
+			name="search"
+			placeholder="Search for positions..."
+			hx-post="/search"
+			hx-trigger="input changed delay:500ms, keyup[key=='Enter'], focus"
+			hx-target="#search-results-container"
+			hx-swap="innerHTML"
+			hx-indicator=".htmx-indicator"
+		/>
+		<div id="search-results-container"></div>
+	</div>
+}

@@ -1,14 +1,17 @@
 package app
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+	"github.com/itsektionen/mimer/app/ctxs"
 	"github.com/itsektionen/mimer/model"
 	"github.com/itsektionen/mimer/service"
+	"github.com/itsektionen/mimer/templates/components"
 	"github.com/itsektionen/mimer/templates/partials"
 	"github.com/itsektionen/mimer/templates/views"
 )
@@ -48,6 +51,8 @@ func (h *PublicHandler) HandleHome(w http.ResponseWriter, r *http.Request) {
 	_ = views.Index(groups).Render(r.Context(), w)
 }
 
+// TODO: Move search logic into service
+// TODO: Make groups searchable
 func (h *PublicHandler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		http.Error(w, "invalid form data", http.StatusBadRequest)
@@ -73,20 +78,10 @@ func (h *PublicHandler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// TODO: Figure out how to clear search result
-	if len(searchResults) == 0 {
-		return
-	}
-
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 
-	for _, position := range searchResults {
-		if err := partials.SearchResult(position.Name, "/positions/"+position.ID.String()).Render(r.Context(), w); err != nil {
-			http.Error(w, "failed to render template", http.StatusInternalServerError)
-			return
-		}
-	}
+	partials.SearchResults(searchResults).Render(r.Context(), w)
 }
 
 func (h *PublicHandler) HandlePositions(w http.ResponseWriter, r *http.Request) {
@@ -155,6 +150,32 @@ func (h *PublicHandler) HandlePositionByID(w http.ResponseWriter, r *http.Reques
 	}
 
 	_ = views.Position(position, trustees).Render(r.Context(), w)
+}
+
+func (h *PublicHandler) HandleToggleTheme(w http.ResponseWriter, r *http.Request) {
+	currentTheme := "light"
+	currentCookie, err := r.Cookie("mimer-theme")
+	if err == nil {
+		currentTheme = currentCookie.Value
+	}
+
+	nextTheme := "dark"
+	if currentTheme == "dark" {
+		nextTheme = "light"
+	}
+
+	nextCookie := http.Cookie{
+		Name:     "mimer-theme",
+		Value:    nextTheme,
+		Path:     "/",
+		HttpOnly: true,
+	}
+
+	http.SetCookie(w, &nextCookie)
+	w.WriteHeader(http.StatusOK)
+
+	ctx := context.WithValue(r.Context(), ctxs.ThemeKey, nextTheme)
+	_ = components.ThemeToggle().Render(ctx, w)
 }
 
 func (h *PublicHandler) HandleNotFound(w http.ResponseWriter, r *http.Request) {
