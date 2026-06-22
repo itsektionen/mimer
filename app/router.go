@@ -10,12 +10,19 @@ func SetupAppRouter(
 	userService service.UserService,
 	positionService service.PositionService,
 	trusteeService service.TrusteeService,
+	searchService service.SearchService,
 ) *chi.Mux {
 	router := chi.NewRouter()
 	router.Use(pathMiddleware)
 	router.Use(themeMiddleware)
 
-	publicHandler := NewPublicHandler(groupService, userService, positionService, trusteeService)
+	publicHandler := NewPublicHandler(
+		groupService,
+		userService,
+		positionService,
+		trusteeService,
+		searchService,
+	)
 
 	router.Get("/static/*", publicHandler.HandleStatic)
 	router.Get("/", publicHandler.HandleHome)

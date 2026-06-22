@@ -41,12 +41,14 @@ func main() {
 	userService := service.NewUserService(userRepo)
 	positionService := service.NewPositionService(positionRepo, trusteeRepo)
 	trusteeService := service.NewTrusteeService(trusteeRepo)
+	searchService := service.NewSearchService(groupRepo, positionRepo)
 
 	router := app.SetupAppRouter(
 		groupService,
 		userService,
 		positionService,
 		trusteeService,
+		searchService,
 	)
 	apiRouter := api.SetupAPIRouter(
 		logger,

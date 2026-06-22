@@ -4,12 +4,10 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/itsektionen/mimer/app/ctxs"
-	"github.com/itsektionen/mimer/model"
 	"github.com/itsektionen/mimer/service"
 	"github.com/itsektionen/mimer/templates/components"
 	"github.com/itsektionen/mimer/templates/partials"
@@ -21,6 +19,7 @@ type PublicHandler struct {
 	userService     service.UserService
 	positionService service.PositionService
 	trusteeService  service.TrusteeService
+	searchService   service.SearchService
 }
 
 func NewPublicHandler(
@@ -28,12 +27,14 @@ func NewPublicHandler(
 	userService service.UserService,
 	positionService service.PositionService,
 	trusteeService service.TrusteeService,
+	searchService service.SearchService,
 ) PublicHandler {
 	return PublicHandler{
 		groupService,
 		userService,
 		positionService,
 		trusteeService,
+		searchService,
 	}
 }
 
@@ -51,8 +52,6 @@ func (h *PublicHandler) HandleHome(w http.ResponseWriter, r *http.Request) {
 	_ = views.Index(groups).Render(r.Context(), w)
 }
 
-// TODO: Move search logic into service
-// TODO: Make groups searchable
 func (h *PublicHandler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		http.Error(w, "invalid form data", http.StatusBadRequest)
@@ -64,24 +63,16 @@ func (h *PublicHandler) HandleSearch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	searchResults := []model.Position{}
-	positions, err := h.positionService.List(r.Context())
+	results, err := h.searchService.Search(r.Context(), searchQuery)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	// TODO: Implement reasonable search algorithm
-	for _, position := range positions {
-		if strings.Contains(strings.ToLower(position.Name), strings.ToLower(searchQuery)) {
-			searchResults = append(searchResults, position)
-		}
-	}
-
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 
-	partials.SearchResults(searchResults).Render(r.Context(), w)
+	partials.SearchResults(results).Render(r.Context(), w)
 }
 
 func (h *PublicHandler) HandlePositions(w http.ResponseWriter, r *http.Request) {
