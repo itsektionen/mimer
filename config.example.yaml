@@ -2,4 +2,11 @@ database:
   url: postgres://postgres:postgres@localhost:5432/mimer?sslmode=disable
 server:
   host: 127.0.0.1
-  port: 8080
+  port: 8888
+oauth:
+  redirect_url: http://localhost:8888/auth/authentik/callback
+  client_id: my_client_id 
+  client_secret: my_client_secret 
+  endpoint:
+    auth_url: https://sso.kth.it/application/o/authorize/
+    token_url: https://sso.kth.it/application/o/token/

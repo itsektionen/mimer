@@ -1,7 +1,6 @@
 package app
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 
@@ -165,7 +164,7 @@ func (h *PublicHandler) HandleToggleTheme(w http.ResponseWriter, r *http.Request
 	http.SetCookie(w, &nextCookie)
 	w.WriteHeader(http.StatusOK)
 
-	ctx := context.WithValue(r.Context(), ctxs.ThemeKey, nextTheme)
+	ctx := ctxs.ThemeIntoContext(r.Context(), nextTheme)
 	_ = components.ThemeToggle().Render(ctx, w)
 }
 

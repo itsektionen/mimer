@@ -3,13 +3,17 @@ package config
 import (
 	"errors"
 	"log"
+	"strings"
 
+	"github.com/go-viper/mapstructure/v2"
 	"github.com/spf13/viper"
+	"golang.org/x/oauth2"
 )
 
 type Config struct {
-	Database databaseConfig
-	Server   serverConfig
+	Database databaseConfig `mapstructure:"database"`
+	Server   serverConfig   `mapstructure:"server"`
+	OAuth    *oauth2.Config `mapstructure:"oauth"`
 }
 
 func (c *Config) Validate() error {
@@ -23,7 +27,7 @@ func (c *Config) Validate() error {
 }
 
 type databaseConfig struct {
-	URL string
+	URL string `mapstructure:"url"`
 }
 
 func (c *databaseConfig) validate() error {
@@ -34,8 +38,8 @@ func (c *databaseConfig) validate() error {
 }
 
 type serverConfig struct {
-	Host string
-	Port int
+	Host string `mapstructure:"host"`
+	Port int    `mapstructure:"port"`
 }
 
 func (c *serverConfig) validate() error {
@@ -52,6 +56,7 @@ func Load() *Config {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
+	viper.AddConfigPath("..")
 
 	viper.SetDefault("server.host", "127.0.0.1")
 	viper.SetDefault("server.port", 8080)
@@ -65,13 +70,18 @@ func Load() *Config {
 		}
 	}
 
-	return &Config{
-		Database: databaseConfig{
-			URL: viper.GetString("database.url"),
-		},
-		Server: serverConfig{
-			Host: viper.GetString("server.host"),
-			Port: viper.GetInt("server.port"),
-		},
+	var cfg Config
+	err := viper.Unmarshal(&cfg, func(c *mapstructure.DecoderConfig) {
+		c.MatchName = func(mapKey, fieldName string) bool {
+			normalize := func(s string) string {
+				return strings.ToLower(strings.ReplaceAll(s, "_", ""))
+			}
+			return normalize(mapKey) == normalize(fieldName)
+		}
+	})
+	if err != nil {
+		log.Fatalf("unable to decode config: %v", err)
 	}
+
+	return &cfg
 }
