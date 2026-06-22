@@ -1,19 +1,9 @@
 package app
 
 import (
-	"context"
-	"net/http"
-
 	"github.com/go-chi/chi/v5"
 	"github.com/itsektionen/mimer/service"
 )
-
-func pathMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(r.Context(), "current_path", r.URL.Path)
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
-}
 
 func SetupAppRouter(
 	groupService service.GroupService,
@@ -23,6 +13,7 @@ func SetupAppRouter(
 ) *chi.Mux {
 	router := chi.NewRouter()
 	router.Use(pathMiddleware)
+	router.Use(themeMiddleware)
 
 	publicHandler := NewPublicHandler(groupService, userService, positionService, trusteeService)
 
@@ -34,6 +25,7 @@ func SetupAppRouter(
 	router.Get("/groups/{groupID}", publicHandler.HandleGroupByID)
 	router.Get("/users", publicHandler.HandleUsers)
 	router.Post("/search", publicHandler.HandleSearch)
+	router.Post("/toggle-theme", publicHandler.HandleToggleTheme)
 	router.NotFound(publicHandler.HandleNotFound)
 
 	return router

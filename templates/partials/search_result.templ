@@ -1,5 +1,18 @@
 package partials
 
-templ SearchResult(text string, href string) {
-	<a class="w-full flex hover:bg-muted px-2 py-1 rounded-sm" href={ href }>{ text }</a>
+import "github.com/itsektionen/mimer/model"
+
+templ SearchResults(positions []model.Position) {
+	<div class="absolute top-full left-0 bg-background right-0 border -mt-px max-h-[267px] overflow-y-auto" id="search-results">
+		if len(positions) == 0 {
+			<p class="text-muted-foreground text-center p-4">No results</p>
+		}
+		for _, pos := range positions {
+			@searchResultItem(pos.Name, "/positions/"+pos.ID.String())
+		}
+	</div>
+}
+
+templ searchResultItem(text string, href string) {
+	<a class="w-full flex hover:bg-muted p-2" href={ href }>{ text }</a>
 }

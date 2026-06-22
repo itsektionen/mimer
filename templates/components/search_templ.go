@@ -8,15 +8,7 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "context"
-import "github.com/itsektionen/mimer/app/ctxs"
-
-func isDarkTheme(ctx context.Context) bool {
-	theme, ok := ctxs.ThemeFromContext(ctx)
-	return ok && theme == "dark"
-}
-
-func ThemeToggle() templ.Component {
+func Search() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -37,22 +29,7 @@ func ThemeToggle() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<button class=\"px-3 py-1 border hover:bg-muted\" hx-post=\"/toggle-theme\" hx-swap=\"outerHTML\" hx-on:click=\"htmx.toggleClass(htmx.find('html'), 'dark')\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if isDarkTheme(ctx) {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "Light")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "Dark")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"relative w-full\" id=\"search-container\"><input class=\"form-control\" type=\"search\" name=\"search\" placeholder=\"Search for positions...\" hx-post=\"/search\" hx-trigger=\"input changed delay:500ms, keyup[key=='Enter'], focus\" hx-target=\"#search-results-container\" hx-swap=\"innerHTML\" hx-indicator=\".htmx-indicator\"><div id=\"search-results-container\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

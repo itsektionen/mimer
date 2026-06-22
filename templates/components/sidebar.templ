@@ -2,11 +2,12 @@ package components
 
 import (
 	"context"
+	"github.com/itsektionen/mimer/app/ctxs"
 	"strings"
 )
 
 func isLinkActive(ctx context.Context, href string) bool {
-	path, ok := ctx.Value("current_path").(string)
+	path, ok := ctxs.PathFromContext(ctx)
 	if !ok {
 		return false
 	}
@@ -17,7 +18,15 @@ func isLinkActive(ctx context.Context, href string) bool {
 }
 
 templ sidebarItem(label string, href string) {
-	<a class={ "flex p-6 font-semibold hover:bg-muted", templ.KV("bg-muted", isLinkActive(ctx, href)) } href={ href }>
+	<a
+		data-active={ isLinkActive(ctx, href) }
+		class={ templ.Classes(
+      "flex p-6 font-semibold hover:bg-muted relative",
+      "data-[active=false]:before:hidden before:content-['']",
+      "before:left-0 before:top-0 before:bottom-0 before:absolute before:w-2 before:bg-primary",
+      ) }
+		href={ href }
+	>
 		{ label }
 	</a>
 }

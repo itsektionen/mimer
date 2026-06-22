@@ -1,9 +1,18 @@
 package views
 
-import "github.com/itsektionen/mimer/templates/components"
+import (
+	"context"
+	"github.com/itsektionen/mimer/app/ctxs"
+	"github.com/itsektionen/mimer/templates/components"
+)
+
+func isDarkTheme(ctx context.Context) bool {
+	theme, ok := ctxs.ThemeFromContext(ctx)
+	return ok && theme == "dark"
+}
 
 templ Layout(title string) {
-	<html lang="en-US">
+	<html lang="en-US" class={ templ.KV("dark", isDarkTheme(ctx)) }>
 		<head>
 			<title>
 				if title != "" {
