@@ -48,7 +48,9 @@ func (s searchService) Search(ctx context.Context, query string) ([]model.Search
 	}
 
 	for _, group := range groups {
-		if strings.Contains(strings.ToLower(group.Name), strings.ToLower(query)) {
+		containsLongName := strings.Contains(strings.ToLower(group.Name), strings.ToLower(query))
+		containsShortName := strings.Contains(strings.ToLower(group.ShortName), strings.ToLower(query))
+		if containsLongName || containsShortName {
 			searchResults = append(searchResults, model.SearchResult{
 				Label: group.Name,
 				Path:  "/groups/" + group.ID.String(),

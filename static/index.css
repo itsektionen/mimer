@@ -3,7 +3,6 @@
 @layer theme, base, components, utilities;
 @layer theme {
   :root, :host {
-    --color-orange-500: oklch(70.5% 0.213 47.604);
     --spacing: 0.25rem;
     --container-6xl: 72rem;
     --text-sm: 0.875rem;
