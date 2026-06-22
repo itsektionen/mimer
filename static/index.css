@@ -627,6 +627,18 @@ body::selection {
     scrollbar-color: color-mix(in srgb, var(--thumb-color) var(--thumb-opacity), transparent) transparent;
   }
 }
+* {
+  &:focus-visible {
+    z-index: 20;
+  }
+  &:focus-visible {
+    outline-style: var(--tw-outline-style);
+    outline-width: 2px;
+  }
+  &:focus-visible {
+    outline-color: var(--primary);
+  }
+}
 input {
   height: calc(var(--spacing) * 9);
   border-style: var(--tw-border-style);
@@ -695,6 +707,11 @@ input {
   initial-value: "";
   inherits: false;
 }
+@property --tw-outline-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
 @layer properties {
   @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
     *, ::before, ::after, ::backdrop {
@@ -711,6 +728,7 @@ input {
       --tw-backdrop-saturate: initial;
       --tw-backdrop-sepia: initial;
       --tw-content: "";
+      --tw-outline-style: solid;
     }
   }
 }
