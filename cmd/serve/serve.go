@@ -42,7 +42,7 @@ func main() {
 	positionService := service.NewPositionService(positionRepo, trusteeRepo)
 	trusteeService := service.NewTrusteeService(trusteeRepo)
 	searchService := service.NewSearchService(groupRepo, positionRepo)
-	authService := service.NewAuthService(*cfg.OAuth)
+	authService := service.NewAuthService(cfg.OAuth.ToOAuth2Config(), cfg.OAuth.UserinfoURL)
 
 	router := app.SetupAppRouter(
 		groupService,

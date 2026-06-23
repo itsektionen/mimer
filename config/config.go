@@ -13,7 +13,26 @@ import (
 type Config struct {
 	Database databaseConfig `mapstructure:"database"`
 	Server   serverConfig   `mapstructure:"server"`
-	OAuth    *oauth2.Config `mapstructure:"oauth"`
+	OAuth    OAuthConfig    `mapstructure:"oauth"`
+}
+
+type OAuthConfig struct {
+	ClientID     string          `mapstructure:"client_id"`
+	ClientSecret string          `mapstructure:"client_secret"`
+	RedirectURL  string          `mapstructure:"redirect_url"`
+	Scopes       []string        `mapstructure:"scopes"`
+	Endpoint     oauth2.Endpoint `mapstructure:"endpoint"`
+	UserinfoURL  string          `mapstructure:"userinfo_url"`
+}
+
+func (o *OAuthConfig) ToOAuth2Config() oauth2.Config {
+	return oauth2.Config{
+		ClientID:     o.ClientID,
+		ClientSecret: o.ClientSecret,
+		RedirectURL:  o.RedirectURL,
+		Scopes:       o.Scopes,
+		Endpoint:     o.Endpoint,
+	}
 }
 
 func (c *Config) Validate() error {

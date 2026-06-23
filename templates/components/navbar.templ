@@ -1,5 +1,7 @@
 package components
 
+import "github.com/itsektionen/mimer/templates"
+
 templ Navbar() {
 	<header class="p-4 w-full border-b border-x max-w-6xl mx-auto sticky top-0 bg-background/80 backdrop-blur-xs min-h-12 flex items-center z-10">
 		<a class="shrink-0" href="/" hx-boost="true">
@@ -8,9 +10,15 @@ templ Navbar() {
 		<div class="ml-auto flex gap-2">
 			@Search()
 			@ThemeToggle()
-			<a class="px-3 py-1 border flex items-center justify-center hover:bg-muted" href="/auth/login">
-				Login
-			</a>
+			if u := templates.GetUser(ctx); u != nil {
+				<a href="/admin" class="px-3 py-1 border flex items-center justify-center hover:bg-muted">
+					Admin	
+				</a>
+			} else {
+				<a class="px-3 py-1 border flex items-center justify-center hover:bg-muted" href="/auth/login">
+					Login
+				</a>
+			}
 		</div>
 	</header>
 }

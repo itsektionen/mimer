@@ -1,0 +1,35 @@
+package views
+
+import "github.com/itsektionen/mimer/model"
+
+templ Admin(userClaims model.UserClaims) {
+	@Layout("Admin") {
+		@adminView(userClaims)
+	}
+}
+
+templ adminView(userClaims model.UserClaims) {
+	<section class="border-b p-8 striped bg-muted">
+		<p class="text-xl font-semibold">Admin Panel</p>
+	</section>
+	<section class="p-8 border-b">
+		<p class="mb-6">You are currently logged in as { userClaims.Email }.</p>
+		<a class="px-3 py-1 border flex items-center justify-center hover:bg-muted w-fit" href="/auth/logout">Logout</a>
+	</section>
+	<section class="p-8">
+		<div class="grid grid-cols-2 gap-4">
+			<a class="p-4 border hover:bg-muted" href="/admin/positions">
+				<p class="text-sm font-medium mb-2">Positions</p>
+				<p class="text-muted-foreground">A position is a role that can be held by a person within the Chapter, like Bootloader for instance.</p>
+			</a>
+			<a class="p-4 border hover:bg-muted" href="/admin/groups">
+				<p class="text-sm font-medium mb-2">Groups</p>
+				<p class="text-muted-foreground">A group is an entity within the Chapter which has trustee positions. It could be the Board, or a committee like init.</p>
+			</a>
+			<a class="p-4 border hover:bg-muted" href="/admin/users">
+				<p class="text-sm font-medium mb-2">Users</p>
+				<p class="text-muted-foreground">A user is a person who can hold any number of positions during a given term. It could be John Doe, for instance.</p>
+			</a>
+		</div>
+	</section>
+}

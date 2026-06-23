@@ -6,12 +6,15 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"net/http"
 
+	"github.com/itsektionen/mimer/model"
 	"golang.org/x/oauth2"
 )
 
 type AuthService struct {
-	config oauth2.Config
+	config      oauth2.Config
+	userinfoURL string
 }
 
 type OAuthState struct {
@@ -37,10 +40,41 @@ func generateStateOauthCookie(nextURL string) (string, error) {
 	return base64.URLEncoding.EncodeToString(j), nil
 }
 
-func NewAuthService(config oauth2.Config) AuthService {
+func NewAuthService(config oauth2.Config, userinfoURL string) AuthService {
 	return AuthService{
-		config,
+		config:      config,
+		userinfoURL: userinfoURL,
 	}
+}
+
+func (s *AuthService) ValidateToken(ctx context.Context, accessToken string) (*model.UserClaims, error) {
+	if accessToken == "" {
+		return nil, fmt.Errorf("empty access token")
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "GET", s.userinfoURL, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create userinfo request: %w", err)
+	}
+
+	req.Header.Set("Authorization", "Bearer "+accessToken)
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to send userinfo request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("userinfo request failed with status %d", resp.StatusCode)
+	}
+
+	var claims model.UserClaims
+	if err := json.NewDecoder(resp.Body).Decode(&claims); err != nil {
+		return nil, fmt.Errorf("failed to decode userinfo response: %w", err)
+	}
+
+	return &claims, nil
 }
 
 func (s *AuthService) DecodeState(state string) (OAuthState, error) {
