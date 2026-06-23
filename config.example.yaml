@@ -7,6 +7,7 @@ oauth:
   redirect_url: http://localhost:8888/auth/authentik/callback
   client_id: my_client_id 
   client_secret: my_client_secret 
+  userinfo_url: https://sso.kth.it/application/o/userinfo/
   endpoint:
     auth_url: https://sso.kth.it/application/o/authorize/
     token_url: https://sso.kth.it/application/o/token/

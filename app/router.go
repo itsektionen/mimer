@@ -4,7 +4,9 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/itsektionen/mimer/app/ctxs"
 	"github.com/itsektionen/mimer/service"
+	"github.com/itsektionen/mimer/templates/views"
 )
 
 func SetupAppRouter(
@@ -17,12 +19,14 @@ func SetupAppRouter(
 ) *chi.Mux {
 	router := chi.NewRouter()
 
+	router.Use(sessionMiddleware(authService))
+	router.Use(pathMiddleware)
+	router.Use(themeMiddleware)
+
 	publicRouter := chi.NewRouter()
 	protectedRouter := chi.NewRouter()
 
-	publicRouter.Use(pathMiddleware)
-	publicRouter.Use(themeMiddleware)
-	protectedRouter.Use(authMiddleware)
+	protectedRouter.Use(requireAuthMiddleware)
 
 	publicHandler := NewPublicHandler(
 		groupService,
@@ -44,14 +48,19 @@ func SetupAppRouter(
 	publicRouter.Get("/users", publicHandler.HandleUsers)
 	publicRouter.Post("/search", publicHandler.HandleSearch)
 	publicRouter.Post("/toggle-theme", publicHandler.HandleToggleTheme)
-	publicRouter.NotFound(publicHandler.HandleNotFound)
+	router.NotFound(publicHandler.HandleNotFound)
 
 	publicRouter.Get("/auth/login", authHandler.Login)
 	publicRouter.Get("/auth/authentik/callback", authHandler.HandleAuthentikCallback)
+	publicRouter.Get("/auth/logout", authHandler.Logout)
 
-	router.Mount("/admin/{$}", protectedRouter)
+	router.Mount("/admin", protectedRouter)
 	protectedRouter.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("yello"))
+		user, ok := ctxs.UserFromContext(r.Context())
+		if !ok {
+			http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		}
+		_ = views.Admin(*user).Render(r.Context(), w)
 	})
 
 	return router

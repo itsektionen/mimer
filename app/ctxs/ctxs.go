@@ -1,6 +1,10 @@
 package ctxs
 
-import "context"
+import (
+	"context"
+
+	"github.com/itsektionen/mimer/model"
+)
 
 type Key string
 
@@ -8,7 +12,17 @@ var (
 	pathKey  Key = "current_path"
 	themeKey Key = "theme"
 	tokenKey Key = "token"
+	userKey  Key = "user"
 )
+
+func UserIntoContext(ctx context.Context, claims *model.UserClaims) context.Context {
+	return context.WithValue(ctx, userKey, claims)
+}
+
+func UserFromContext(ctx context.Context) (*model.UserClaims, bool) {
+	claims, ok := ctx.Value(userKey).(*model.UserClaims)
+	return claims, ok
+}
 
 func ThemeIntoContext(ctx context.Context, theme string) context.Context {
 	return context.WithValue(ctx, themeKey, theme)

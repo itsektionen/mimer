@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/itsektionen/mimer/app/ctxs"
 	"github.com/itsektionen/mimer/service"
 )
 
@@ -72,15 +73,34 @@ func (h *AuthHandler) HandleAuthentikCallback(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	idToken := token.Extra("id_token").(string)
-
 	http.SetCookie(w, &http.Cookie{
 		Name:     "mimer_token",
-		Value:    idToken,
+		Value:    token.AccessToken,
 		Path:     "/",
 		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
 		MaxAge:   int(time.Until(token.Expiry).Seconds()),
 	})
 
 	http.Redirect(w, r, s.NextURL, http.StatusTemporaryRedirect)
+}
+
+func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
+	_, ok := ctxs.UserFromContext(r.Context())
+
+	if !ok {
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "mimer_token",
+		Value:    "",
+		Path:     "/",
+		HttpOnly: true,
+		MaxAge:   -1,
+	})
+
+	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 }
