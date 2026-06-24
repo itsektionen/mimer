@@ -50,8 +50,9 @@ var groupMetadata = map[string]GroupMetadata{
 }
 
 type ParsedPosition struct {
-	Name    string
-	History []HistoryRow
+	Name        string
+	Description string
+	History     []HistoryRow
 }
 
 type HistoryRow struct {
@@ -73,7 +74,11 @@ func parseMD(path string) (*ParsedPosition, error) {
 	reTitle := regexp.MustCompile(`^##\s+(.+)$`)
 	reTableRow := regexp.MustCompile(`^\|?\s*(\d{4})\s*\|\s*([^|]*)\|\s*([^|]*)\|?$`)
 
+	inDescription := false
 	inHistory := false
+	var descLines []string
+
+	reIgnore := regexp.MustCompile(`(?i)^\s*[\-\*]\s*\*\*(Access Privileges|Time Requirement):?\*\*:?`)
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -84,9 +89,28 @@ func parseMD(path string) (*ParsedPosition, error) {
 			}
 		}
 
+		if strings.HasPrefix(line, "### Description") {
+			inDescription = true
+			inHistory = false
+			continue
+		}
+
 		if strings.HasPrefix(line, "### History") {
 			inHistory = true
+			inDescription = false
 			continue
+		}
+
+		if strings.HasPrefix(line, "###") {
+			inDescription = false
+			continue
+		}
+
+		if inDescription {
+			if reIgnore.MatchString(line) {
+				continue
+			}
+			descLines = append(descLines, line)
 		}
 
 		if inHistory {
@@ -106,6 +130,8 @@ func parseMD(path string) (*ParsedPosition, error) {
 			}
 		}
 	}
+
+	pos.Description = strings.TrimSpace(strings.Join(descLines, "\n"))
 
 	return pos, nil
 }
@@ -226,10 +252,16 @@ func main() {
 				}
 			}
 
+			var description *string
+			if parsed.Description != "" {
+				description = &parsed.Description
+			}
+
 			p, err := positionService.Create(ctx, db.CreatePositionParams{
-				Name:    parsed.Name,
-				Email:   strings.ToLower(strings.ReplaceAll(parsed.Name, " ", ".")) + "@kth.it",
-				GroupID: g.ID,
+				Name:        parsed.Name,
+				Email:       strings.ToLower(strings.ReplaceAll(parsed.Name, " ", ".")) + "@kth.it",
+				Description: description,
+				GroupID:     g.ID,
 				EstablishedAt: pgtype.Date{
 					Time:  time.Date(pEarliest, time.January, 1, 0, 0, 0, 0, time.UTC),
 					Valid: true,
