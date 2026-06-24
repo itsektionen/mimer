@@ -29,6 +29,7 @@ type Position struct {
 	ID            uuid.UUID
 	Name          string
 	Email         string
+	Description   *string
 	GroupID       uuid.UUID
 	EstablishedAt pgtype.Date
 	DissolvedAt   pgtype.Date

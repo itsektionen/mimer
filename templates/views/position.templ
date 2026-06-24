@@ -15,6 +15,8 @@ templ positionView(position model.Position, trustees []model.Trustee) {
 		</div>
 	</section>
 	<section class="p-8">
+		<p class="text-sm font-medium text-muted-foreground mb-2">Description</p>
+		<p class="mb-8">{ *position.Description }</p>
 		<table class="table-auto w-full border-collapse border text-sm">
 			<thead>
 				<tr class="bg-secondary">

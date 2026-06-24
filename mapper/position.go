@@ -17,6 +17,7 @@ func ToPosition(p db.Position) model.Position {
 		Name:          p.Name,
 		GroupID:       p.GroupID,
 		Email:         p.Email,
+		Description:   p.Description,
 		EstablishedAt: p.EstablishedAt.Time,
 		DissolvedAt:   dissolvedAt,
 	}
@@ -43,6 +44,7 @@ func ToPositionWithTrustees(rows []db.ListGroupPositionsWithActiveTrusteesRow) [
 			Name:          row.PositionName,
 			GroupID:       row.GroupID,
 			Email:         row.PositionEmail,
+			Description:   row.PositionDescription,
 			EstablishedAt: row.PositionEstablishedAt.Time,
 			DissolvedAt:   dissolvedAt,
 		}

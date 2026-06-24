@@ -12,6 +12,7 @@ type Position struct {
 	Name          string     `json:"name" example:"Bootloader"`
 	GroupID       uuid.UUID  `json:"groupId" example:"00000000-0000-0000-0000-000000000000"`
 	Email         string     `json:"email" example:"bootloader@kth.it"`
+	Description   *string    `json:"description,omitempty" example:"Pretty awesome guy if I say so myself"`
 	EstablishedAt time.Time  `json:"establishedAt" example:"2021-01-01T00:00:00Z"`
 	DissolvedAt   *time.Time `json:"dissolvedAt" example:"2021-01-01T00:00:00Z"`
 }

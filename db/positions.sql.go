@@ -16,6 +16,7 @@ const createPosition = `-- name: CreatePosition :one
 INSERT INTO positions (
     name,
     email,
+    description,
     group_id,
     established_at,
     dissolved_at
@@ -24,14 +25,16 @@ INSERT INTO positions (
     $2,
     $3,
     $4,
-    $5
+    $5,
+    $6
 )
-RETURNING id, name, email, group_id, established_at, dissolved_at, created_at, updated_at, deleted_at
+RETURNING id, name, email, description, group_id, established_at, dissolved_at, created_at, updated_at, deleted_at
 `
 
 type CreatePositionParams struct {
 	Name          string
 	Email         string
+	Description   *string
 	GroupID       uuid.UUID
 	EstablishedAt pgtype.Date
 	DissolvedAt   pgtype.Date
@@ -41,6 +44,7 @@ func (q *Queries) CreatePosition(ctx context.Context, arg CreatePositionParams) 
 	row := q.db.QueryRow(ctx, createPosition,
 		arg.Name,
 		arg.Email,
+		arg.Description,
 		arg.GroupID,
 		arg.EstablishedAt,
 		arg.DissolvedAt,
@@ -50,6 +54,7 @@ func (q *Queries) CreatePosition(ctx context.Context, arg CreatePositionParams) 
 		&i.ID,
 		&i.Name,
 		&i.Email,
+		&i.Description,
 		&i.GroupID,
 		&i.EstablishedAt,
 		&i.DissolvedAt,
@@ -64,7 +69,7 @@ const deletePosition = `-- name: DeletePosition :one
 UPDATE positions
     SET deleted_at = NOW()
 WHERE id = $1 AND deleted_at IS NULL
-RETURNING id, name, email, group_id, established_at, dissolved_at, created_at, updated_at, deleted_at
+RETURNING id, name, email, description, group_id, established_at, dissolved_at, created_at, updated_at, deleted_at
 `
 
 func (q *Queries) DeletePosition(ctx context.Context, id uuid.UUID) (Position, error) {
@@ -74,6 +79,7 @@ func (q *Queries) DeletePosition(ctx context.Context, id uuid.UUID) (Position, e
 		&i.ID,
 		&i.Name,
 		&i.Email,
+		&i.Description,
 		&i.GroupID,
 		&i.EstablishedAt,
 		&i.DissolvedAt,
@@ -85,7 +91,7 @@ func (q *Queries) DeletePosition(ctx context.Context, id uuid.UUID) (Position, e
 }
 
 const getPosition = `-- name: GetPosition :one
-SELECT id, name, email, group_id, established_at, dissolved_at, created_at, updated_at, deleted_at FROM positions
+SELECT id, name, email, description, group_id, established_at, dissolved_at, created_at, updated_at, deleted_at FROM positions
 WHERE id = $1 AND deleted_at IS NULL LIMIT 1
 `
 
@@ -96,6 +102,7 @@ func (q *Queries) GetPosition(ctx context.Context, id uuid.UUID) (Position, erro
 		&i.ID,
 		&i.Name,
 		&i.Email,
+		&i.Description,
 		&i.GroupID,
 		&i.EstablishedAt,
 		&i.DissolvedAt,
@@ -111,6 +118,7 @@ SELECT
     pos.id as position_id,
     pos.name as position_name,
     pos.email as position_email,
+    pos.description as position_description,
     pos.group_id,
     pos.established_at as position_established_at,
     pos.dissolved_at as position_dissolved_at,
@@ -137,6 +145,7 @@ type ListGroupPositionsWithActiveTrusteesRow struct {
 	PositionID            uuid.UUID
 	PositionName          string
 	PositionEmail         string
+	PositionDescription   *string
 	GroupID               uuid.UUID
 	PositionEstablishedAt pgtype.Date
 	PositionDissolvedAt   pgtype.Date
@@ -162,6 +171,7 @@ func (q *Queries) ListGroupPositionsWithActiveTrustees(ctx context.Context, grou
 			&i.PositionID,
 			&i.PositionName,
 			&i.PositionEmail,
+			&i.PositionDescription,
 			&i.GroupID,
 			&i.PositionEstablishedAt,
 			&i.PositionDissolvedAt,
@@ -184,7 +194,7 @@ func (q *Queries) ListGroupPositionsWithActiveTrustees(ctx context.Context, grou
 }
 
 const listPositions = `-- name: ListPositions :many
-SELECT id, name, email, group_id, established_at, dissolved_at, created_at, updated_at, deleted_at FROM positions
+SELECT id, name, email, description, group_id, established_at, dissolved_at, created_at, updated_at, deleted_at FROM positions
 WHERE deleted_at IS NULL
 ORDER BY name
 `
@@ -202,6 +212,7 @@ func (q *Queries) ListPositions(ctx context.Context) ([]Position, error) {
 			&i.ID,
 			&i.Name,
 			&i.Email,
+			&i.Description,
 			&i.GroupID,
 			&i.EstablishedAt,
 			&i.DissolvedAt,
@@ -223,17 +234,19 @@ const updatePosition = `-- name: UpdatePosition :one
 UPDATE positions
     SET name = $2,
     email = $3,
-    group_id = $4,
-    established_at = $5,
-    dissolved_at = $6
+    description = $4,
+    group_id = $5,
+    established_at = $6,
+    dissolved_at = $7
 WHERE id = $1 AND deleted_at IS NULL
-RETURNING id, name, email, group_id, established_at, dissolved_at, created_at, updated_at, deleted_at
+RETURNING id, name, email, description, group_id, established_at, dissolved_at, created_at, updated_at, deleted_at
 `
 
 type UpdatePositionParams struct {
 	ID            uuid.UUID
 	Name          string
 	Email         string
+	Description   *string
 	GroupID       uuid.UUID
 	EstablishedAt pgtype.Date
 	DissolvedAt   pgtype.Date
@@ -244,6 +257,7 @@ func (q *Queries) UpdatePosition(ctx context.Context, arg UpdatePositionParams) 
 		arg.ID,
 		arg.Name,
 		arg.Email,
+		arg.Description,
 		arg.GroupID,
 		arg.EstablishedAt,
 		arg.DissolvedAt,
@@ -253,6 +267,7 @@ func (q *Queries) UpdatePosition(ctx context.Context, arg UpdatePositionParams) 
 		&i.ID,
 		&i.Name,
 		&i.Email,
+		&i.Description,
 		&i.GroupID,
 		&i.EstablishedAt,
 		&i.DissolvedAt,

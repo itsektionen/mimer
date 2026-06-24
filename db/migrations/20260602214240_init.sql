@@ -41,6 +41,7 @@ CREATE TABLE positions (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
+    description TEXT,
     group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
 
     established_at DATE NOT NULL,
@@ -80,12 +81,10 @@ BEFORE UPDATE ON trustees
 FOR EACH ROW EXECUTE FUNCTION update_timestamp();
 
 -- +goose Down
-DROP TRIGGER IF EXISTS update_timestamp_trustee ON trustees;
-DROP TRIGGER IF EXISTS update_timestamp_position ON positions;
-DROP TRIGGER IF EXISTS update_timestamp_user ON users;
-DROP TRIGGER IF EXISTS update_timestamp_group ON groups;
-DROP TABLE IF EXISTS trustees;
-DROP TABLE IF EXISTS positions;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS groups;
-DROP FUNCTION IF EXISTS update_timestamp();
+DROP FUNCTION IF EXISTS update_timestamp() CASCADE;
+
+DROP TABLE IF EXISTS trustees CASCADE;
+DROP TABLE IF EXISTS positions CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS groups CASCADE;
+
