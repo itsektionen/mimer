@@ -110,3 +110,21 @@ func (s *AuthService) ExchangeCode(ctx context.Context, code string) (*oauth2.To
 	}
 	return token, nil
 }
+
+func (s *AuthService) RefreshToken(ctx context.Context, refreshToken string) (*oauth2.Token, error) {
+	if refreshToken == "" {
+		return nil, fmt.Errorf("empty refresh token")
+	}
+
+	t := &oauth2.Token{
+		RefreshToken: refreshToken,
+	}
+
+	ts := s.config.TokenSource(ctx, t)
+	newToken, err := ts.Token()
+	if err != nil {
+		return nil, fmt.Errorf("failed to refresh token: %w", err)
+	}
+
+	return newToken, nil
+}
