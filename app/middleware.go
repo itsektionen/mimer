@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/itsektionen/mimer/app/ctxs"
+	"github.com/itsektionen/mimer/model"
 	"github.com/itsektionen/mimer/service"
 )
 
@@ -36,22 +38,61 @@ func sessionMiddleware(authService service.AuthService) func(http.Handler) http.
 				return
 			}
 
-			cookie, err := r.Cookie("mimer_token")
-			if err != nil {
-				next.ServeHTTP(w, r)
+			var accessToken string
+			accessCookie, err := r.Cookie("mimer_token")
+			if err == nil {
+				accessToken = accessCookie.Value
+			}
+
+			var claims *model.UserClaims
+			var validateErr error
+
+			if accessToken != "" {
+				claims, validateErr = authService.ValidateToken(r.Context(), accessToken)
+			}
+
+			if validateErr == nil && claims != nil {
+				ctx := ctxs.UserIntoContext(r.Context(), claims)
+				next.ServeHTTP(w, r.WithContext(ctx))
 				return
 			}
 
-			token := cookie.Value
-			if token == "" {
-				next.ServeHTTP(w, r)
-				return
+			refreshCookie, err := r.Cookie("mimer_refresh_token")
+			if err == nil && refreshCookie.Value != "" {
+				newToken, refreshErr := authService.RefreshToken(r.Context(), refreshCookie.Value)
+				if refreshErr == nil && newToken != nil {
+					newClaims, validateErr := authService.ValidateToken(r.Context(), newToken.AccessToken)
+					if validateErr == nil && newClaims != nil {
+						http.SetCookie(w, &http.Cookie{
+							Name:     "mimer_token",
+							Value:    newToken.AccessToken,
+							Path:     "/",
+							HttpOnly: true,
+							Secure:   true,
+							SameSite: http.SameSiteLaxMode,
+							MaxAge:   int(time.Until(newToken.Expiry).Seconds()),
+						})
+
+						if newToken.RefreshToken != "" {
+							http.SetCookie(w, &http.Cookie{
+								Name:     "mimer_refresh_token",
+								Value:    newToken.RefreshToken,
+								Path:     "/",
+								HttpOnly: true,
+								Secure:   true,
+								SameSite: http.SameSiteLaxMode,
+								MaxAge:   30 * 24 * 3600, // 30 days
+							})
+						}
+
+						ctx := ctxs.UserIntoContext(r.Context(), newClaims)
+						next.ServeHTTP(w, r.WithContext(ctx))
+						return
+					}
+				}
 			}
 
-			claims, err := authService.ValidateToken(r.Context(), token)
-			if err != nil {
-				fmt.Println("session validation failed:", err)
-				// Clear invalid cookie
+			if accessToken != "" {
 				http.SetCookie(w, &http.Cookie{
 					Name:     "mimer_token",
 					Value:    "",
@@ -59,12 +100,18 @@ func sessionMiddleware(authService service.AuthService) func(http.Handler) http.
 					HttpOnly: true,
 					MaxAge:   -1,
 				})
-				next.ServeHTTP(w, r)
-				return
+			}
+			if err == nil && refreshCookie.Value != "" {
+				http.SetCookie(w, &http.Cookie{
+					Name:     "mimer_refresh_token",
+					Value:    "",
+					Path:     "/",
+					HttpOnly: true,
+					MaxAge:   -1,
+				})
 			}
 
-			ctx := ctxs.UserIntoContext(r.Context(), claims)
-			next.ServeHTTP(w, r.WithContext(ctx))
+			next.ServeHTTP(w, r)
 		})
 	}
 }

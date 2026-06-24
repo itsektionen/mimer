@@ -83,6 +83,18 @@ func (h *AuthHandler) HandleAuthentikCallback(w http.ResponseWriter, r *http.Req
 		MaxAge:   int(time.Until(token.Expiry).Seconds()),
 	})
 
+	if token.RefreshToken != "" {
+		http.SetCookie(w, &http.Cookie{
+			Name:     "mimer_refresh_token",
+			Value:    token.RefreshToken,
+			Path:     "/",
+			HttpOnly: true,
+			Secure:   true,
+			SameSite: http.SameSiteLaxMode,
+			MaxAge:   30 * 24 * 3600, // 30 days
+		})
+	}
+
 	http.Redirect(w, r, s.NextURL, http.StatusTemporaryRedirect)
 }
 
@@ -96,6 +108,14 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 
 	http.SetCookie(w, &http.Cookie{
 		Name:     "mimer_token",
+		Value:    "",
+		Path:     "/",
+		HttpOnly: true,
+		MaxAge:   -1,
+	})
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "mimer_refresh_token",
 		Value:    "",
 		Path:     "/",
 		HttpOnly: true,
