@@ -32,21 +32,21 @@ type GroupMetadata struct {
 }
 
 var groupMetadata = map[string]GroupMetadata{
-	"board":               {Name: "Sektionsstyrelsen", ShortName: "Styrelsen", Color: "#000000"},
-	"business_relations":  {Name: "Näringslivsnämnden", ShortName: "NN", Color: "#FFD700"},
-	"communication":       {Name: "Kommunikationsnämnden", ShortName: "KommN", Color: "#FF8C00"},
-	"education":           {Name: "Studienämnden", ShortName: "SN", Color: "#4169E1"},
-	"elections":           {Name: "Valberedningen", ShortName: "VB", Color: "#DC143C"},
-	"init":                {Name: "init", ShortName: "init", Color: "#00FF00"},
-	"itk":                 {Name: "ITerativa Klubben", ShortName: "ITK", Color: "#006700"},
-	"jml":                 {Name: "JML-nämnden", ShortName: "JML", Color: "#9400D3"},
+	"board":               {Name: "Sektionsstyrelsen", ShortName: "Styrelsen", Color: "#cc99ff"},
+	"business_relations":  {Name: "Näringslivsnämnden", ShortName: "NN", Color: "#cc99ff"},
+	"communication":       {Name: "Kommunikationsnämnden", ShortName: "KommN", Color: "#cc99ff"},
+	"education":           {Name: "Studienämnden", ShortName: "SN", Color: "#cc99ff"},
+	"elections":           {Name: "Valberedningen", ShortName: "VB", Color: "#cc99ff"},
+	"init":                {Name: "init", ShortName: "init", Color: "#000000"},
+	"itk":                 {Name: "ITerativa Klubben", ShortName: "ITK", Color: "#ADFF5B"},
+	"jml":                 {Name: "JML-nämnden", ShortName: "JML", Color: "#cc99ff"},
 	"qmisk":               {Name: "QlubbMästeriet IN-Sektionen Kista", ShortName: "QMISK", Color: "#800000"},
-	"reception":           {Name: "Mottagningen", ShortName: "Mottagningen", Color: "#FF4500"},
-	"sports":              {Name: "Idrottsnämnden", ShortName: "Idrottsnämnden", Color: "#2E8B57"},
-	"strängteoretiquerna": {Name: "Strängteoretiquerna", ShortName: "Strängteoretiquerna", Color: "#8B4513"},
-	"study_environment":   {Name: "Studiemiljönämnden", ShortName: "SMN", Color: "#708090"},
-	"tmeit":               {Name: "TraditionsMEsterIT", ShortName: "TMEIT", Color: "#000067"},
-	"other":               {Name: "Övriga förtroendevalda", ShortName: "Övriga", Color: "#808080"},
+	"reception":           {Name: "Mottagningen", ShortName: "Mottagningen", Color: "#cc99ff"},
+	"sports":              {Name: "Idrottsnämnden", ShortName: "Idrottsnämnden", Color: "#cc99ff"},
+	"strängteoretiquerna": {Name: "Strängteoretiquerna", ShortName: "Strängteoretiquerna", Color: "#cc99ff"},
+	"study_environment":   {Name: "Studiemiljönämnden", ShortName: "SMN", Color: "#cc99ff"},
+	"tmeit":               {Name: "TraditionsMEsterIT", ShortName: "TMEIT", Color: "#436B7D"},
+	"other":               {Name: "Övriga förtroendevalda", ShortName: "Övriga", Color: "#cc99ff"},
 }
 
 type ParsedPosition struct {
