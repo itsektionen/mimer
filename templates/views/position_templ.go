@@ -104,7 +104,7 @@ func positionView(position model.Position, trustees []model.Trustee) templ.Compo
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p><table class=\"table-auto w-full border-collapse border text-sm\"><thead><tr class=\"bg-secondary\"><th class=\"border p-4 text-left font-semibold\">Name</th><th class=\"border p-4 text-left font-semibold\">Year</th></tr></thead> <tbody>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p><p class=\"text-sm font-medium text-muted-foreground mb-2\">Holders</p><table class=\"table-auto w-full border-collapse border text-sm\"><thead><tr class=\"bg-secondary\"><th class=\"border p-4 text-left font-semibold\">Name</th><th class=\"border p-4 text-left font-semibold\">Year</th></tr></thead> <tbody>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -116,7 +116,7 @@ func positionView(position model.Position, trustees []model.Trustee) templ.Compo
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(trustee.User.FullName())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/views/position.templ`, Line: 31, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/views/position.templ`, Line: 32, Col: 32}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -129,7 +129,7 @@ func positionView(position model.Position, trustees []model.Trustee) templ.Compo
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(trustee.StartDate.Year())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/views/position.templ`, Line: 34, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/views/position.templ`, Line: 35, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
