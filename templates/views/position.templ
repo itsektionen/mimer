@@ -18,20 +18,20 @@ templ positionView(position model.Position, trustees []model.Trustee) {
 		<p class="text-sm font-medium text-muted-foreground mb-2">Description</p>
 		<p class="mb-8">{ *position.Description }</p>
 		<p class="text-sm font-medium text-muted-foreground mb-2">Holders</p>
-		<table class="table-auto w-full border-collapse border text-sm">
+		<table class="data-table">
 			<thead>
 				<tr class="bg-secondary">
-					<th class="border p-4 text-left font-semibold">Name</th>
-					<th class="border p-4 text-left font-semibold">Year</th>
+					<th>Name</th>
+					<th>Year</th>
 				</tr>
 			</thead>
 			<tbody>
 				for _, trustee := range trustees {
-					<tr class="hover:bg-muted">
-						<td class="border p-4 text-left">
+					<tr>
+						<td>
 							{ trustee.User.FullName() }
 						</td>
-						<td class="border p-4 text-left">
+						<td>
 							{ trustee.StartDate.Year() }
 						</td>
 					</tr>

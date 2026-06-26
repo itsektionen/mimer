@@ -1,0 +1,49 @@
+package views
+
+import "github.com/itsektionen/mimer/model"
+
+templ positionListItem(position model.Position) {
+	<tr>
+		<td>{ position.Name }</td>
+		<td>
+			if position.IsActive() {
+				Yes 
+			} else {
+				No
+			}
+		</td>
+		<td>
+			<a class="px-3 py-1 border bg-background hover:bg-muted" href={ "/admin/positions/" + position.ID.String() }>Edit</a>
+		</td>
+	</tr>
+}
+
+templ AdminPositions(positions []model.Position) {
+	@Layout("Admin") {
+		@adminPositionsView(positions)
+	}
+}
+
+templ adminPositionsView(positions []model.Position) {
+	<section class="p-8 border-b">
+		<a class="px-3 py-1 border hover:bg-muted" href="/admin/positions/create">
+			Create new
+		</a>
+	</section>
+	<section class="p-8">
+		<table class="data-table">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Active</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				for _, pos := range positions {
+					@positionListItem(pos)
+				}
+			</tbody>
+		</table>
+	</section>
+}

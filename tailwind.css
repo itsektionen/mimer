@@ -214,3 +214,28 @@ input {
       transparent 12px,
       transparent 20px);
 }
+
+.data-table {
+  @apply table-auto w-full border-collapse border text-sm;
+
+  thead {
+    tr {
+      @apply bg-secondary;
+    }
+  }
+
+  th {
+    @apply border p-4 text-left font-semibold;
+  }
+
+  tbody {
+    tr {
+      @apply hover:bg-muted;
+
+      td {
+        @apply border p-4 text-left;
+      }
+    }
+  }
+
+}

@@ -35,6 +35,9 @@ func SetupAppRouter(
 		trusteeService,
 		searchService,
 	)
+	adminHandler := NewAdminHandler(
+		positionService,
+	)
 
 	authHandler := NewAuthHandler(authService)
 
@@ -62,6 +65,7 @@ func SetupAppRouter(
 		}
 		_ = views.Admin(*user).Render(r.Context(), w)
 	})
+	protectedRouter.Get("/positions", adminHandler.HandlePositions)
 
 	return router
 }
