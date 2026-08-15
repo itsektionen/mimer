@@ -1,0 +1,36 @@
+package views
+
+import (
+	"github.com/itsektionen/mimer/model"
+	"time"
+)
+
+templ CreatePosition(groups []model.Group) {
+	@Layout("Admin") {
+		@createPositionView(groups)
+	}
+}
+
+var today = time.Now()
+
+templ createPositionView(groups []model.Group) {
+	<section class="p-8">
+		<form hx-post="/admin/positions/create" class="flex flex-col [&>input]:mb-6 [&>textarea]:mb-6 [&>select]:mb-6 [&>label]:mb-2">
+			<label for="name">Name</label>
+			<input name="name" type="text" placeholder="Bootloader"/>
+			<label for="email">Email</label>
+			<input name="email" type="text" placeholder="bootloader@kth.it"/>
+			<label for="description">Description</label>
+			<textarea name="description" placeholder="The coolest president of the coolest committee"></textarea>
+			<label for="group">Group</label>
+			<select name="group">
+				for _, group := range groups {
+					<option value={ group.ID.String() }>{ group.Name }</option>
+				}
+			</select>
+			<label for="establishedAt">Established at</label>
+			<input value={ today.Format("2006-01-02") } type="date" name="establishedAt"/>
+			<button class="w-fit bg-primary text-primary-foreground px-3 py-1 mt-8" type="submit">Create</button>
+		</form>
+	</section>
+}

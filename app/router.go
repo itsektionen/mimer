@@ -37,6 +37,7 @@ func SetupAppRouter(
 	)
 	adminHandler := NewAdminHandler(
 		positionService,
+		groupService,
 	)
 
 	authHandler := NewAuthHandler(authService)
@@ -66,6 +67,8 @@ func SetupAppRouter(
 		_ = views.Admin(*user).Render(r.Context(), w)
 	})
 	protectedRouter.Get("/positions", adminHandler.HandlePositions)
+	protectedRouter.Get("/positions/create", adminHandler.HandleCreatePositionView)
+	protectedRouter.Post("/positions/create", adminHandler.HandleCreatePosition)
 
 	return router
 }

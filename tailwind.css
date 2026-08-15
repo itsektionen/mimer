@@ -176,7 +176,7 @@
   }
 
   html {
-    @apply overscroll-none;
+    @apply overscroll-y-none;
     scrollbar-gutter: stable both-edges;
   }
 
@@ -194,25 +194,44 @@ body::selection {
   --thumb-color: var(--primary);
   --thumb-opacity: 50%;
 
-  scrollbar-color: color-mix(in srgb,
+  scrollbar-color: color-mix(
+      in srgb,
       var(--thumb-color) var(--thumb-opacity),
-      transparent) transparent;
+      transparent
+    )
+    transparent;
 }
 
 * {
   @apply focus-visible:outline-primary focus-visible:outline-2 focus-visible:z-20;
 }
 
-input {
+.dark * {
+  color-scheme: dark;
+}
+
+input[type="text"],
+input[type="search"],
+input[type="date"] {
   @apply px-2 py-1 border h-9;
 }
 
+textarea {
+  @apply px-2 py-1 border;
+}
+
+select {
+  @apply px-2 py-1 border;
+}
+
 .striped {
-  background-image: repeating-linear-gradient(45deg,
-      color-mix(in srgb, var(--accent), var(--background) 20%) 10px,
-      color-mix(in srgb, var(--accent), var(--background) 20%) 11px,
-      transparent 12px,
-      transparent 20px);
+  background-image: repeating-linear-gradient(
+    45deg,
+    color-mix(in srgb, var(--accent), var(--background) 20%) 10px,
+    color-mix(in srgb, var(--accent), var(--background) 20%) 11px,
+    transparent 12px,
+    transparent 20px
+  );
 }
 
 .data-table {
@@ -237,5 +256,4 @@ input {
       }
     }
   }
-
 }

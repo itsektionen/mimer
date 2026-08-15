@@ -148,7 +148,7 @@ func adminPositionsView(positions []model.Position) templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<section class=\"p-8 border-b\"><a class=\"px-3 py-1 border hover:bg-muted\" href=\"/admin/positions/create\">Create new</a></section><section class=\"p-8\"><table class=\"data-table\"><thead><tr><th>Name</th><th>Active</th><th>Actions</th></tr></thead> <tbody>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<section class=\"p-8 border-b\"><h1 class=\"text-3xl mb-8 font-medium\">Positions</h1><a class=\"px-3 py-1 border hover:bg-muted\" href=\"/admin/positions/create\">Create new</a></section><section class=\"p-8\"><table class=\"data-table\"><thead><tr><th>Name</th><th>Active</th><th>Actions</th></tr></thead> <tbody>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
