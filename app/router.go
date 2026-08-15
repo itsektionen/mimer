@@ -69,6 +69,8 @@ func SetupAppRouter(
 	protectedRouter.Get("/positions", adminHandler.HandlePositions)
 	protectedRouter.Get("/positions/create", adminHandler.HandleCreatePositionView)
 	protectedRouter.Post("/positions/create", adminHandler.HandleCreatePosition)
+	protectedRouter.Get("/positions/{positionID}", adminHandler.HandleEditPositionView)
+	protectedRouter.Post("/positions/{positionID}", adminHandler.HandleEditPosition)
 
 	return router
 }

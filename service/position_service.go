@@ -16,6 +16,7 @@ type PositionService interface {
 	GetByID(ctx context.Context, id uuid.UUID) (model.Position, error)
 	Assign(ctx context.Context, positionID uuid.UUID, personID uuid.UUID) (*model.Trustee, error)
 	ListTrustees(ctx context.Context, positionID uuid.UUID) ([]model.Trustee, error)
+	Update(ctx context.Context, positionID uuid.UUID, params db.UpdatePositionParams) (model.Position, error)
 }
 
 type positionService struct {
@@ -46,4 +47,10 @@ func (s *positionService) Assign(ctx context.Context, positionID uuid.UUID, pers
 
 func (s *positionService) ListTrustees(ctx context.Context, positionID uuid.UUID) ([]model.Trustee, error) {
 	return s.trusteeRepo.ListByPositionID(ctx, positionID)
+}
+
+func (s *positionService) Update(ctx context.Context, positionID uuid.UUID, params db.UpdatePositionParams) (model.Position, error) {
+	p := params
+	p.ID = positionID
+	return s.repo.Update(ctx, p)
 }

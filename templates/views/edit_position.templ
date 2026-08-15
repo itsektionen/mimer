@@ -1,0 +1,31 @@
+package views 
+
+import "github.com/itsektionen/mimer/model"
+
+templ EditPositionView(pos model.Position, groups []model.Group) {
+	@Layout("Editing " + pos.Name) {
+		<section class="p-8">
+			<form hx-post={ "/admin/positions/" + pos.ID.String() } class="flex flex-col [&>input]:mb-6 [&>textarea]:mb-6 [&>select]:mb-6 [&>label]:mb-2">
+				<label for="name">Name</label>
+				<input value={ pos.Name } name="name" type="text" placeholder="Bootloader"/>
+				<label for="email">Email</label>
+				<input value={ pos.Email } name="email" type="text" placeholder="bootloader@kth.it"/>
+				<label for="description">Description</label>
+				<textarea name="description" placeholder="The coolest president of the coolest committee"></textarea>
+				<label for="group">Group</label>
+				<select value={ pos.GroupID.String() } name="group">
+					for _, group := range groups {
+						if group.ID == pos.GroupID {
+							<option selected value={ group.ID.String() }>{ group.Name }</option>
+						} else {
+							<option value={ group.ID.String() }>{ group.Name }</option>
+						}
+					}
+				</select>
+				<label for="establishedAt">Established at</label>
+				<input value={ pos.EstablishedAt.Format("2006-01-02") } type="date" name="establishedAt"/>
+				<button class="w-fit bg-primary text-primary-foreground px-3 py-1 mt-8" type="submit">Save changes</button>
+			</form>
+		</section>
+	}
+}
